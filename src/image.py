@@ -177,11 +177,11 @@ class DrImage(Gtk.Box):
 	def restore_last_state(self):
 		"""Set the last saved pixbuf from the history as the main_pixbuf. This
 		is used to rebuild the picture from its history."""
-		last_saved_pixbuf_op = self._history.get_last_saved_state()
+		last_saved_pixbuf_op = self._history.get_last_stored_state()
 		self._apply_state(last_saved_pixbuf_op)
 
 	def reset_to_initial_pixbuf(self):
-		self._apply_state(self._history.initial_operation)
+		self._apply_state(self._history.get_initial_operation())
 		self._history.rewind_history()
 
 	def _apply_state(self, state_op):
@@ -234,7 +234,6 @@ class DrImage(Gtk.Box):
 		self._load_pixbuf_common(disk_pixbuf)
 		self.use_stable_pixbuf()
 		self.update()
-		self.remember_current_state()
 		self._update_can_reload_action()
 		self.window.update_picture_title()
 
@@ -403,7 +402,7 @@ class DrImage(Gtk.Box):
 		return not self._history.has_initial_pixbuf()
 
 	def get_initial_rgba(self):
-		return self._history.initial_operation['rgba']
+		return self._history.get_initial_operation()['rgba']
 
 	############################################################################
 	# Misc ? ###################################################################

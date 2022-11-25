@@ -283,7 +283,8 @@ class Application(Gtk.Application):
 		"""Action callback, showing the "about" dialog."""
 		about_dialog = Gtk.AboutDialog(transient_for=self.props.active_window,
 			copyright="© 2018-2023 Romain F. T.",
-			authors=["Romain F. T.", "Fábio Colacio", "Alexis Lozano", "Arak @ARAKHN1D"],
+			authors=["Romain F. T.", "Fábio Colacio", "Alexis Lozano", "Arak @ARAKHN1D",
+			         "Julián Cámara"],
 			# To translators: "translate" this by a list of your names (one name
 			# per line), they will be displayed in the "about" dialog
 			translator_credits=_("translator-credits"),

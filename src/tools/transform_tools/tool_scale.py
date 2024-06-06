@@ -122,15 +122,17 @@ class ToolScale(AbstractCanvasTool):
 		self._y = 0
 		self.x_press = self.x_motion = None
 		self.y_press = self.y_motion = None
+		self._spinbtns_disabled = True
 		self._w100_btn.set_value(100)
 		self._h100_btn.set_value(100)
 
 		width, height = self._get_original_size()
 		self.set_preserve_ratio()
 		self._ratio = width / height
-		self._spinbtns_disabled = False
 		self._width_btn.set_value(width)
 		self._height_btn.set_value(height)
+		self._spin_size = (self._get_width(), self._get_height())
+		self._spinbtns_disabled = False
 		self.build_and_do_op() # Ensure a correct preview
 
 	def _get_original_size(self):
@@ -166,79 +168,58 @@ class ToolScale(AbstractCanvasTool):
 		if self._preserve_ratio == former_setting:
 			return
 		if self._preserve_ratio:
-			self._ratio = self._get_width() / self._get_height()
+			if for_spinbtns:
+				# The edited field already has its new value. The previous
+				# logical size can be newer than the throttled preview.
+				width, height = self._spin_size
+				self._ratio = width / height
+			else:
+				self._ratio = self._get_width() / self._get_height()
 
 	def _try_scale_dimensions(self):
 		if self._reload_is_locked:
 			return
 		self._reload_is_locked = True
 		GLib.timeout_add(100, self._unlock_reload, {})
-		self._async_try_scale_dimensions()
+		self.build_and_do_op()
 
 	def _unlock_reload(self, content_params):
 		self._reload_is_locked = False
-		self._async_try_scale_dimensions()
-
-	def _async_try_scale_dimensions(self, data_dict={}):
-		"""When the value in a spinbutton changes, adjust the values in the
-		spinbuttons if necessary, and build-and-do the corresponding tool
-		operation."""
-		self._spinbtns_disabled = True
-
-		if self._preserve_ratio:
-			temp_pixbuf = self.get_image().temp_pixbuf
-			existing_width = temp_pixbuf.get_width()
-			existing_height = temp_pixbuf.get_height()
-
-			new_width = self._get_width()
-			new_height = self._get_height()
-
-			if existing_width != new_width:
-				new_height = new_width / self._ratio
-				self._height_btn.set_value(new_height)
-			if existing_height != new_height:
-				new_width = new_height * self._ratio
-				self._width_btn.set_value(new_width)
-		# else:
-			# If the ratio isn't locked, the dimension should be applied without
-			# any change. Calculations to adjust the size are only useful when
-			# trying to preserve the image proportions.
-
-		# Update the "percentage" spinbuttons
-		original_width , original_height = self._get_original_size()
-		new_w100 = 100 * (self._get_width() / original_width)
-		new_h100 = 100 * (self._get_height() / original_height)
-		self._w100_btn.set_value(new_w100)
-		self._h100_btn.set_value(new_h100)
-
-		self._spinbtns_disabled = False
 		self.build_and_do_op()
 
 	############################################################################
 	# Spinbuttons management ###################################################
 
-	def on_spinbtn_changed(self, *args):
+	def on_spinbtn_changed(self, button):
 		if self._spinbtns_disabled:
 			return
 		if self.x_press is None:
 			# This means the user interacts with the spinbtn directly, instead
 			# of the surface.
 			self.set_preserve_ratio(True)
+		# Resolve the edited axis now. Throttle only rendering, since the
+		# preview cannot distinguish multiple queued edits to the controls.
+		self._spinbtns_disabled = True
+		if self._preserve_ratio:
+			if button is self._width_btn:
+				self._height_btn.set_value(self._get_width() / self._ratio)
+			else:
+				self._width_btn.set_value(self._get_height() * self._ratio)
+		width, height = self._spin_size = (self._get_width(), self._get_height())
+		original_width, original_height = self._get_original_size()
+		self._w100_btn.set_value(100 * width / original_width)
+		self._h100_btn.set_value(100 * height / original_height)
+		self._spinbtns_disabled = False
 		self._try_scale_dimensions()
 
-	def on_spinbtn100_changed(self, *args):
+	def on_spinbtn100_changed(self, button):
 		if self._spinbtns_disabled:
 			return
-		# This callback can only pass its guard clause when triggered from the
-		# spinbutton directly: i don't have to check the value of self.x_press
-		self.set_preserve_ratio(True)
-
 		original_width, original_height = self._get_original_size()
-		new_width = original_width * (self._w100_btn.get_value() / 100)
-		new_height = original_height * (self._h100_btn.get_value() / 100)
-		delta_x = self._get_width() - new_width
-		delta_y = self._get_height() - new_height
-		self._apply_deltas_to_spinbtns(new_width, new_height, delta_x, delta_y)
+		if button is self._w100_btn:
+			self._width_btn.set_value(original_width * button.get_value() / 100)
+		else:
+			self._height_btn.set_value(original_height * button.get_value() / 100)
 
 	def _apply_deltas_to_spinbtns(self, new_width, new_height, dx=0, dy=0):
 		if self._preserve_ratio:

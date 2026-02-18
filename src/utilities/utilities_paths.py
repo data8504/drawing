@@ -5,13 +5,43 @@ from gi.repository import Gdk
 
 ################################################################################
 
+def _read_pixel_rgba(data, stride, x, y):
+	"""Read a single pixel from a cairo ARGB32 buffer, returning RGBA bytes.
+
+	Cairo ARGB32 stores pixels as premultiplied BGRA on little-endian systems.
+	This un-premultiplies and converts to standard RGBA byte order."""
+	offset = y * stride + x * 4
+	# Cairo ARGB32 on little-endian: B, G, R, A
+	b = data[offset]
+	g = data[offset + 1]
+	r = data[offset + 2]
+	a = data[offset + 3]
+	# Un-premultiply alpha (cairo stores color values pre-multiplied by alpha)
+	if 0 < a < 255:
+		r = min(255, r * 255 // a)
+		g = min(255, g * 255 // a)
+		b = min(255, b * 255 // a)
+	return bytes((r, g, b, a))
+
 def utilities_get_rgba_for_xy(surface, x, y):
-	# Guard clause: we can't perform color picking outside of the surface
-	if x < 0 or x > surface.get_width() or y < 0 or y > surface.get_height():
+	"""Read the RGBA color at pixel (x, y) from a cairo ImageSurface.
+
+	Returns a bytes object with 4 values (R, G, B, A) in 0-255 range,
+	or None if the coordinates are outside the surface bounds.
+
+	This reads directly from the surface pixel buffer, avoiding the overhead
+	of allocating a GdkPixbuf for each pixel read."""
+	x = int(x)
+	y = int(y)
+	w = surface.get_width()
+	h = surface.get_height()
+	if x < 0 or x >= w or y < 0 or y >= h:
 		return None
-	screenshot = Gdk.pixbuf_get_from_surface(surface, float(x), float(y), 1, 1)
-	rgba_vals = screenshot.get_pixels()
-	return rgba_vals
+	surface.flush()
+	data = surface.get_data()
+	stride = surface.get_stride()
+	return _read_pixel_rgba(data, stride, x, y)
+
 
 def utilities_get_magic_path(surface, x, y):
 	"""Return the pixel-edge outline of the clicked four-connected RGBA region.

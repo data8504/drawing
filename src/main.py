@@ -35,7 +35,7 @@ class Application(Gtk.Application):
 
 	APP_ID = 'com.github.maoschanz.drawing'
 	APP_PATH = '/com/github/maoschanz/drawing'
-	BUG_REPORT_URL = 'https://github.com/maoschanz/drawing/issues'
+	BUG_REPORT_URL = 'https://github.com/data8504/drawing/issues'
 	FLATPAK_BINARY_PATH = '/app/bin/drawing'
 	CURRENT_BINARY_PATH = ''
 
@@ -294,7 +294,7 @@ class Application(Gtk.Application):
 			comments=_("Simple image editor for Linux"),
 			license_type=Gtk.License.GPL_3_0,
 			logo_icon_name=self.APP_ID, version=str(self._version),
-			website='https://maoschanz.github.io/drawing/',
+			website='https://github.com/data8504/drawing',
 			website_label=_("Official webpage"))
 		bug_report_btn = Gtk.LinkButton(halign=Gtk.Align.CENTER, visible=True, \
 		               label=_("Report bugs or ideas"), uri=self.BUG_REPORT_URL)

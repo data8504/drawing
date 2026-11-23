@@ -1,19 +1,122 @@
+name: Native build
 on:
-  push:
-    branches: [master]
   pull_request:
-name: CI
+  push:
+    branches: [master, stable/1.0]
+    tags: ['v*', '[0-9]*']
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing stable tag to build and publish (blank runs CI only)
+        required: false
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: native-${{ github.ref }}-${{ inputs.release_tag }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
-  flatpak-builder:
-    name: Flatpak Builder
-    runs-on: ubuntu-latest
-    container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-41
-      options: --privileged
+  native:
+    name: Native ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-26.04]
+    runs-on: ${{ matrix.os }}
+    outputs:
+      commit: ${{ steps.release.outputs.commit }}
     steps:
-    - uses: actions/checkout@v2.4.0
-    - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
-      with:
-        bundle: drawing.flatpak
-        manifest-path: com.github.maoschanz.drawing.json
-        run-tests: true
+      # Keep release/build tooling from the triggering reviewed commit even when
+      # manually rebuilding an older tag that predates these workflows.
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          path: infrastructure
+          persist-credentials: false
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          path: source
+          ref: ${{ inputs.release_tag || github.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install native build and runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y meson ninja-build gettext itstool \
+            libglib2.0-dev-bin desktop-file-utils appstream appstream-util gir1.2-gtk-3.0 \
+            python3-gi-cairo dbus-x11 xvfb xauth
+      - name: Configure
+        working-directory: source
+        run: meson setup build --prefix=/usr --buildtype=release
+      - name: Check release tag and accepted history
+        id: release
+        if: startsWith(github.ref, 'refs/tags/') || inputs.release_tag != ''
+        working-directory: source
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
+        run: python3 ../infrastructure/build-aux/ci/check-release.py "$RELEASE_TAG"
+      - name: Build and test
+        working-directory: source
+        run: |
+          meson compile -C build
+          meson test -C build --print-errorlogs
+          DESTDIR="$PWD/stage" meson install -C build --no-rebuild
+      - name: Package validated installation
+        working-directory: source
+        env:
+          DISTRIBUTION: ${{ matrix.os }}
+        run: |
+          python3 ../infrastructure/build-aux/ci/package.py stage dist \
+            --distribution "${DISTRIBUTION/-/}" > package.log
+          cat package.log
+          sudo dpkg --install dist/*.deb
+      - name: Smoke installed launcher and fresh window
+        working-directory: source
+        env:
+          GSETTINGS_BACKEND: memory
+          GIO_USE_VFS: local
+          NO_AT_BRIDGE: '1'
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          export XDG_CONFIG_HOME="$RUNNER_TEMP/drawing-config"
+          export XDG_CACHE_HOME="$RUNNER_TEMP/drawing-cache"
+          xvfb-run -a dbus-run-session -- drawing --version
+          timeout 30s xvfb-run -a dbus-run-session -- \
+            python3 ../infrastructure/build-aux/ci/smoke.py
+      - name: Upload native packages and source
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: drawing-${{ matrix.os }}
+          path: source/dist/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload failure logs
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: logs-${{ matrix.os }}
+          path: |
+            source/build/meson-logs/
+            source/package.log
+          retention-days: 7
+  release:
+    name: Publish immutable release
+    if: startsWith(github.ref, 'refs/tags/') || inputs.release_tag != ''
+    needs: native
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: drawing-ubuntu-*
+          path: artifacts
+      - name: Upload complete draft, then publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
+          RELEASE_COMMIT: ${{ needs.native.outputs.commit }}
+        run: python3 build-aux/ci/publish.py artifacts

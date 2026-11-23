@@ -1,3 +1,10 @@
+drawing (1.2.0-1) unstable; urgency=medium
+
+  * Continue the GTK 3 development line with fixes for connected-color tools,
+    saved document state, opaque exports, and selections at the canvas edge.
+
+ -- Matthew Hiltner <data8504@users.noreply.github.com>  Mon, 23 Nov 2026 00:00:00 +0000
+
 drawing (1.2.0) unstable; urgency=low
 
   * consistently apply a transform tool's operation if it's interrupted (#515)

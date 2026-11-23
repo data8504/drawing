@@ -9,6 +9,7 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+from gtk_runtime import gtk_api
 
 
 def git(*args):
@@ -37,6 +38,9 @@ doc = args.stage / 'usr/share/doc/drawing'
 doc.mkdir(parents=True, exist_ok=True)
 shutil.copyfile('debian/copyright', doc / 'copyright')
 shutil.copyfile('LICENSE', doc / 'LICENSE')
+api = gtk_api(args.stage)
+gtk_package = 'gir1.2-gtk-' + api
+gtk_minimum, cairo_minimum = ('4.10', '3.42') if api == '4.0' else ('3.24', '3.30')
 control = args.stage / 'DEBIAN'
 control.mkdir()
 (control / 'control').write_text(f'''Package: drawing
@@ -45,7 +49,7 @@ Architecture: all
 Maintainer: Matthew Hiltner <data8504@users.noreply.github.com>
 Section: graphics
 Priority: optional
-Depends: gir1.2-gtk-3.0 (>= 3.24), python3-gi-cairo (>= 3.30), python3, dconf-gsettings-backend | gsettings-backend
+Depends: {gtk_package} (>= {gtk_minimum}), python3-gi-cairo (>= {cairo_minimum}), python3, dconf-gsettings-backend | gsettings-backend
 Description: Simple drawing application for the GNOME desktop
  A continuation of Drawing, a basic image editor for the GNOME desktop.
 ''')
@@ -74,7 +78,7 @@ manifest = {'commit': commit, 'version': version, 'distribution': args.distribut
             'source_date_epoch': epoch, 'package_version': deb_version,
             'packages': subprocess.check_output(['dpkg-query', '-W', '-f=${Package}\t${Version}\n',
                          'meson', 'ninja-build', 'python3', 'python3-gi-cairo',
-                         'gir1.2-gtk-3.0'], text=True).splitlines()}
+                         gtk_package], text=True).splitlines()}
 (args.output / f'build-{args.distribution}.json').write_text(json.dumps(manifest, indent=2) + '\n')
 for p in sorted(args.output.iterdir()):
 	if p.is_file() and p.name != 'SHA256SUMS':

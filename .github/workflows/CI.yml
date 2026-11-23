@@ -76,6 +76,11 @@ jobs:
             --distribution "${DISTRIBUTION/-/}" > package.log
           cat package.log
           sudo dpkg --install dist/*.deb
+          verification="$(sudo dpkg --verify drawing)"
+          if [ -n "$verification" ]; then
+            printf '%s\n' "$verification" >&2
+            exit 1
+          fi
       - name: Smoke installed launcher and fresh window
         working-directory: source
         env:

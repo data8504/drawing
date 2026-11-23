@@ -49,6 +49,12 @@ Depends: gir1.2-gtk-3.0 (>= 3.24), python3-gi-cairo (>= 3.30), python3, dconf-gs
 Description: Simple drawing application for the GNOME desktop
  A continuation of Drawing, a basic image editor for the GNOME desktop.
 ''')
+payload = sorted(p for p in (args.stage / 'usr').rglob('*')
+                 if p.is_file() and not p.is_symlink())
+# dpkg uses these checksums to verify the installed payload.
+(control / 'md5sums').write_text(''.join(
+	f'{hashlib.md5(p.read_bytes(), usedforsecurity=False).hexdigest()}  '
+	f'{p.relative_to(args.stage)}\n' for p in payload))
 # Debian's file triggers update schema, icon and desktop caches on install/remove.
 # No package-maintained user configuration or application data is modified.
 for p in sorted(args.stage.rglob('*'), reverse=True):

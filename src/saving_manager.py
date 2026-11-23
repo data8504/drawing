@@ -41,6 +41,7 @@ class DrSavingManager():
 			to_new = True
 
 		image = self._window.get_active_image()
+		image._history.finish_pending_rebuild()
 
 		if image.get_file_path() is None or to_new or selection_only:
 			gfile = self._file_chooser_save()

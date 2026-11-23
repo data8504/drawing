@@ -22,7 +22,7 @@ class DrMinimap(Gtk.Popover):
 		self._zoom_scale.connect('value-changed', self._update_zoom_level)
 
 		self._minimap_area = builder.get_object('_minimap_area')
-		self._minimap_area.set_size(200, 200)
+		self._minimap_area.set_size_request(200, 200)
 		self._minimap_area.add_events(Gdk.EventMask.BUTTON_PRESS_MASK | \
 		                              Gdk.EventMask.BUTTON_MOTION_MASK | \
 		                              Gdk.EventMask.BUTTON_RELEASE_MASK)

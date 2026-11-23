@@ -18,8 +18,8 @@ A rollback reinstalls the previously saved package, preserving user data.
 For a stable release, merge reviewed changes through branch protection, update
 Meson and AppStream version metadata in that PR, then push its version tag
 (`v1.2.0`, for example). The tag must identify a commit in protected `master` or
-`stable/1.0` history. Existing older tags such as `1.0.2` can be rebuilt by running
-the workflow from the protected default branch and supplying `release_tag`.
+`stable/1.0` history. To publish an older, unpublished tag, run the workflow
+from the protected default branch and supply `release_tag`.
 Release dispatch from other branches fails before building or publication.
 This retains the tag's source unchanged and uses the current reviewed build
 infrastructure. A blank dispatch runs CI only. Never move an existing tag.
@@ -31,8 +31,9 @@ SHA256SUMS, download and verify every asset, and publish it as latest. Publicati
 locks the assets and tag and GitHub generates a release attestation. Release
 notes and the latest designation remain editable. A failed upload leaves an
 unpublished draft; a retry verifies existing bytes and fills missing assets.
-A published release is only verified on retry, never replaced. Asset corrections
-require a new version.
+Use `gh release verify 1.0.2` (with the corresponding tag) for a published
+release. Rebuilding its source with newer packaging tools can change package
+bytes. Asset corrections require a new version.
 
 CI runs use read-only tokens and no project secrets. Only publication receives
 `contents: write`. External PR code runs on GitHub-hosted runners. Required branch

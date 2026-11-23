@@ -18,7 +18,7 @@
       <object class="GtkFrame">
         <property name="visible">True</property>
         <child>
-          <object class="GtkLayout" id="_minimap_area">
+          <object class="GtkDrawingArea" id="_minimap_area">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
           </object>

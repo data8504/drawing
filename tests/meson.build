@@ -10,6 +10,15 @@ gui_runner = find_program('xvfb-run', required: false)
 private_bus = find_program('dbus-run-session', required: false)
 if gui_runner.found() and private_bus.found()
 	test(
+		'Selection bounds',
+		gui_runner,
+		args: ['-a', private_bus.path(), '--', python3.find_python().path(),
+			files('test_selection_bounds.py')],
+		timeout: 30,
+		env: ['PYTHONDONTWRITEBYTECODE=1', 'GSETTINGS_BACKEND=memory',
+			'GIO_USE_VFS=local', 'NO_AT_BRIDGE=1'],
+	)
+	test(
 		'Saved document state',
 		gui_runner,
 		args: ['-a', private_bus.path(), '--', python3.find_python().path(),

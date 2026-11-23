@@ -364,7 +364,8 @@ class DrWindow(Gtk.ApplicationWindow):
 			if callback is not None:
 				callback(True)
 			return
-		self.notebook.set_current_page(index)
+		if not tab.is_saved():
+			self.notebook.set_current_page(index)
 		def confirmed(can_close):
 			if can_close:
 				index = self.notebook.page_num(tab)
@@ -412,6 +413,7 @@ class DrWindow(Gtk.ApplicationWindow):
 				self.close_tab(self.get_active_image(), next_tab)
 				return
 			if self._is_tools_initialisation_finished:
+				self._decorations.remove_from_ui()
 				self.options_manager.persist_tools_options()
 				self.gsettings.set_string('last-active-tool', self.active_tool_id)
 				self.gsettings.set_int('window-width', self.get_width())

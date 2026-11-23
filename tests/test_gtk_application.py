@@ -299,6 +299,26 @@ class ApplicationSmokeTest(unittest.TestCase):
 					self.assertIsNone(image._gfile_monitor)
 					self.assertTrue(old_monitor.is_cancelled())
 					self.assertFalse(image.reload_info_bar.get_visible())
+					# Closing a saved, inactive tab must preserve the crop preview.
+					untouched = window._build_new_tab()
+					window.notebook.set_current_page(window.notebook.page_num(image))
+					window.tools['crop'].select_flowbox_child()
+					crop = window.active_tool()
+					crop.width_btn.set_value(34)
+					settle()
+					self.assertTrue(untouched.is_saved())
+					untouched.try_close_tab()
+					self.assertEqual(window.notebook.page_num(untouched), -1)
+					self.assertIs(window.get_active_image(), image)
+					self.assertEqual(crop.width_btn.get_value_as_int(), 34)
+					# Closing a second window stops its subtitle updates.
+					extra = app.open_window_with_content(None)
+					decorations = extra._decorations
+					self.assertTrue(decorations._loop_is_ongoing)
+					closed = []
+					extra.request_close(closed.append)
+					self.assertEqual(closed, [True])
+					self.assertFalse(decorations._loop_is_ongoing)
 					self.assertFalse(callback_errors, callback_errors)
 				finally:
 					window.destroy()

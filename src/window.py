@@ -116,10 +116,9 @@ class DrWindow(Gtk.ApplicationWindow):
 		# can continue normally.
 		try:
 			if get_cb:
-				self._build_new_tab() # temporary image, to avoid errors when
-				# the window finishes its initialisation while we wait for the
-				# timeout. It will be discarded later.
-				GLib.timeout_add(500, self.async_build_from_clipboard, {})
+				# Initialize a placeholder while waiting for the clipboard.
+				temporary = self._build_new_tab()
+				GLib.timeout_add(500, self.async_build_from_clipboard, temporary)
 			elif gfile is not None:
 				self._build_new_tab(gfile=gfile)
 			else:
@@ -242,16 +241,16 @@ class DrWindow(Gtk.ApplicationWindow):
 				self.update_picture_title()
 		dialog.choose(chosen)
 
-	def async_build_from_clipboard(self, content_params):
-		temporary = self.get_active_image()
-		self.build_image_from_clipboard(
-			lambda created: self.close_tab(temporary) if created else None)
+	def async_build_from_clipboard(self, temporary):
+		if self.get_application() is None or self.notebook.page_num(temporary) < 0:
+			return GLib.SOURCE_REMOVE
+		def created(has_image):
+			if has_image:
+				self.close_tab(temporary)
+		self.build_image_from_clipboard(callback=created)
 		return GLib.SOURCE_REMOVE
 
 	def build_image_from_clipboard(self, *args, callback=None):
-		# Also accept the continuation used while replacing a startup placeholder.
-		if args and callable(args[0]):
-			callback = args[0]
 		def received(pixbuf):
 			if pixbuf is not None:
 				self._build_new_tab(pixbuf=pixbuf)
@@ -314,6 +313,7 @@ class DrWindow(Gtk.ApplicationWindow):
 			new_image.init_background(width, height, background_rgba)
 		self._update_tabs_visibility()
 		self.notebook.set_current_page(self.notebook.get_n_pages()-1)
+		return new_image
 
 	def confirm_open_twice(self, gfile, callback):
 		dialog = DrMessageDialog(self)
@@ -1128,6 +1128,7 @@ class DrWindow(Gtk.ApplicationWindow):
 				self.reveal_message(error)
 		if not gfiles:
 			return False
+		image = self.get_active_image()
 		dialog = DrMessageDialog(self)
 		dialog.set_action(_("Cancel"), None)
 		open_id = dialog.set_action(_("Open"), None)
@@ -1139,7 +1140,7 @@ class DrWindow(Gtk.ApplicationWindow):
 				for gfile in gfiles:
 					self._build_new_tab(gfile=gfile)
 			elif response == import_id:
-				self.import_from_path(gfiles[0].get_path())
+				self.import_from_path(image, gfiles[0].get_path())
 		dialog.choose(chosen)
 		return True
 
@@ -1245,15 +1246,23 @@ class DrWindow(Gtk.ApplicationWindow):
 		self._read_clipboard_image(image_received)
 
 	def action_import(self, *args):
-		self.file_chooser_open(
-			lambda gfile: self.import_from_path(gfile.get_path()) if gfile is not None else None,
-			_("Import a picture"))
+		image = self.get_active_image()
+		def chosen(gfile):
+			if gfile is not None:
+				self.import_from_path(image, gfile.get_path())
+		self.file_chooser_open(chosen, _("Import a picture"))
 
-	def import_from_path(self, file_path):
+	def import_from_path(self, image, file_path):
 		"""Import a file as the selection pixbuf. Called by the 'win.import'
 		action or when an image is imported by drag-and-drop."""
-		self.force_selection()
+		if image is None or self.get_application() is None:
+			return
+		index = self.notebook.page_num(image)
+		if index < 0:
+			return
 		pixbuf = GdkPixbuf.Pixbuf.new_from_file(file_path)
+		self.notebook.set_current_page(index)
+		self.force_selection()
 		self.get_selection_tool().import_selection(pixbuf)
 
 	def action_selection_export(self, *args):

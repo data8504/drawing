@@ -276,6 +276,9 @@ class AbstractAbstractTool():
 	def start_tool_operation(self, operation):
 		if operation['tool_id'] != self.id:
 			raise WrongToolIdException(operation['tool_id'], self.id)
+		# A new edit must start from the requested undo result, even while
+		# its delayed redraw is pending.
+		self.get_image()._history.finish_pending_rebuild()
 		self.restore_pixbuf()
 		self._ongoing_operation = True
 

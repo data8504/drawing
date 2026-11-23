@@ -40,3 +40,15 @@ test(
 	timeout: 30,
 	env: ['PYTHONDONTWRITEBYTECODE=1'],
 )
+
+test(
+	'History checkpoints',
+	python3.find_python(),
+	args: files('test_history.py'),
+	timeout: 30,
+	env: [
+		'PYTHONDONTWRITEBYTECODE=1',
+		'DRAWING_TEST_RESOURCE=' + join_paths(meson.build_root(),
+			'src/drawing.gresource'),
+	],
+)

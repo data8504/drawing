@@ -177,11 +177,11 @@ class DrImage(Gtk.Box):
 	def restore_last_state(self):
 		"""Set the last saved pixbuf from the history as the main_pixbuf. This
 		is used to rebuild the picture from its history."""
-		last_saved_pixbuf_op = self._history.get_last_saved_state()
+		last_saved_pixbuf_op = self._history.get_last_stored_state()
 		self._apply_state(last_saved_pixbuf_op)
 
 	def reset_to_initial_pixbuf(self):
-		self._apply_state(self._history.initial_operation)
+		self._apply_state(self._history.get_initial_operation())
 		self._history.rewind_history()
 
 	def _apply_state(self, state_op):
@@ -234,7 +234,6 @@ class DrImage(Gtk.Box):
 		self._load_pixbuf_common(disk_pixbuf)
 		self.use_stable_pixbuf()
 		self.update()
-		self.remember_current_state()
 		self._update_can_reload_action()
 		self.window.update_picture_title()
 
@@ -403,7 +402,7 @@ class DrImage(Gtk.Box):
 		return not self._history.has_initial_pixbuf()
 
 	def get_initial_rgba(self):
-		return self._history.initial_operation['rgba']
+		return self._history.get_initial_operation()['rgba']
 
 	############################################################################
 	# Misc ? ###################################################################
@@ -466,6 +465,7 @@ class DrImage(Gtk.Box):
 		"""Signal callback. Executed when a mouse button is pressed on
 		self._drawing_area, if the button is the mouse wheel the colors are
 		exchanged, otherwise the signal is transmitted to the selected tool."""
+		self._history.finish_pending_rebuild()
 		if self._is_pressed:
 			# reject attempts to draw with a given button if an other one is
 			# already doing something
@@ -491,6 +491,7 @@ class DrImage(Gtk.Box):
 		If a button (not the mouse wheel) is pressed, the tool's method should
 		have an effect on the image, otherwise it shouldn't change anything
 		except the mouse cursor icon for example."""
+		self._history.finish_pending_rebuild()
 		event_x, event_y = self.get_event_coords(event)
 
 		if self.motion_behavior == DrMotionBehavior.HOVER:
@@ -534,6 +535,7 @@ class DrImage(Gtk.Box):
 		"""Signal callback. Executed when a mouse button is released on
 		self._drawing_area, if the button is not the signal is transmitted to
 		the selected tool."""
+		self._history.finish_pending_rebuild()
 		self._ctrl_pressed = False
 		if self.motion_behavior == DrMotionBehavior.SLIP:
 			if not self._is_slip_moving():

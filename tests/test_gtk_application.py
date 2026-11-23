@@ -237,6 +237,20 @@ class ApplicationSmokeTest(unittest.TestCase):
 						settle()
 					self.assertEqual(window.notebook.get_n_pages(), 2)
 					self.assertEqual(bytes(window.get_active_image().surface.get_data()), pixels)
+					# Opening an import chooser binds the selection to its
+					# original tab even when the active tab changes meanwhile.
+					other = window.get_active_image()
+					window.notebook.set_current_page(window.notebook.page_num(image))
+					chooser = []
+					with patch.object(window, 'file_chooser_open',
+						side_effect=lambda callback, title: chooser.append(callback)):
+						window.action_import()
+					window.notebook.set_current_page(window.notebook.page_num(other))
+					chooser.pop()(Gio.File.new_for_path(str(exported)))
+					self.assertEqual(window.get_active_image(), image)
+					self.assertTrue(image.selection.is_active)
+					self.assertFalse(other.selection.is_active)
+					window.action_unselect()
 					# A failed replacement no longer belongs to the former file.
 					window.notebook.set_current_page(window.notebook.page_num(image))
 					old_monitor = image._gfile_monitor

@@ -815,14 +815,12 @@ class DrImage(Gtk.Box):
 		max_coord = mpb_size - (available_size / self.zoom_level)
 		return max_coord
 
-	def _get_centering_scroll(self, previewed_size, real_size, available_size):
+	def _get_centering_scroll(self, real_size, available_size):
 		"""Returns the (negative) scroll coordinate which centers the image on
 		an axis, or None if the image shouldn't be centered. The position is
 		based on the real size of the image: the size of the preview of a
 		transform tool changes while the user drags its handles, and the image
 		would move under the pointer."""
-		if self.get_max_coord(previewed_size, available_size) >= 0:
-			return None
 		max_coord = self.get_max_coord(real_size, available_size)
 		if max_coord >= 0:
 			return None
@@ -831,12 +829,10 @@ class DrImage(Gtk.Box):
 	def _scroll_needs_centering_fix(self):
 		"""True if an image smaller than the widget isn't centered on an axis,
 		or if a negative scroll coordinate remains while it shouldn't."""
-		for scroll, previewed, real, available in (
-		    (self.scroll_x, self.get_previewed_width(), \
-		            self.get_pixbuf_width(), self.get_widget_width()), \
-		    (self.scroll_y, self.get_previewed_height(), \
-		            self.get_pixbuf_height(), self.get_widget_height())):
-			centered = self._get_centering_scroll(previewed, real, available)
+		for scroll, real, available in (
+		    (self.scroll_x, self.get_pixbuf_width(), self.get_widget_width()),
+		    (self.scroll_y, self.get_pixbuf_height(), self.get_widget_height())):
+			centered = self._get_centering_scroll(real, available)
 			if centered is not None:
 				if scroll != centered:
 					return True
@@ -848,8 +844,7 @@ class DrImage(Gtk.Box):
 		"""Keeps the scroll coordinate in the valid range, except when the image
 		is smaller than the widget: then the (negative) coordinate which centers
 		the image in the widget is returned."""
-		centered = self._get_centering_scroll(previewed_size, real_size, \
-		                                                        available_size)
+		centered = self._get_centering_scroll(real_size, available_size)
 		if centered is not None:
 			return centered
 		max_coord = self.get_max_coord(previewed_size, available_size)

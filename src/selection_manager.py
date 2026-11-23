@@ -79,8 +79,8 @@ class DrSelectionManager():
 		xmin, ymin, xmax, ymax = cairo_context.path_extents()
 		xmax = min(xmax, main_width)
 		ymax = min(ymax, main_height)
-		xmin = int( max(xmin, 0.0) ) # If everything is right, this is selection_x
-		ymin = int( max(ymin, 0.0) ) # If everything is right, this is selection_y
+		xmin = int(max(xmin, 0.0)) # If everything is right, this is selection_x
+		ymin = int(max(ymin, 0.0)) # If everything is right, this is selection_y
 		if self.selection_x < 0:
 			xmin = self.selection_x
 		if self.selection_y < 0:
@@ -89,16 +89,30 @@ class DrSelectionManager():
 		# Actually store the pixbuf
 		selection_width = int(xmax - xmin)
 		selection_height = int(ymax - ymin)
-		if selection_width > 0 and selection_height > 0:
+		clip_x = max(xmin, 0)
+		clip_y = max(ymin, 0)
+		clip_width = min(xmin + selection_width, main_width) - clip_x
+		clip_height = min(ymin + selection_height, main_height) - clip_y
+		if selection_width > 0 and selection_height > 0 and \
+		   clip_width > 0 and clip_height > 0:
 			# print('⇒ load pixbuf')
-			pixbuf = Gdk.pixbuf_get_from_surface(surface, int(xmin), int(ymin),\
-			                                  selection_width, selection_height)
+			pixbuf = Gdk.pixbuf_get_from_surface(surface, int(clip_x), int(clip_y),\
+			                                      int(clip_width), int(clip_height))
 			if pixbuf is not None:
+				if clip_x != xmin or clip_y != ymin:
+					padded = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB,
+					                        True, 8, selection_width, selection_height)
+					padded.fill(0)
+					pixbuf.copy_area(0, 0, int(clip_width), int(clip_height),
+					                 padded, int(clip_x - xmin), int(clip_y - ymin))
+					pixbuf = padded
 				if rgba is not None and rgba[3] > 0.0:
 					pixbuf = pixbuf.add_alpha(True, int(rgba[0] * 255), \
 					                                int(rgba[1] * 255), \
 					                                int(rgba[2] * 255))
 				self.selection_pixbuf = pixbuf
+			else:
+				self.reset(True)
 			# can't use `set_pixbuf` here ^ because it would replace the free
 			# path with a rectangle path
 		else:

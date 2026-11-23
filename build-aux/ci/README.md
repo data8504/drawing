@@ -53,3 +53,17 @@ The publishing token needs `contents: write`, not repository administration.
 Enable immutable releases in repository settings before the first publication.
 The workflow verifies the published release's `immutable` flag and exact assets;
 GitHub's administration-only policy endpoint is not accessible to GITHUB_TOKEN.
+
+The GTK4 development branch also builds the GNOME 51 Flatpak manifest with the
+pinned official Flatpak builder action and SDK container. The SDK runs the
+registered tests; the GUI test explicitly skips if the SDK has no private X
+server/session-bus tools. Both native jobs still require and run the full GUI
+suite and installed-window smoke. The Flatpak job uploads a validation bundle;
+it does not publish a Flatpak or create a release. Native publication guards and
+stable-tag rebuilding remain unchanged.
+
+Native CI installs GTK3 and GTK4 introspection runtimes because protected release
+dispatch may rebuild an older GTK3 tag. The package and installed smoke helpers
+read the source's declared GTK API before loading GTK; GTK4 packages depend on
+GTK 4.10 or newer, while old tags keep their GTK3 dependency. This is build-tool
+support for existing releases, not a second application backend.

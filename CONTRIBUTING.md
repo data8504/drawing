@@ -289,6 +289,10 @@ The Flatpak development manifest uses the GNOME 51 SDK. The native build checks
 that the Python runtime can load GTK 4.10 and its Cairo bridge; GTK C development
 headers are not required for this Python application.
 
+The Flatpak SDK build runs raster and metadata tests. Its build sandbox lacks
+the Flatpak portal Glycin uses to start codecs, so the PNG/JPEG/BMP round trip
+runs in both native CI jobs.
+
 ##### Dependencies to **build** the app
 
 Here, "optional" means you may succeed without them if you use the correct meson

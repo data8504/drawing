@@ -110,6 +110,32 @@ jobs:
             source/build/meson-logs/
             source/package.log
           retention-days: 7
+  flatpak:
+    name: Flatpak GNOME 51
+    if: |
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/master') ||
+      (github.event_name == 'workflow_dispatch' && inputs.release_tag == '')
+    runs-on: ubuntu-24.04
+    container:
+      # Official GNOME 51 SDK/build image, pinned by its registry digest.
+      image: ghcr.io/flathub-infra/flatpak-github-actions@sha256:78d969b18225ae107ca29497bf09c4a3f791e5f1838a9a912a529d0024fb6210
+      # Let SDK updates and their temporary repositories share one filesystem.
+      options: --privileged --volume /var/lib/flatpak
+      env:
+        FLATPAK_SYSTEM_CACHE_DIR: /var/lib/flatpak
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Build and test the GNOME 51 sandbox
+        uses: flatpak/flatpak-github-actions/flatpak-builder@79327416609af08178ad73b352877e51450790b3
+        with:
+          manifest-path: com.github.maoschanz.drawing.json
+          bundle: drawing-gtk4.flatpak
+          run-tests: true
+          cache: false
+          artifact-name: drawing-gtk4-flatpak
   release:
     name: Publish immutable release
     if: |

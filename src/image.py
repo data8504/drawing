@@ -465,6 +465,7 @@ class DrImage(Gtk.Box):
 		"""Signal callback. Executed when a mouse button is pressed on
 		self._drawing_area, if the button is the mouse wheel the colors are
 		exchanged, otherwise the signal is transmitted to the selected tool."""
+		self._history.finish_pending_rebuild()
 		if self._is_pressed:
 			# reject attempts to draw with a given button if an other one is
 			# already doing something
@@ -490,6 +491,7 @@ class DrImage(Gtk.Box):
 		If a button (not the mouse wheel) is pressed, the tool's method should
 		have an effect on the image, otherwise it shouldn't change anything
 		except the mouse cursor icon for example."""
+		self._history.finish_pending_rebuild()
 		event_x, event_y = self.get_event_coords(event)
 
 		if self.motion_behavior == DrMotionBehavior.HOVER:
@@ -533,6 +535,7 @@ class DrImage(Gtk.Box):
 		"""Signal callback. Executed when a mouse button is released on
 		self._drawing_area, if the button is not the signal is transmitted to
 		the selected tool."""
+		self._history.finish_pending_rebuild()
 		self._ctrl_pressed = False
 		if self.motion_behavior == DrMotionBehavior.SLIP:
 			if not self._is_slip_moving():

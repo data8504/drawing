@@ -6,6 +6,7 @@ from pathlib import Path
 import sys
 import types
 import tempfile
+import os
 import unittest
 from unittest.mock import patch
 
@@ -183,6 +184,48 @@ class HistoryTest(unittest.TestCase):
 		self.manager.try_redo()
 		self.manager.try_redo()
 		self.assertFalse(self.manager.get_saved())
+
+	def test_pending_undo_finishes_before_paint_region_preparation(self):
+		Gio.Resource.load(os.environ['DRAWING_TEST_RESOURCE'])._register()
+		image_module = importlib.import_module('drawing.image')
+		Paint = importlib.import_module('drawing.tool_paint').ToolPaint
+		paths = importlib.import_module('drawing.utilities_paths')
+		for x in (0, 1):
+			self.draw(x)
+		self.manager.try_undo()
+		self.assertTrue(self.manager._waiting_for_rebuild)
+		image = self.image
+		tool = Paint.__new__(Paint)
+		tool.id, tool._ongoing_operation, tool._magic_path = 'paint', False, None
+		tool._last_btn = 1
+		tool.main_color, tool._use_antialias = (0, 1, 0, 1), False
+		tool.get_image = lambda: image
+		tool.get_surface = lambda: image.surface
+		tool.restore_pixbuf = image.use_stable_pixbuf
+		tool.non_destructive_show_modif = lambda: None
+		tool.get_option_value = lambda key: 'replace'
+		tool.show_error = lambda message: self.fail(message)
+		image.tool = tool
+		image.window.tools['paint'] = tool
+		image.window.set_window_subtitles = lambda: None
+		image.window.update_picture_title = lambda: None
+		image.get_event_coords = lambda event: (int(event.x), int(event.y))
+		image._is_pressed = False
+		image.motion_behavior = image_module.DrMotionBehavior.HOVER
+		event = Gdk.EventButton()
+		event.button, event.x, event.y = 1, 1, 0
+		event.state = Gdk.ModifierType(0)
+		image_module.DrImage.on_press_on_area(image, None, event)
+		self.assertFalse(self.manager._waiting_for_rebuild)
+		image_module.DrImage.on_release_on_area(image, None, event)
+		expected = Image()
+		expected.tool.apply_operation({'tool_id': 'test', 'x': 0})
+		context = cairo.Context(expected.surface)
+		context.append_path(paths.utilities_get_magic_path(expected.surface, 1, 0))
+		context.set_operator(cairo.Operator.SOURCE)
+		context.set_source_rgba(0, 1, 0, 1)
+		context.fill()
+		self.assertEqual(image.pixels(), expected.pixels())
 
 	def test_save_uses_pending_undo_result(self):
 		self.draw(1)

@@ -60,17 +60,14 @@ class SaveStateTest(unittest.TestCase):
 			previous_hook(*info)
 		sys.excepthook = capture
 		self.addCleanup(setattr, sys, 'excepthook', previous_hook)
-		from drawing.window import DrWindow
 		self.folder = tempfile.TemporaryDirectory()
 		self.addCleanup(self.folder.cleanup)
 		self.path = Path(self.folder.name) / 'original.png'
 		pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 32, 16)
 		pixbuf.fill(0xffffffff)
 		pixbuf.savev(str(self.path), 'png', [], [])
-		self.window = DrWindow(application=self.app)
-		self.window.init_window_content_async({'gfile': None, 'get_cb': False})
-		self.window._build_new_tab(gfile=Gio.File.new_for_path(str(self.path)))
-		self.window.show_all()
+		self.window = self.app.open_window_with_content(
+			Gio.File.new_for_path(str(self.path)), check_duplicates=False)
 		self.image = self.window.get_active_image()
 		self.manager = self.window.saving_manager
 		self.window.tools['pencil'].select_flowbox_child()

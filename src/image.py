@@ -439,6 +439,11 @@ class DrImage(Gtk.Box):
 		if self.window.devel_mode:
 			self._fps_counter += 1
 
+		# Center the image if it's small (or undo it if it's not anymore), which
+		# is needed for example after the window is resized.
+		if self._scroll_needs_centering_fix():
+			self.correct_coords(self.scroll_x, self.scroll_y)
+
 		# Background color
 		cairo_context.set_source_rgba(*self._bg_rgba)
 		cairo_context.paint()
@@ -703,11 +708,12 @@ class DrImage(Gtk.Box):
 		event_x = self.scroll_x + (event.x / self.zoom_level)
 		event_y = self.scroll_y + (event.y / self.zoom_level)
 		if as_integers:
-			# `int()` will truncate to the lower integer so we need this to get
-			# an accurate behavior when doing pixel-art for example
-			event_x += 0.5
-			event_y += 0.5
-			return int(event_x), int(event_y)
+			# Preserve the existing positive nearest-pixel rounding.
+			# Keep outside-image coordinates outside before rounding. Centered
+			# margins routinely produce negative fractional image positions.
+			pixel_x = int(event_x + 0.5) if event_x >= 0 else math.floor(event_x)
+			pixel_y = int(event_y + 0.5) if event_y >= 0 else math.floor(event_y)
+			return pixel_x, pixel_y
 		else:
 			return event_x, event_y
 
@@ -796,19 +802,53 @@ class DrImage(Gtk.Box):
 
 		# Update the horizontal scrollbar
 		mpb_width = self.get_previewed_width()
-		wanted_x = min(wanted_x, self.get_max_coord(mpb_width, available_w))
-		wanted_x = max(wanted_x, 0)
+		wanted_x = self._clamp_or_center(wanted_x, mpb_width, \
+		                    self.get_pixbuf_width(), available_w)
 		self.update_scrollbar(False, available_w, int(mpb_width), int(wanted_x))
 
 		# Update the vertical scrollbar
 		mpb_height = self.get_previewed_height()
-		wanted_y = min(wanted_y, self.get_max_coord(mpb_height, available_h))
-		wanted_y = max(wanted_y, 0)
+		wanted_y = self._clamp_or_center(wanted_y, mpb_height, \
+		                    self.get_pixbuf_height(), available_h)
 		self.update_scrollbar(True, available_h, int(mpb_height), int(wanted_y))
 
 	def get_max_coord(self, mpb_size, available_size):
 		max_coord = mpb_size - (available_size / self.zoom_level)
 		return max_coord
+
+	def _get_centering_scroll(self, real_size, available_size):
+		"""Returns the (negative) scroll coordinate which centers the image on
+		an axis, or None if the image shouldn't be centered. The position is
+		based on the real size of the image: the size of the preview of a
+		transform tool changes while the user drags its handles, and the image
+		would move under the pointer."""
+		max_coord = self.get_max_coord(real_size, available_size)
+		if max_coord >= 0:
+			return None
+		return int(max_coord / 2)
+
+	def _scroll_needs_centering_fix(self):
+		"""Keep small previews centered and larger previews within pan bounds."""
+		for scroll, preview, real, available in (
+		    (self.scroll_x, self.get_previewed_width(),
+		        self.get_pixbuf_width(), self.get_widget_width()),
+		    (self.scroll_y, self.get_previewed_height(),
+		        self.get_pixbuf_height(), self.get_widget_height())):
+			if self._clamp_or_center(scroll, preview, real, available) != scroll:
+				return True
+		return False
+
+	def _clamp_or_center(self, wanted, previewed_size, real_size, available_size):
+		"""Center small previews; retain or pan the origin of enlarged ones."""
+		centered = self._get_centering_scroll(real_size, available_size)
+		max_coord = self.get_max_coord(previewed_size, available_size)
+		if centered is not None:
+			if max_coord <= 0:
+				return centered
+			# Growing a preview preserves its origin, while explicit panning
+			# can reach its newly enlarged bounds.
+			return max(min(wanted, max_coord), centered)
+		return max(min(wanted, max_coord), 0)
 
 	def update_scrollbar(self, is_vertical, allocated_size, pixbuf_size, coord):
 		if is_vertical:
@@ -816,13 +856,19 @@ class DrImage(Gtk.Box):
 		else:
 			scrollbar = self._h_scrollbar
 		scrollbar.set_visible(allocated_size / self.zoom_level < pixbuf_size)
-		scrollbar.set_range(0, pixbuf_size)
-		scrollbar.get_adjustment().set_page_size(allocated_size / self.zoom_level)
+		real_size = self.get_pixbuf_height() if is_vertical else \
+			self.get_pixbuf_width()
+		centered = self._get_centering_scroll(real_size, allocated_size)
+		lower = centered if centered is not None else 0
+		page_size = allocated_size / self.zoom_level
+		scrollbar.set_range(lower, max(pixbuf_size, lower + page_size))
+		scrollbar.get_adjustment().set_page_size(page_size)
 		scrollbar.set_value(coord)
+		value = int(scrollbar.get_value())
 		if is_vertical:
-			self.scroll_y = int(scrollbar.get_value())
+			self.scroll_y = value
 		else:
-			self.scroll_x = int(scrollbar.get_value())
+			self.scroll_x = value
 
 	def _zoom_to_point(self, event):
 		"""Zoom in or out the image in a way such that the point under the
@@ -861,6 +907,7 @@ class DrImage(Gtk.Box):
 		self.set_zoom_level(opti)
 		self.scroll_x = 0
 		self.scroll_y = 0
+		self.fake_scrollbar_update()
 
 	def is_zoomed_surface_sharp(self):
 		return self.zoom_level > self.ZOOM_THRESHOLD

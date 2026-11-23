@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <interface domain="drawing">
-
+  <requires lib="gtk" version="4.0" />
   <menu id="inactive-selection-menu">
     <section>
       <item>
@@ -24,9 +24,6 @@
       </item>
     </section>
   </menu>
-
-  <!-- -->
-
   <menu id="active-selection-menu">
     <section>
       <item>
@@ -53,7 +50,6 @@
     </section>
     <section>
       <attribute name="display-hint">horizontal-buttons</attribute>
-      <!-- XXX inconsistent with the idea of additional tools -->
       <item>
         <attribute name="label" translatable="yes">Crop</attribute>
         <attribute name="action">win.active_tool</attribute>
@@ -97,14 +93,11 @@
         </section>
         <section>
           <item>
-            <!-- Define the image as being the currently selected area -->
             <attribute name="label" translatable="yes">Define as current image</attribute>
             <attribute name="action">win.selection-replace-canvas</attribute>
             <attribute name="hidden-when">action-missing</attribute>
           </item>
           <item>
-            <!-- Expand the canvas of the current image to make the current selection fit in it. -->
-            <!-- Can be translated as "Expand to this size". -->
             <attribute name="label" translatable="yes">Expand image to fit</attribute>
             <attribute name="action">win.selection-expand-canvas</attribute>
             <attribute name="hidden-when">action-missing</attribute>
@@ -123,5 +116,4 @@
       </submenu>
     </section>
   </menu>
-
 </interface>

@@ -9,8 +9,8 @@ import unittest
 
 import gi
 
-gi.require_version('Gtk', '3.0')
-gi.require_version('Gdk', '3.0')
+gi.require_version('Gtk', '4.0')
+gi.require_version('Gdk', '4.0')
 from gi.repository import Gdk, GdkPixbuf, GLib
 
 source_dir = Path(__file__).resolve().parents[1] / 'src'
@@ -39,8 +39,9 @@ def pixel(image, x=0, y=0):
 class OpaqueExportTest(unittest.TestCase):
 	def setUp(self):
 		self.manager = SavingManager(None)
-		self.image = types.SimpleNamespace(get_initial_rgba=lambda:
-			Gdk.RGBA(red=.2, green=.4, blue=.6, alpha=.3))
+		color = Gdk.RGBA()
+		color.red, color.green, color.blue, color.alpha = .2, .4, .6, .3
+		self.image = types.SimpleNamespace(get_initial_rgba=lambda: color)
 
 	def flatten(self, source, replacement):
 		result = self.manager._replace_alpha(source, replacement, self.image)

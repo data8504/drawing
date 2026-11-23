@@ -29,11 +29,11 @@ def utilities_add_filechooser_filters(dialog):
 	svgPictures.set_name(_("SVG images"))
 	svgPictures.add_mime_type('image/svg+xml')
 
-	dialog.add_filter(allPictures)
-	dialog.add_filter(pngPictures)
-	dialog.add_filter(jpegPictures)
-	dialog.add_filter(bmpPictures)
-	dialog.add_filter(svgPictures)
+	filters = Gio.ListStore.new(Gtk.FileFilter)
+	for file_filter in (allPictures, pngPictures, jpegPictures, bmpPictures, svgPictures):
+		filters.append(file_filter)
+	dialog.set_filters(filters)
+	dialog.set_default_filter(allPictures)
 
 ################################################################################
 
@@ -49,7 +49,7 @@ def utilities_gfile_is_image(gfile, error_msg=""):
 		else:
 			error_msg = error_msg + _("%s isn't an image.") % gfile.get_path()
 	except Exception as err:
-		error_msg = error_msg + err.message
+		error_msg = error_msg + str(err)
 	return False, error_msg
 
 class InvalidFileFormatException(Exception):

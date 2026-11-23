@@ -1,5 +1,6 @@
 # Licensed under GPL3 https://github.com/maoschanz/drawing/blob/master/LICENSE
 
+import cairo
 from gi.repository import Gdk
 
 from .utilities_paths import utilities_get_rgba_for_xy
@@ -19,12 +20,19 @@ def utilities_gdk_rgba_to_normalized_array(gdk_rgba):
 	"""Convert a Gdk.RGBA to an array of values between 0 and 1."""
 	return [gdk_rgba.red, gdk_rgba.green, gdk_rgba.blue, gdk_rgba.alpha]
 
+def utilities_normalized_array_to_gdk_rgba(r, g, b, a):
+	"""Build a Gdk.RGBA from channels between 0 and 1."""
+	# Older PyGObject versions ignore boxed constructor keyword arguments.
+	color = Gdk.RGBA()
+	color.red, color.green, color.blue, color.alpha = r, g, b, a
+	return color
+
 def utilities_color_array_to_gdk_rgba(r, g, b, a):
 	"""Convert an array of values (as used by cairo) to a Gdk.RGBA object. The
 	values should be integers between 0 and 255, except alpha."""
 	if a > 1.0:
 		raise Exception("Incorrect value for alpha")
-	return Gdk.RGBA(red=r / 255, green=g / 255, blue=b / 255, alpha=a)
+	return utilities_normalized_array_to_gdk_rgba(r / 255, g / 255, b / 255, a)
 
 ################################################################################
 
@@ -154,3 +162,13 @@ def utilities_get_rgba_name(gdk_rgba):
 
 ################################################################################
 
+
+
+def utilities_surface_from_pixbuf(pixbuf):
+	"""Copy raster pixels into a CPU Cairo surface for document operations."""
+	format_ = cairo.Format.ARGB32 if pixbuf.get_has_alpha() else cairo.Format.RGB24
+	surface = cairo.ImageSurface(format_, pixbuf.get_width(), pixbuf.get_height())
+	context = cairo.Context(surface)
+	Gdk.cairo_set_source_pixbuf(context, pixbuf, 0, 0)
+	context.paint()
+	return surface

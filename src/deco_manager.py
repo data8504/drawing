@@ -1,6 +1,6 @@
 # Licensed under GPL3 https://github.com/maoschanz/drawing/blob/master/LICENSE
 
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, GLib, Pango
 
 class DrDecoManagerMenubar():
 	__gtype_name__ = 'DrDecoManagerMenubar'
@@ -99,13 +99,13 @@ class DrDecoManagerMenubar():
 
 		if available:
 			icon_name = 'dialog-information-symbolic'
-			self._main_menu_btn.get_style_context().add_class('suggested-action')
+			self._main_menu_btn.add_css_class('suggested-action')
 		else:
 			icon_name = 'open-menu-symbolic'
-			self._main_menu_btn.get_style_context().remove_class('suggested-action')
+			self._main_menu_btn.remove_css_class('suggested-action')
 		# XXX ackshually, depending on the layout, it shouldn't always be
 		# symbolic, and it shouldn't always be the "BUTTON" size
-		image = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
+		image = Gtk.Image.new_from_icon_name(icon_name)
 		self._main_menu_btn.set_image(image)
 
 	def set_undo_label(self, label):
@@ -146,6 +146,14 @@ class DrDecoManagerHeaderbar(DrDecoManagerMenubar):
 			resource_path = self.UI_PATH + 'headerbar.ui'
 		builder = Gtk.Builder.new_from_resource(resource_path)
 		self._widget = builder.get_object('header_bar')
+		self._title_label = Gtk.Label(ellipsize=Pango.EllipsizeMode.END, single_line_mode=True)
+		self._title_label.add_css_class('title')
+		self._subtitle_label = Gtk.Label(ellipsize=Pango.EllipsizeMode.END, single_line_mode=True)
+		self._subtitle_label.add_css_class('subtitle')
+		titles = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+		titles.append(self._title_label)
+		titles.append(self._subtitle_label)
+		self._widget.set_title_widget(titles)
 		window.set_titlebar(self._widget)
 
 		# Code differences are kept minimal between the 2 cases: widgets will
@@ -209,11 +217,12 @@ class DrDecoManagerHeaderbar(DrDecoManagerMenubar):
 			return False
 		self._increment_subtitle_index()
 
-		self._widget.set_title(self._main_title)
+		self._window.set_title(self._main_title)
+		self._title_label.set_label(self._main_title)
 		if len(self._subtitles) > 1:
-			self._widget.set_subtitle(self._subtitles[self._subtitle_index])
+			self._subtitle_label.set_label(self._subtitles[self._subtitle_index])
 		elif len(self._subtitles) == 1:
-			self._widget.set_subtitle(self._subtitles[0])
+			self._subtitle_label.set_label(self._subtitles[0])
 		return False
 
 	def set_undo_label(self, label):
@@ -234,14 +243,17 @@ class DrDecoManagerHeaderbar(DrDecoManagerMenubar):
 	# Adaptability #############################################################
 
 	def init_adaptability(self):
-		# Header bar width limit
-		self._widget.show_all()
-		widgets_width = self._hidable_widget_1.get_preferred_width()[0] \
-		              + self._hidable_widget_2.get_preferred_width()[0] \
-		                     + self._save_long.get_preferred_width()[0] \
-		                    - self._save_short.get_preferred_width()[0] \
-		                      + self._undo_btn.get_preferred_width()[0] \
-		                      + self._redo_btn.get_preferred_width()[0]
+		# Measure the expanded controls before choosing the compact layout.
+		for widget in (self._hidable_widget_1, self._hidable_widget_2,
+			self._save_long, self._save_short, self._undo_btn, self._redo_btn):
+			widget.set_visible(True)
+		self._widget.set_visible(True)
+		widgets_width = self._hidable_widget_1.measure(Gtk.Orientation.HORIZONTAL, -1)[0] \
+		              + self._hidable_widget_2.measure(Gtk.Orientation.HORIZONTAL, -1)[0] \
+		                     + self._save_long.measure(Gtk.Orientation.HORIZONTAL, -1)[0] \
+		                    - self._save_short.measure(Gtk.Orientation.HORIZONTAL, -1)[0] \
+		                      + self._undo_btn.measure(Gtk.Orientation.HORIZONTAL, -1)[0] \
+		                      + self._redo_btn.measure(Gtk.Orientation.HORIZONTAL, -1)[0]
 		widgets_width = widgets_width + self._manual_correction
 		self._limit_size = widgets_width * 2.5 # 100% arbitrary
 		# print(self._limit_size)
@@ -286,8 +298,9 @@ class DrDecoManagerToolbar(DrDecoManagerMenubar):
 
 		# Composition over inheritance
 		self._widget = builder.get_object('toolbar')
-		window.toolbar_box.pack_start(self._widget, True, True, 0)
-		window.toolbar_box.show_all()
+		window.toolbar_box.prepend(self._widget)
+		self._widget.set_visible(True)
+		window.toolbar_box.set_visible(True)
 
 		# Mandatory widget name, used for the `win.main_menu` action
 		self._main_menu_btn = builder.get_object('main_menu_btn')
@@ -301,22 +314,21 @@ class DrDecoManagerToolbar(DrDecoManagerMenubar):
 		builder.add_from_resource(self.UI_PATH + 'win-menus.ui')
 
 		new_btn = builder.get_object('new_menu_btn')
-		new_menu = Gtk.Menu.new_from_model(builder.get_object('new-image-menu'))
-		new_btn.set_menu(new_menu)
+		new_btn.set_menu_model(builder.get_object('new-image-menu'))
 
 		save_btn = builder.get_object('save_menu_btn')
-		save_menu = Gtk.Menu.new_from_model(builder.get_object('save-section'))
-		save_btn.set_menu(save_menu)
+		save_btn.set_menu_model(builder.get_object('save-section'))
 
 		if with_menubar:
 			self._main_menu_btn.set_visible(False)
 		else:
+			self._main_menu_btn.set_visible(True)
 			others_menu = builder.get_object('minimal-window-menu')
 			self._main_menu_btn.set_menu_model(others_menu)
 
 	def remove_from_ui(self):
 		self._loop_is_ongoing = False
-		self._widget.destroy()
+		self._widget.unparent()
 		return False
 
 	# def set_undo_label(self, label):

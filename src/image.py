@@ -16,7 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cairo, random, math
+from .utilities_colors import utilities_surface_from_pixbuf
 from gi.repository import Gtk, Gdk, Gio, GdkPixbuf, Pango, GLib
+from .canvas_input import CanvasInput
 from .history_manager import DrHistoryManager
 from .selection_manager import DrSelectionManager
 from .properties import DrPropertiesDialog
@@ -64,8 +66,7 @@ class DrImage(Gtk.Box):
 		self.gfile = None
 		self.filename = None
 		self._gfile_monitor = None
-		self._file_etag = None
-		self.connect('destroy', self._cancel_gfile_monitoring)
+		self._known_etag = None
 		self._update_can_reload_action()
 
 		# Closing the info bar
@@ -96,32 +97,73 @@ class DrImage(Gtk.Box):
 		                                             self._update_zoom_behavior)
 
 	def _init_drawing_area(self):
-		self._drawing_area.add_events( \
-			Gdk.EventMask.BUTTON_PRESS_MASK | \
-			Gdk.EventMask.BUTTON_RELEASE_MASK | \
-			Gdk.EventMask.POINTER_MOTION_MASK | \
-			Gdk.EventMask.SMOOTH_SCROLL_MASK | \
-			Gdk.EventMask.ENTER_NOTIFY_MASK | \
-			Gdk.EventMask.LEAVE_NOTIFY_MASK)
-		# Using BUTTON_MOTION_MASK instead of POINTER_MOTION_MASK would be less
-		# algorithmically complex but not "powerful" enough.
+		self._drawing_area.set_draw_func(self.on_draw)
+		click = Gtk.GestureClick.new()
+		click.set_button(0)
+		click.connect('pressed', self._on_pointer_pressed)
+		click.connect('released', self._on_pointer_released)
+		self._drawing_area.add_controller(click)
+		motion = Gtk.EventControllerMotion.new()
+		motion.connect('motion', self._on_pointer_motion)
+		motion.connect('enter', self._on_pointer_enter)
+		motion.connect('leave', lambda *args: self.on_leave_image())
+		self._drawing_area.add_controller(motion)
+		stylus = Gtk.GestureStylus.new()
+		stylus.set_stylus_only(True)
+		stylus.set_button(0)
+		stylus.connect('down', self._on_stylus_down)
+		stylus.connect('motion', self._on_stylus_motion)
+		stylus.connect('proximity', self._on_stylus_motion)
+		stylus.connect('up', self._on_stylus_up)
+		self._drawing_area.add_controller(stylus)
+		click.group(stylus)
+		scroll = Gtk.EventControllerScroll.new(Gtk.EventControllerScrollFlags.BOTH_AXES)
+		scroll.connect('scroll', self._on_controller_scroll)
+		self._drawing_area.add_controller(scroll)
+		self._h_scrollbar.get_adjustment().connect('value-changed', self.on_scrollbar_value_change)
+		self._v_scrollbar.get_adjustment().connect('value-changed', self.on_scrollbar_value_change)
 
-		# For displaying things on the widget
-		self._drawing_area.connect('draw', self.on_draw)
+	def _is_stylus_event(self, controller):
+		event = controller.get_current_event()
+		return event is not None and event.get_device_tool() is not None
 
-		# For drawing with tools
-		self._drawing_area.connect('motion-notify-event', self.on_motion_on_area)
-		self._drawing_area.connect('button-press-event', self.on_press_on_area)
-		self._drawing_area.connect('button-release-event', self.on_release_on_area)
+	def _on_pointer_pressed(self, gesture, count, x, y):
+		if not self._is_stylus_event(gesture):
+			self.on_press_on_area(self._drawing_area,
+				CanvasInput(gesture, x, y, gesture.get_current_button() or 1))
 
-		# For scrolling
-		self._drawing_area.connect('scroll-event', self.on_scroll_on_area)
-		self._h_scrollbar.connect('value-changed', self.on_scrollbar_value_change)
-		self._v_scrollbar.connect('value-changed', self.on_scrollbar_value_change)
+	def _on_pointer_released(self, gesture, count, x, y):
+		if not self._is_stylus_event(gesture):
+			self.on_release_on_area(self._drawing_area,
+				CanvasInput(gesture, x, y, gesture.get_current_button() or 1))
 
-		# For the cursor
-		self._drawing_area.connect('enter-notify-event', self.on_enter_image)
-		self._drawing_area.connect('leave-notify-event', self.on_leave_image)
+	def _on_pointer_enter(self, controller, x, y):
+		self._pointer_x, self._pointer_y = x, y
+		self.on_enter_image()
+
+	def _on_pointer_motion(self, controller, x, y):
+		if not self._is_stylus_event(controller):
+			self._pointer_x, self._pointer_y = x, y
+			self.on_motion_on_area(self._drawing_area, CanvasInput(controller, x, y))
+
+	def _on_stylus_down(self, gesture, x, y):
+		self._stylus_button = gesture.get_current_button() or 1
+		self.on_press_on_area(self._drawing_area,
+			CanvasInput(gesture, x, y, self._stylus_button))
+
+	def _on_stylus_motion(self, gesture, x, y):
+		self._pointer_x, self._pointer_y = x, y
+		self.on_motion_on_area(self._drawing_area, CanvasInput(gesture, x, y))
+
+	def _on_stylus_up(self, gesture, x, y):
+		self.on_release_on_area(self._drawing_area,
+			CanvasInput(gesture, x, y, self._stylus_button))
+
+	def _on_controller_scroll(self, controller, dx, dy):
+		event = CanvasInput(controller, getattr(self, '_pointer_x', 0),
+			getattr(self, '_pointer_y', 0), dx=dx, dy=dy)
+		self.on_scroll_on_area(self._drawing_area, event)
+		return True
 
 	def _update_background_color(self, *args):
 		rgba = self.window.gsettings.get_strv('ui-background-rgba')
@@ -221,21 +263,18 @@ class DrImage(Gtk.Box):
 		self.set_main_pixbuf(pixbuf)
 
 	def reload_from_disk(self, gfile=None):
-		"""Safely reloads the image from the disk."""
-		gfile = gfile or self.gfile
-		if gfile is None:
-			# the action shouldn't be active in the first place
+		"""Decode first, then commit this file and its saved document state."""
+		target = gfile or self.gfile
+		if target is None:
 			return
-		# Decode before committing a Save As destination. Failed writes or
-		# readback must leave the original document identity intact.
-		disk_pixbuf = GdkPixbuf.Pixbuf.new_from_file(gfile.get_path())
-		self._connect_gfile_monitoring(gfile)
-		self.gfile = gfile
+		disk_pixbuf = GdkPixbuf.Pixbuf.new_from_file(target.get_path())
+		self._connect_gfile_monitoring(target)
 		self._load_pixbuf_common(disk_pixbuf)
 		self.use_stable_pixbuf()
 		self.update()
 		self.remember_current_state()
 		self._update_can_reload_action()
+		self.update_title()
 		self.window.update_picture_title()
 
 	def try_load_file(self, gfile):
@@ -257,39 +296,42 @@ class DrImage(Gtk.Box):
 		self.try_load_pixbuf(pixbuf)
 		self._update_can_reload_action()
 
-	def _connect_gfile_monitoring(self, gfile=None):
-		gfile = gfile or self.gfile
-		flags = Gio.FileMonitorFlags.WATCH_MOUNTS
-		monitor = gfile.monitor(flags)
-		monitor.connect('changed', self.reveal_reload_message)
-		self._cancel_gfile_monitoring()
-		self._gfile_monitor = monitor
-		self._file_etag = self._get_file_etag(gfile)
-
-	def _cancel_gfile_monitoring(self, *args):
-		if self._gfile_monitor:
-			self._gfile_monitor.cancel()
-			self._gfile_monitor = None
-		self._file_etag = None
-
 	def _get_file_etag(self, gfile=None):
+		target = gfile or self.gfile
+		if target is None:
+			return None
 		try:
-			info = (gfile or self.gfile).query_info('etag::value',
-				Gio.FileQueryInfoFlags.NONE, None)
+			info = target.query_info('etag::value', Gio.FileQueryInfoFlags.NONE, None)
 			return info.get_attribute_string('etag::value')
 		except GLib.Error:
 			return None
 
-	def reveal_reload_message(self, monitor, *args):
-		# Notifications are delayed. Never reload here: the user may have
-		# edited since saving. An unchanged etag identifies our own write.
-		if monitor != self._gfile_monitor:
+	def _connect_gfile_monitoring(self, gfile=None):
+		target = gfile or self.gfile
+		# Allocate before replacing document identity or its existing monitor.
+		monitor = target.monitor(Gio.FileMonitorFlags.WATCH_MOUNTS)
+		self._cancel_gfile_monitoring()
+		self.gfile = target
+		self._known_etag = self._get_file_etag(target)
+		self._gfile_monitor = monitor
+		monitor.connect('changed', self.reveal_reload_message)
+
+	def _cancel_gfile_monitoring(self):
+		if self._gfile_monitor is not None:
+			self._gfile_monitor.cancel()
+		self._gfile_monitor = None
+		self._known_etag = None
+
+	def reveal_reload_message(self, monitor, file, other_file, event):
+		# Saving commits pixels/history synchronously. A queued monitor event
+		# must never reload over edits made after that save completed.
+		if monitor is not self._gfile_monitor:
 			return
-		if self._file_etag is not None \
-		and self._get_file_etag() == self._file_etag:
+		etag = self._get_file_etag()
+		if etag is not None and etag == self._known_etag:
 			return
 		self._update_can_reload_action()
-		self.reload_label.set_visible(self.window.get_allocated_width() > 500)
+		self.reload_label.set_visible(self.window.get_width() > 500)
 		self.reload_info_bar.set_visible(True)
 
 	def hide_reload_message(self, *args):
@@ -304,26 +346,25 @@ class DrImage(Gtk.Box):
 	def build_tab_widget(self):
 		"""Build the GTK widget displayed as the tab title."""
 		# The tab can be closed with a button.
-		btn = Gtk.Button.new_from_icon_name('window-close-symbolic', Gtk.IconSize.BUTTON)
-		btn.set_relief(Gtk.ReliefStyle.NONE)
+		btn = Gtk.Button.new_from_icon_name('window-close-symbolic')
+		btn.add_css_class('flat')
 		btn.connect('clicked', self.try_close_tab)
 		# The title is a label. Middle-clicking on it closes the tab too.
 		self.tab_label = Gtk.Label(label=self.get_filename_for_display())
 		self.tab_label.set_ellipsize(Pango.EllipsizeMode.END)
-		event_box = Gtk.EventBox()
-		event_box.add(self.tab_label)
-		self._tab_close_gesture = Gtk.GestureMultiPress.new(event_box)
+		self._tab_close_gesture = Gtk.GestureClick.new()
+		self.tab_label.add_controller(self._tab_close_gesture)
 		self._tab_close_gesture.set_button(Gdk.BUTTON_MIDDLE)
 		self._tab_close_gesture.connect('pressed', self.on_tab_title_pressed)
 		# These widgets are packed in a regular box, which is returned.
-		tab_title = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, expand=True)
+		tab_title = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, hexpand=True, vexpand=True)
 		if self.window.deco_layout == 'he':
-			tab_title.pack_start(btn, expand=False, fill=False, padding=0)
-			tab_title.pack_end(event_box, expand=True, fill=True, padding=0)
+			tab_title.append(btn)
+			tab_title.append(self.tab_label)
 		else:
-			tab_title.pack_start(event_box, expand=True, fill=True, padding=0)
-			tab_title.pack_end(btn, expand=False, fill=False, padding=0)
-		tab_title.show_all()
+			tab_title.append(self.tab_label)
+			tab_title.append(btn)
+		tab_title.set_visible(True)
 		return tab_title
 	
 	def on_tab_title_pressed(self, gesture, n_press, x, y):
@@ -345,17 +386,8 @@ class DrImage(Gtk.Box):
 		return unsaved_file_name
 
 	def try_close_tab(self, *args):
-		"""Ask the window to close the image/tab. Then unallocate widgets and
-		pixbufs."""
-		if self.window.close_tab(self):
-			self.destroy()
-			self.selection.reset(False)
-			self.main_pixbuf = None
-			self.temp_pixbuf = None
-			self._history.empty_history()
-			return True
-		else:
-			return False
+		self.window.close_tab(self)
+
 
 	def set_tab_label(self, title_text):
 		self.tab_label.set_label(title_text)
@@ -433,7 +465,7 @@ class DrImage(Gtk.Box):
 	############################################################################
 	# Drawing area, main pixbuf, and surface management ########################
 
-	def on_draw(self, area, cairo_context):
+	def on_draw(self, area, cairo_context, width, height):
 		"""Signal callback. Executed when self._drawing_area is redrawn."""
 		if self.window.devel_mode:
 			self._fps_counter += 1
@@ -590,7 +622,7 @@ class DrImage(Gtk.Box):
 		"""This is called by tools' `restore_pixbuf`, so at the beginning of
 		each operation (even unapplied)."""
 		# maybe the "scale" parameter should be 1 instead of 0
-		self.surface = Gdk.cairo_surface_create_from_pixbuf(self.main_pixbuf, 0, None)
+		self.surface = utilities_surface_from_pixbuf(self.main_pixbuf)
 		# print('image.py: use_stable_pixbuf')
 		self.surface.set_device_scale(self.SCALE_FACTOR, self.SCALE_FACTOR)
 
@@ -760,7 +792,8 @@ class DrImage(Gtk.Box):
 			self.add_deltas(event.delta_x, event.delta_y, acceleration)
 
 	def on_scrollbar_value_change(self, scrollbar):
-		self.correct_coords(self._h_scrollbar.get_value(), self._v_scrollbar.get_value())
+		self.correct_coords(self._h_scrollbar.get_adjustment().get_value(),
+			self._v_scrollbar.get_adjustment().get_value())
 		self.update() # allowing imperfect framerate would likely be useless
 
 	def reset_deltas(self, delta_x, delta_y):
@@ -815,13 +848,14 @@ class DrImage(Gtk.Box):
 		else:
 			scrollbar = self._h_scrollbar
 		scrollbar.set_visible(allocated_size / self.zoom_level < pixbuf_size)
-		scrollbar.set_range(0, pixbuf_size)
+		scrollbar.get_adjustment().set_lower(0)
+		scrollbar.get_adjustment().set_upper(pixbuf_size)
 		scrollbar.get_adjustment().set_page_size(allocated_size / self.zoom_level)
-		scrollbar.set_value(coord)
+		scrollbar.get_adjustment().set_value(coord)
 		if is_vertical:
-			self.scroll_y = int(scrollbar.get_value())
+			self.scroll_y = int(scrollbar.get_adjustment().get_value())
 		else:
-			self.scroll_x = int(scrollbar.get_value())
+			self.scroll_x = int(scrollbar.get_adjustment().get_value())
 
 	def _zoom_to_point(self, event):
 		"""Zoom in or out the image in a way such that the point under the

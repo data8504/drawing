@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <interface domain="drawing">
-
+  <requires lib="gtk" version="4.0" />
   <menu id="options-menu">
     <section>
-      <!-- <attribute name="display-hint">horizontal-buttons</attribute> -->
       <item>
         <attribute name="label" translatable="yes">Rotate left</attribute>
         <attribute name="action">win.rotate-counter-cw</attribute>
@@ -16,7 +15,6 @@
       </item>
     </section>
     <section>
-      <!-- <attribute name="display-hint">horizontal-buttons</attribute> -->
       <item>
         <attribute name="label" translatable="yes">Flip horizontally</attribute>
         <attribute name="action">win.rotate-flip-h</attribute>
@@ -29,5 +27,4 @@
       </item>
     </section>
   </menu>
-
 </interface>

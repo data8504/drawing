@@ -1,71 +1,61 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <interface domain="drawing">
+  <requires lib="gtk" version="4.0" />
   <object class="GtkShortcutsWindow" id="help_overlay">
     <property name="icon-name">com.github.maoschanz.drawing</property>
     <child>
       <object class="GtkShortcutsSection">
-        <property name="visible">True</property>
         <property name="section-name">shortcuts</property>
-        <property name="title" translatable="yes">Keyboard Shortcuts</property>
+        <property name="title" translatable="1">Keyboard Shortcuts</property>
         <property name="max-height">9</property>
-        <!-- 9 is actually both the maximum AND the minimum possible -->
         <child>
           <object class="GtkShortcutsGroup">
-            <property name="visible">True</property>
-            <property name="title" translatable="yes">General</property>
+            <property name="title" translatable="1">General</property>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">New Window</property>
+                <property name="title" translatable="1">New Window</property>
                 <property name="action-name">app.new_window</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Main menu</property>
+                <property name="title" translatable="1">Main menu</property>
                 <property name="action-name">win.main_menu</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Toggle the menu-bar</property>
+                <property name="title" translatable="1">Toggle the menu-bar</property>
                 <property name="action-name">win.show-menubar</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Shortcuts</property>
+                <property name="title" translatable="1">Shortcuts</property>
                 <property name="accelerator">&lt;Primary&gt;question</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Help</property>
+                <property name="title" translatable="1">Help</property>
                 <property name="action-name">app.help</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">About Drawing</property>
+                <property name="title" translatable="1">About Drawing</property>
                 <property name="action-name">app.about</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Show preferences</property>
+                <property name="title" translatable="1">Show preferences</property>
                 <property name="action-name">app.settings</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Quit all windows</property>
+                <property name="title" translatable="1">Quit all windows</property>
                 <property name="action-name">app.quit</property>
               </object>
             </child>
@@ -73,231 +63,193 @@
         </child>
         <child>
           <object class="GtkShortcutsGroup">
-            <property name="visible">True</property>
-            <property name="title" translatable="yes">Image</property>
+            <property name="title" translatable="1">Image</property>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">New Blank Image</property>
+                <property name="title" translatable="1">New Blank Image</property>
                 <property name="action-name">win.new_tab</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">New Image From Clipboard</property>
+                <property name="title" translatable="1">New Image From Clipboard</property>
                 <property name="action-name">win.new_tab_clipboard</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Open a picture</property>
+                <property name="title" translatable="1">Open a picture</property>
                 <property name="action-name">win.open</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Reload image from disk</property>
+                <property name="title" translatable="1">Reload image from disk</property>
                 <property name="action-name">win.reload_file</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Save</property>
+                <property name="title" translatable="1">Save</property>
                 <property name="action-name">win.save</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Save picture as…</property>
+                <property name="title" translatable="1">Save picture as…</property>
                 <property name="action-name">win.save_as</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Copy to clipboard</property>
+                <property name="title" translatable="1">Copy to clipboard</property>
                 <property name="action-name">win.to_clipboard</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Close the active image</property>
+                <property name="title" translatable="1">Close the active image</property>
                 <property name="action-name">win.close_tab</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Print image</property>
+                <property name="title" translatable="1">Print image</property>
                 <property name="action-name">win.print</property>
               </object>
             </child>
           </object>
         </child>
-
         <child>
           <object class="GtkShortcutsGroup">
-            <property name="visible">True</property>
-            <property name="title" translatable="yes">Tools</property>
+            <property name="title" translatable="1">Tools</property>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Show tools names</property>
+                <property name="title" translatable="1">Show tools names</property>
                 <property name="action-name">win.show-labels</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Open the tool options menu</property>
+                <property name="title" translatable="1">Open the tool options menu</property>
                 <property name="action-name">win.options_menu</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Back to previous tool</property>
+                <property name="title" translatable="1">Back to previous tool</property>
                 <property name="action-name">win.back_to_previous</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Bigger width</property>
+                <property name="title" translatable="1">Bigger width</property>
                 <property name="action-name">win.size_more</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Smaller width</property>
+                <property name="title" translatable="1">Smaller width</property>
                 <property name="action-name">win.size_less</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Apply a transformation</property>
+                <property name="title" translatable="1">Apply a transformation</property>
                 <property name="action-name">win.apply_transform</property>
               </object>
             </child>
-            <!-- TODO "cancel transformation"? -->
           </object>
         </child>
         <child>
           <object class="GtkShortcutsGroup">
-            <property name="visible">True</property>
-            <property name="title" translatable="yes">Zoom</property>
+            <property name="title" translatable="1">Zoom</property>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Toggle the preview</property>
+                <property name="title" translatable="1">Toggle the preview</property>
                 <property name="action-name">win.toggle_preview</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Zoom Out</property>
+                <property name="title" translatable="1">Zoom Out</property>
                 <property name="accelerator">&lt;Primary&gt;minus</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Original Zoom</property>
+                <property name="title" translatable="1">Original Zoom</property>
                 <property name="accelerator">&lt;Primary&gt;1</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Zoom In</property>
+                <property name="title" translatable="1">Zoom In</property>
                 <property name="accelerator">&lt;Primary&gt;plus</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Maximum zoom</property>
+                <property name="title" translatable="1">Maximum zoom</property>
                 <property name="accelerator">&lt;Primary&gt;&lt;Shift&gt;plus</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Optimal Zoom</property>
+                <property name="title" translatable="1">Optimal Zoom</property>
                 <property name="accelerator">&lt;Primary&gt;0</property>
               </object>
             </child>
           </object>
         </child>
-
         <child>
           <object class="GtkShortcutsGroup">
-            <property name="visible">True</property>
-            <property name="title" translatable="yes">Selection</property>
+            <property name="title" translatable="1">Selection</property>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Select all</property>
+                <property name="title" translatable="1">Select all</property>
                 <property name="action-name">win.select_all</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Deselect</property>
+                <property name="title" translatable="1">Deselect</property>
                 <property name="action-name">win.unselect</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <!-- Label displayed in the keyboard shortcuts dialog -->
-                <property name="title" translatable="yes">Delete the selection</property>
+                <property name="title" translatable="1">Delete the selection</property>
                 <property name="action-name">win.selection_delete</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Cut</property>
+                <property name="title" translatable="1">Cut</property>
                 <property name="action-name">win.selection_cut</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Copy</property>
+                <property name="title" translatable="1">Copy</property>
                 <property name="action-name">win.selection_copy</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Paste</property>
+                <property name="title" translatable="1">Paste</property>
                 <property name="action-name">win.paste</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">New Image From Selection</property>
+                <property name="title" translatable="1">New Image From Selection</property>
                 <property name="action-name">win.new_tab_selection</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <!-- Label displayed in the keyboard shortcuts dialog -->
-                <property name="title" translatable="yes">Import a file as the selection</property>
+                <property name="title" translatable="1">Import a file as the selection</property>
                 <property name="action-name">win.import</property>
               </object>
             </child>
@@ -305,28 +257,22 @@
         </child>
         <child>
           <object class="GtkShortcutsGroup">
-            <property name="visible">True</property>
-            <property name="title" translatable="yes">Colors</property>
+            <property name="title" translatable="1">Colors</property>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <!-- Label displayed in the keyboard shortcuts dialog -->
-                <property name="title" translatable="yes">Edit the main color (left click)</property>
+                <property name="title" translatable="1">Edit the main color (left click)</property>
                 <property name="action-name">win.main_color</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <!-- Label displayed in the keyboard shortcuts dialog -->
-                <property name="title" translatable="yes">Edit the secondary color (right click)</property>
+                <property name="title" translatable="1">Edit the secondary color (right click)</property>
                 <property name="action-name">win.secondary_color</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Exchange colors</property>
+                <property name="title" translatable="1">Exchange colors</property>
                 <property name="action-name">win.exchange_color</property>
               </object>
             </child>
@@ -334,91 +280,75 @@
         </child>
         <child>
           <object class="GtkShortcutsGroup">
-            <property name="visible">True</property>
-            <property name="title" translatable="yes">History</property>
+            <property name="title" translatable="1">History</property>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Undo</property>
+                <property name="title" translatable="1">Undo</property>
                 <property name="action-name">win.undo</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Redo</property>
+                <property name="title" translatable="1">Redo</property>
                 <property name="action-name">win.redo</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Reset canvas</property>
+                <property name="title" translatable="1">Reset canvas</property>
                 <property name="action-name">win.reset_canvas</property>
               </object>
             </child>
           </object>
         </child>
-
         <child>
           <object class="GtkShortcutsGroup">
-            <property name="visible">True</property>
-            <!-- Context: this section of the shortcuts window is about moving -->
-            <!-- the view to the left/right/top/bottom -->
-            <property name="title" translatable="yes">Navigation</property>
+            <property name="title" translatable="1">Navigation</property>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Go Left</property>
+                <property name="title" translatable="1">Go Left</property>
                 <property name="action-name">win.go_left</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Go Up</property>
+                <property name="title" translatable="1">Go Up</property>
                 <property name="action-name">win.go_up</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Go Down</property>
+                <property name="title" translatable="1">Go Down</property>
                 <property name="action-name">win.go_down</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Go Right</property>
+                <property name="title" translatable="1">Go Right</property>
                 <property name="action-name">win.go_right</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Go to the left end</property>
+                <property name="title" translatable="1">Go to the left end</property>
                 <property name="accelerator">&lt;Primary&gt;Home</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Go to the top</property>
+                <property name="title" translatable="1">Go to the top</property>
                 <property name="accelerator">&lt;Primary&gt;Page_Up</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Go to the bottom</property>
+                <property name="title" translatable="1">Go to the bottom</property>
                 <property name="accelerator">&lt;Primary&gt;Page_Down</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Go to the right end</property>
+                <property name="title" translatable="1">Go to the right end</property>
                 <property name="accelerator">&lt;Primary&gt;End</property>
               </object>
             </child>
@@ -426,19 +356,16 @@
         </child>
         <child>
           <object class="GtkShortcutsGroup">
-            <property name="visible">True</property>
-            <property name="title" translatable="yes">Tabs</property>
+            <property name="title" translatable="1">Tabs</property>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Tab at the left</property>
+                <property name="title" translatable="1">Tab at the left</property>
                 <property name="action-name">win.tab_left</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Tab at the right</property>
+                <property name="title" translatable="1">Tab at the right</property>
                 <property name="action-name">win.tab_right</property>
               </object>
             </child>
@@ -446,19 +373,16 @@
         </child>
         <child>
           <object class="GtkShortcutsGroup">
-            <property name="visible">True</property>
-            <property name="title" translatable="yes">Fullscreen</property>
+            <property name="title" translatable="1">Fullscreen</property>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Toggle fullscreen mode</property>
+                <property name="title" translatable="1">Toggle fullscreen mode</property>
                 <property name="action-name">win.fullscreen</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
-                <property name="title" translatable="yes">Toggle toolbars visibility</property>
+                <property name="title" translatable="1">Toggle toolbars visibility</property>
                 <property name="action-name">win.hide_controls</property>
               </object>
             </child>
@@ -466,81 +390,29 @@
         </child>
       </object>
     </child>
-
-    <!-- ******************************************************************* -->
-
     <child>
       <object class="GtkShortcutsSection">
-        <property name="visible">True</property>
         <property name="section-name">gestures</property>
-        <property name="title" translatable="yes">Touch gestures</property>
+        <property name="title" translatable="1">Touch gestures</property>
         <property name="max-height">5</property>
-
         <child>
           <object class="GtkShortcutsGroup">
-            <property name="visible">True</property>
-            <property name="title" translatable="yes">Zoom</property>
+            <property name="title" translatable="1">Zoom</property>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
                 <property name="shortcut-type">gesture-pinch</property>
-                <property name="title" translatable="yes">Zoom Out</property>
+                <property name="title" translatable="1">Zoom Out</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
                 <property name="shortcut-type">gesture-stretch</property>
-                <property name="title" translatable="yes">Zoom In</property>
+                <property name="title" translatable="1">Zoom In</property>
               </object>
             </child>
           </object>
         </child>
-
-        <!-- <child> -->
-        <!--   <object class="GtkShortcutsGroup"> -->
-        <!--     <property name="visible">True</property> -->
-        <!--     <property name="title" translatable="yes">Tabs</property> -->
-        <!--     <child> -->
-        <!--       <object class="GtkShortcutsShortcut"> -->
-        <!--         <property name="visible">True</property> -->
-        <!--         <property name="title" translatable="yes">Tab at the left</property> -->
-        <!--         <property name="shortcut-type">gesture-two-finger-swipe-left</property> -->
-        <!--       </object> -->
-        <!--     </child> -->
-        <!--     <child> -->
-        <!--       <object class="GtkShortcutsShortcut"> -->
-        <!--         <property name="visible">True</property> -->
-        <!--         <property name="title" translatable="yes">Tab at the right</property> -->
-        <!--         <property name="shortcut-type">gesture-two-finger-swipe-right</property> -->
-        <!--       </object> -->
-        <!--     </child> -->
-        <!--   </object> -->
-        <!-- </child> -->
-
-        <!-- <child> -->
-        <!--   <object class="GtkShortcutsGroup"> -->
-        <!--     <property name="visible">True</property> -->
-        <!--     <property name="title" translatable="yes">Selection</property> -->
-        <!--     <child> -->
-        <!--       <object class="GtkShortcutsShortcut"> -->
-        <!--         <property name="visible">True</property> -->
-        <!--         <property name="title" translatable="yes">Rotate clockwise</property> -->
-        <!--         <property name="shortcut-type">gesture-rotate-clockwise</property> -->
-        <!--       </object> -->
-        <!--     </child> -->
-        <!--     <child> -->
-        <!--       <object class="GtkShortcutsShortcut"> -->
-        <!--         <property name="visible">True</property> -->
-        <!--         <property name="title" translatable="yes">Rotate counter-clockwise</property> -->
-        <!--         <property name="shortcut-type">gesture-rotate-counterclockwise</property> -->
-        <!--       </object> -->
-        <!--     </child> -->
-        <!--   </object> -->
-        <!-- </child> -->
-
       </object>
     </child>
   </object>
 </interface>
-

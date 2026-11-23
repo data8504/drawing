@@ -9,10 +9,9 @@ drawing_resources = gnome.compile_resources(meson.project_name(),
 	install_dir: pkgdatadir,
 )
 
-python3 = import('python3')
 
 conf = configuration_data()
-conf.set('PYTHON', python3.find_python().path())
+conf.set('PYTHON', python3.full_path())
 conf.set('VERSION', meson.project_version())
 conf.set('localedir', join_paths(get_option('prefix'), get_option('localedir')))
 conf.set('pkgdatadir', pkgdatadir)
@@ -42,6 +41,7 @@ drawing_sources = [
 	'tools_initializer.py',
 
 	'image.py',
+	'canvas_input.py',
 	'history_manager.py',
 	'printing_manager.py',
 	'saving_manager.py',

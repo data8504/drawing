@@ -1,43 +1,41 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <interface domain="drawing">
-
+  <requires lib="gtk" version="4.0" />
   <object class="GtkActionBar" id="bottom-pane">
-    <property name="visible">False</property>
-    <property name="expand">True</property>
-
+    <property name="visible">0</property>
+    <property name="hexpand">1</property>
+    <property name="vexpand">1</property>
     <child>
       <object class="GtkBox" id="import_box">
-        <property name="visible">True</property>
-        <style><class name="linked"/></style>
+        <style>
+          <class name="linked" />
+        </style>
         <child>
           <object class="GtkButton">
             <property name="action_name">win.import</property>
-            <property name="label" translatable="yes">Import</property>
-            <property name="visible">True</property>
+            <property name="label" translatable="1">Import</property>
           </object>
         </child>
         <child>
           <object class="GtkButton">
             <property name="action_name">win.paste</property>
-            <property name="label" translatable="yes">Paste</property>
-            <property name="visible">True</property>
+            <property name="label" translatable="1">Paste</property>
           </object>
         </child>
       </object>
     </child>
     <child>
       <object class="GtkBox" id="clipboard_box">
-        <property name="visible">True</property>
-        <style><class name="linked"/></style>
+        <style>
+          <class name="linked" />
+        </style>
         <child>
           <object class="GtkButton">
             <property name="action_name">win.selection_delete</property>
-            <property name="tooltip-text" translatable="yes">Delete</property>
-            <property name="visible">True</property>
+            <property name="tooltip-text" translatable="1">Delete</property>
             <child>
               <object class="GtkImage">
                 <property name="icon-name">edit-delete-symbolic</property>
-                <property name="visible">True</property>
               </object>
             </child>
           </object>
@@ -45,12 +43,10 @@
         <child>
           <object class="GtkButton">
             <property name="action_name">win.selection_cut</property>
-            <property name="tooltip-text" translatable="yes">Cut</property>
-            <property name="visible">True</property>
+            <property name="tooltip-text" translatable="1">Cut</property>
             <child>
               <object class="GtkImage">
                 <property name="icon-name">edit-cut-symbolic</property>
-                <property name="visible">True</property>
               </object>
             </child>
           </object>
@@ -58,173 +54,154 @@
         <child>
           <object class="GtkButton">
             <property name="action_name">win.selection_copy</property>
-            <property name="tooltip-text" translatable="yes">Copy</property>
-            <property name="visible">True</property>
+            <property name="tooltip-text" translatable="1">Copy</property>
             <child>
               <object class="GtkImage">
                 <property name="icon-name">edit-copy-symbolic</property>
-                <property name="visible">True</property>
               </object>
             </child>
           </object>
         </child>
       </object>
     </child>
-
     <child>
       <object class="GtkMenuButton" id="actions_btn">
-        <property name="visible">True</property>
         <property name="menu-model">actions-menu-short</property>
         <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="spacing">10</property>
-            <child>
-              <object class="GtkImage">
-                <property name="icon-name">system-run-symbolic</property>
-                <property name="visible">True</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkImage">
-                <property name="icon-name">pan-down-symbolic</property>
-                <property name="visible">True</property>
-              </object>
-              <packing>
-                <property name="pack-type">end</property>
-              </packing>
-            </child>
-          </object>
-        </child>
-      </object>
-    </child>
-
-    <child>
-      <object class="GtkMenuButton" id="actions_btn_long">
-        <property name="visible">True</property>
-        <style><class name="suggested-action"/></style>
-        <property name="menu-model">actions-menu-long</property>
-        <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="spacing">10</property>
-            <child>
-              <object class="GtkImage">
-                <property name="icon-name">system-run-symbolic</property>
-                <property name="visible">True</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkImage">
-                <property name="icon-name">pan-down-symbolic</property>
-                <property name="visible">True</property>
-              </object>
-              <packing>
-                <property name="pack-type">end</property>
-              </packing>
-            </child>
-          </object>
-        </child>
-      </object>
-    </child>
-
-    <child>
-      <object class="GtkMenuButton" id="options_btn">
-        <property name="valign">center</property>
-        <property name="visible">True</property>
-        <property name="menu-model">options-menu</property>
-        <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="spacing">10</property>
-            <child>
-              <object class="GtkBox" id="options_long_box">
-                <property name="visible">True</property>
-                <property name="spacing">10</property>
+          <object class="GtkCenterBox">
+            <property name="start-widget">
+              <object class="GtkBox">
                 <child>
-                  <object class="GtkLabel">
-                    <property name="label" translatable="yes">Selection options</property>
-                    <property name="visible">True</property>
+                  <object class="GtkImage">
+                    <property name="icon-name">system-run-symbolic</property>
                   </object>
                 </child>
+              </object>
+            </property>
+            <property name="end-widget">
+              <object class="GtkBox">
                 <child>
                   <object class="GtkImage">
                     <property name="icon-name">pan-down-symbolic</property>
-                    <property name="visible">True</property>
                   </object>
-                  <packing>
-                    <property name="pack-type">end</property>
-                  </packing>
                 </child>
+              </object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuButton" id="actions_btn_long">
+        <style>
+          <class name="suggested-action" />
+        </style>
+        <property name="menu-model">actions-menu-long</property>
+        <child>
+          <object class="GtkCenterBox">
+            <property name="start-widget">
+              <object class="GtkBox">
+                <child>
+                  <object class="GtkImage">
+                    <property name="icon-name">system-run-symbolic</property>
+                  </object>
+                </child>
+              </object>
+            </property>
+            <property name="end-widget">
+              <object class="GtkBox">
+                <child>
+                  <object class="GtkImage">
+                    <property name="icon-name">pan-down-symbolic</property>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuButton" id="options_btn">
+        <property name="valign">center</property>
+        <property name="menu-model">options-menu</property>
+        <child>
+          <object class="GtkBox">
+            <property name="spacing">10</property>
+            <child>
+              <object class="GtkCenterBox" id="options_long_box">
+                <property name="start-widget">
+                  <object class="GtkBox">
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label" translatable="1">Selection options</property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+                <property name="end-widget">
+                  <object class="GtkBox">
+                    <child>
+                      <object class="GtkImage">
+                        <property name="icon-name">pan-down-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
               </object>
             </child>
             <child>
               <object class="GtkImage" id="options_short_box">
                 <property name="icon-name">view-more-symbolic</property>
-                <property name="tooltip-text" translatable="yes">Selection options</property>
-                <property name="visible">True</property>
+                <property name="tooltip-text" translatable="1">Selection options</property>
               </object>
             </child>
           </object>
         </child>
       </object>
     </child>
-
-    <child>
+    <child type="end">
       <object class="GtkToggleButton" id="minimap_btn">
         <property name="valign">center</property>
-        <property name="tooltip-text" translatable="yes">Preview</property>
-        <property name="visible">True</property>
+        <property name="tooltip-text" translatable="1">Preview</property>
         <property name="action-name">win.toggle_preview</property>
         <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="spacing">10</property>
-            <child>
-              <object class="GtkLabel" id="minimap_label">
-                <property name="label">100%</property>
-                <property name="visible">True</property>
+          <object class="GtkCenterBox">
+            <property name="start-widget">
+              <object class="GtkBox">
+                <child>
+                  <object class="GtkLabel" id="minimap_label">
+                    <property name="label">100%</property>
+                  </object>
+                </child>
               </object>
-            </child>
-            <child>
-              <object class="GtkImage" id="minimap_arrow">
-                <property name="icon-name">pan-down-symbolic</property>
-                <property name="visible">True</property>
+            </property>
+            <property name="end-widget">
+              <object class="GtkBox">
+                <child>
+                  <object class="GtkImage" id="minimap_arrow">
+                    <property name="icon-name">pan-down-symbolic</property>
+                  </object>
+                </child>
               </object>
-              <packing>
-                <property name="pack-type">end</property>
-              </packing>
-            </child>
+            </property>
           </object>
         </child>
       </object>
-      <packing>
-        <property name="pack-type">end</property>
-      </packing>
     </child>
-
-    <child>
+    <child type="end">
       <object class="GtkButton" id="help_btn">
-        <property name="visible">True</property>
-        <property name="relief">none</property>
-        <property name="tooltip-text" translatable="yes">Help about selection</property>
+        <property name="has-frame">false</property>
+        <property name="tooltip-text" translatable="1">Help about selection</property>
         <property name="action-name">app.help_selection</property>
         <child>
           <object class="GtkImage">
             <property name="icon-name">help-faq-symbolic</property>
-            <property name="visible">True</property>
           </object>
         </child>
       </object>
-      <packing>
-        <property name="pack-type">end</property>
-      </packing>
     </child>
-
   </object>
-
-  <!-- ********************************************************************* -->
-
   <menu id="actions-menu-long">
     <section>
       <item>
@@ -285,7 +262,6 @@
       </item>
     </section>
   </menu>
-
   <menu id="actions-menu-short">
     <section>
       <item>
@@ -329,7 +305,6 @@
       </item>
     </section>
   </menu>
-
   <menu id="options-menu">
     <section>
       <attribute name="label" translatable="yes">Replace with…</attribute>
@@ -354,6 +329,4 @@
       </item>
     </section>
   </menu>
-
 </interface>
-

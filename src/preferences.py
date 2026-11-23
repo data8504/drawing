@@ -15,7 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gtk, Gio, Gdk
+from gi.repository import Gtk, Gio
+from .utilities_colors import utilities_normalized_array_to_gdk_rgba
 from .utilities_units import utilities_add_unit_to_spinbtn
 
 @Gtk.Template(resource_path='/com/github/maoschanz/drawing/ui/preferences.ui')
@@ -42,8 +43,7 @@ class DrPrefsWindow(Gtk.Window):
 		if wants_csd:
 			header_bar = Gtk.HeaderBar(
 				visible=True, \
-				title=_("Preferences"), \
-				show_close_button=True \
+				show_title_buttons=True \
 			)
 			self.set_titlebar(header_bar)
 			stack_switcher = Gtk.StackSwitcher(
@@ -51,17 +51,17 @@ class DrPrefsWindow(Gtk.Window):
 				stack=self.stack, \
 				halign=Gtk.Align.CENTER \
 			)
-			header_bar.set_custom_title(stack_switcher)
+			header_bar.set_title_widget(stack_switcher)
 			self.set_default_size(480, 500)
 		else:
 			stack_sidebar = Gtk.StackSidebar(visible=True, stack=self.stack)
 			stack_sidebar.set_size_request(140, -1)
-			self.content_area.pack_start(stack_sidebar, False, False, 0)
+			self.content_area.prepend(stack_sidebar)
 			self.set_default_size(600, 400) # Not high enough but the golden
 			# ratio is more important than usability
 
 		if is_beta:
-			self.get_style_context().add_class('devel')
+			self.add_css_class('devel')
 
 		self.page_builder_images()
 		self.page_builder_tools()
@@ -209,20 +209,20 @@ class DrPrefsWindow(Gtk.Window):
 		self.attach_large(label)
 
 	def add_help(self, label_text):
-		help_btn = Gtk.Button.new_from_icon_name('help-faq-symbolic', \
-		                                                    Gtk.IconSize.BUTTON)
+		help_btn = Gtk.Button.new_from_icon_name('help-faq-symbolic')
 		help_btn.set_valign(Gtk.Align.CENTER)
-		help_btn.set_relief(Gtk.ReliefStyle.NONE)
+		help_btn.add_css_class('flat')
 		help_btn.set_action_name('app.help_prefs') # could be a parameter
 
 		label = Gtk.Label(label=label_text)
-		label.set_line_wrap(True)
-		label.get_style_context().add_class('dim-label')
+		label.set_wrap(True)
+		label.add_css_class('dim-label')
 
 		box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-		box.pack_start(label, expand=False, fill=False, padding=0)
-		box.pack_end(help_btn, expand=False, fill=False, padding=0)
-		box.show_all()
+		label.set_hexpand(True)
+		box.append(label)
+		box.append(help_btn)
+		box.set_visible(True)
 		self.attach_large(box)
 
 	def add_row(self, label_text, widget):
@@ -244,7 +244,7 @@ class DrPrefsWindow(Gtk.Window):
 		g = float(background_rgba[1])
 		b = float(background_rgba[2])
 		a = float(background_rgba[3])
-		color = Gdk.RGBA(red=r, green=g, blue=b, alpha=a)
+		color = utilities_normalized_array_to_gdk_rgba(r, g, b, a)
 		color_btn.set_rgba(color)
 		color_btn.connect('color-set', self.on_colorbtn_changed, key)
 		self.add_row(label_text, color_btn)
@@ -257,27 +257,29 @@ class DrPrefsWindow(Gtk.Window):
 		self.add_row(label_text, spinbtn)
 
 	def add_radio_flowbox(self, setting_key, labels_dict):
-		flowbox = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, expand=True)
+		flowbox = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, hexpand=True, vexpand=True)
 		self._radio_are_active = False
 		w0 = None
 		for id0 in labels_dict:
 			w0 = self.build_radio_btn(labels_dict[id0], id0, setting_key, w0)
-			flowbox.add(w0)
+			flowbox.insert(w0, -1)
 		self._radio_are_active = True
 		self.attach_large(flowbox)
 
 	def build_radio_btn(self, label, btn_id, key, group):
-		btn = Gtk.RadioButton(label=label, visible=True, group=group)
+		btn = Gtk.CheckButton(label=label, visible=True)
+		if group is not None:
+			btn.set_group(group)
 		active_id = self._gsettings.get_string(key)
 		btn.set_active(btn_id == active_id)
 		btn.connect('toggled', self.on_radio_btn_changed, key, btn_id)
 		return btn
 
 	def add_check_flowbox(self, setting_key, labels_dict):
-		flowbox = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, expand=True)
+		flowbox = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, hexpand=True, vexpand=True)
 		for id0 in labels_dict:
 			w0 = self.build_check_btn(labels_dict[id0], id0, setting_key)
-			flowbox.add(w0)
+			flowbox.insert(w0, -1)
 		self.attach_large(flowbox)
 
 	def build_check_btn(self, label, row_id, key):
@@ -310,7 +312,7 @@ class DrPrefsWindow(Gtk.Window):
 		self._gsettings.set_strv(key, array_of_strings)
 
 	def on_radio_btn_changed(self, radiobtn, key, btn_id):
-		if self._radio_are_active:
+		if self._radio_are_active and radiobtn.get_active():
 			self._gsettings.set_string(key, btn_id)
 
 	def on_colorbtn_changed(self, color_btn, key):

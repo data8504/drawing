@@ -1,6 +1,7 @@
 # Licensed under GPL3 https://github.com/maoschanz/drawing/blob/master/LICENSE
 
-from gi.repository import Gdk, Gio, GdkPixbuf, GLib
+from gi.repository import Gio, GdkPixbuf, GLib
+from .utilities_colors import utilities_normalized_array_to_gdk_rgba
 # from .abstract_tool import WrongToolIdException
 
 ################################################################################
@@ -115,7 +116,7 @@ class DrHistoryManager():
 		self.initial_operation = {
 			'tool_id': None,
 			'pixbuf': pixbuf,
-			'rgba': Gdk.RGBA(red=r, green=g, blue=b, alpha=a),
+			'rgba': utilities_normalized_array_to_gdk_rgba(r, g, b, a),
 			'width': width, 'height': height
 		}
 

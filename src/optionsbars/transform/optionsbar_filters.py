@@ -45,8 +45,8 @@ class OptionsBarFilters(AbstractOptionsBar):
 		widget_spinbtn.set_adjustment(adj)
 		utilities_add_unit_to_spinbtn(widget_spinbtn, spin_chars, unit)
 
-		self.centered_box.add(widget_label)
-		self.centered_box.add(widget_spinbtn)
+		self.centered_box.append(widget_label)
+		self.centered_box.append(widget_spinbtn)
 		return widget_label, widget_spinbtn
 
 	############################################################################
@@ -55,11 +55,11 @@ class OptionsBarFilters(AbstractOptionsBar):
 		super().init_adaptability()
 		self._menu_icon.set_visible(False)
 		widgets_size = self.filters_tool.get_max_filter_width()
-		temp_limit_size = self.menu_btn.get_preferred_width()[0] + \
+		temp_limit_size = self.menu_btn.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
 		                  50 + widgets_size + \
-		                  self.cancel_btn.get_preferred_width()[0] + \
-		                  self.help_btn.get_preferred_width()[0] + \
-		                  self.apply_btn.get_preferred_width()[0]
+		                  self.cancel_btn.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
+		                  self.help_btn.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
+		                  self.apply_btn.measure(Gtk.Orientation.HORIZONTAL, -1)[0]
 		self._set_limit_size(temp_limit_size)
 
 	def on_filter_changed(self):

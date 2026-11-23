@@ -1,16 +1,18 @@
 
 project(
 	'drawing',
-	version: '1.2.0',
-	meson_version: '>= 0.50',
+	version: '1.99.0-dev',
+	meson_version: '>= 0.56',
 )
 app_uuid = 'com.github.maoschanz.drawing'
 
 # Dependencies #################################################################
 
-# TODO the proper way to check python3 libs dependencies is this:
-# https://mesonbuild.com/Python-module.html#dependency but the doc is quite bad
-# so i've no idea how to make it work
+python3 = import('python').find_installation('python3', modules: ['gi', 'cairo'])
+run_command(python3, '-c',
+    'import gi; gi.require_version("Gtk", "4.0"); gi.require_foreign("cairo"); from gi.repository import Gtk; error = Gtk.check_version(4, 10, 0); assert error is None, error',
+    check: true,
+)
 
 ################################################################################
 

@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GLib
 import math
 
 class DrPrintingManager():
@@ -27,6 +27,7 @@ class DrPrintingManager():
 	def __init__(self, window):
 		self._window = window
 		self._auto_orientation = None
+		self._operations = set()
 
 	def print_pixbuf(self, pixbuf):
 		"""Starts the GTK "print" dialog with a few pre-defined settings."""
@@ -39,7 +40,7 @@ class DrPrintingManager():
 			self._auto_orientation = Gtk.PageOrientation.PORTRAIT
 		psetup.set_orientation(self._auto_orientation)
 		if self._AUTO_SETTINGS:
-			psetup.set_paper_size(Gtk.PaperSize('A4'))
+			psetup.set_paper_size(Gtk.PaperSize(Gtk.PAPER_NAME_A4))
 		print_op.set_default_page_setup(psetup)
 
 		# print_op.set_use_full_page(True) # removes margins; do i want it?
@@ -58,11 +59,21 @@ class DrPrintingManager():
 			action_type = Gtk.PrintOperationAction.EXPORT
 		else:
 			action_type = Gtk.PrintOperationAction.PRINT_DIALOG
-		# `res` will be Gtk.PrintOperationResult.APPLY even when "Preview" is
-		# clicked, because the possible values are actually "APPLY", "CANCEL",
-		# "IN_PROGRESS" and "ERROR"
-		res = print_op.run(action_type, self._window)
-		# I'll assume print_op continues to live enough to be used by signals.
+		print_op.set_allow_async(True)
+		self._operations.add(print_op)
+		def finished(operation, result):
+			self._operations.discard(operation)
+			if result == Gtk.PrintOperationResult.ERROR:
+				try:
+					operation.get_error()
+				except GLib.Error as error:
+					self._window.reveal_message(str(error))
+		print_op.connect('done', finished)
+		try:
+			print_op.run(action_type, self._window)
+		except GLib.Error as error:
+			self._operations.discard(print_op)
+			self._window.reveal_message(str(error))
 
 	############################################################################
 

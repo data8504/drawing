@@ -1,63 +1,66 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <interface domain="drawing">
+  <requires lib="gtk" version="4.0" />
   <object class="GtkPopover" id="insertion-popover">
-    <property name="visible">True</property>
-    <child>
+    <property name="visible">false</property>
+    <property name="child">
       <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="margin">2</property>
+        <property name="margin-start">2</property>
+        <property name="margin-end">2</property>
+        <property name="margin-top">2</property>
+        <property name="margin-bottom">2</property>
         <property name="spacing">2</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkFrame">
-            <property name="visible">True</property>
-            <child>
+            <property name="child">
               <object class="GtkTextView" id="entry">
-                <property name="visible">True</property>
-                <property name="accepts-tab">False</property>
+                <property name="accepts-tab">0</property>
               </object>
-            </child>
+            </property>
           </object>
         </child>
         <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="orientation">horizontal</property>
-            <child>
-              <object class="GtkButton">
-                <property name="visible">True</property>
-                <property name="action-name">win.text-cancel</property>
-                <property name="tooltip_text" translatable="yes">Cancel</property>
+          <object class="GtkCenterBox">
+            <style>
+              <class name="linked" />
+            </style>
+            <property name="start-widget">
+              <object class="GtkBox">
                 <child>
-                  <object class="GtkImage">
-                    <property name="icon-name">window-close-symbolic</property>
-                    <property name="visible">True</property>
+                  <object class="GtkButton">
+                    <property name="action-name">win.text-cancel</property>
+                    <property name="tooltip_text" translatable="1">Cancel</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="icon-name">window-close-symbolic</property>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>
-            </child>
-            <child>
-              <object class="GtkButton">
-                <property name="visible">True</property>
-                <property name="expand">True</property>
-                <property name="action-name">win.text-insert</property>
-                <property name="tooltip_text" translatable="yes">Insert here</property>
-                <property name="label" translatable="yes">Insert here</property>
-                <style><class name="suggested-action"/></style>
+            </property>
+            <property name="end-widget">
+              <object class="GtkBox">
+                <child>
+                  <object class="GtkButton">
+                    <property name="hexpand">1</property>
+                    <property name="vexpand">1</property>
+                    <property name="action-name">win.text-insert</property>
+                    <property name="tooltip_text" translatable="1">Insert here</property>
+                    <property name="label" translatable="1">Insert here</property>
+                    <style>
+                      <class name="suggested-action" />
+                    </style>
+                  </object>
+                </child>
               </object>
-              <packing>
-                <property name="pack-type">end</property>
-              </packing>
-            </child>
-            <style><class name="linked"/></style>
+            </property>
           </object>
         </child>
       </object>
-    </child>
+    </property>
   </object>
-
-  <!-- -->
-
   <menu id="options-menu">
     <section>
       <attribute name="label" translatable="yes">Font</attribute>
@@ -75,35 +78,29 @@
       </item>
     </section>
     <section>
-      <!-- Context: the types of background behind the inserted text -->
       <attribute name="label" translatable="yes">Background</attribute>
       <section>
         <item>
-          <!-- Context: a type of background behind the inserted text -->
           <attribute name="label" translatable="yes">No background</attribute>
           <attribute name="action">win.text-background</attribute>
           <attribute name="target">none</attribute>
         </item>
         <item>
-          <!-- Context: a type of background behind the inserted text -->
           <attribute name="label" translatable="yes">Shadow</attribute>
           <attribute name="action">win.text-background</attribute>
           <attribute name="target">shadow</attribute>
         </item>
         <item>
-          <!-- Context: a type of background behind the inserted text -->
           <attribute name="label" translatable="yes">Thin outline</attribute>
           <attribute name="action">win.text-background</attribute>
           <attribute name="target">thin-outline</attribute>
         </item>
         <item>
-          <!-- Context: a type of background behind the inserted text -->
           <attribute name="label" translatable="yes">Thick outline</attribute>
           <attribute name="action">win.text-background</attribute>
           <attribute name="target">thick-outline</attribute>
         </item>
         <item>
-          <!-- Context: a type of background behind the inserted text -->
           <attribute name="label" translatable="yes">Rectangle background</attribute>
           <attribute name="action">win.text-background</attribute>
           <attribute name="target">rectangle</attribute>

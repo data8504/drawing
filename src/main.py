@@ -16,7 +16,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import sys, gi, datetime
-gi.require_version('Gtk', '3.0')
+gi.require_version('Gtk', '4.0')
 gi.require_version('PangoCairo', '1.0')
 from gi.repository import Gtk, Gio, GLib, Gdk
 from .window import DrWindow
@@ -70,7 +70,7 @@ class Application(Gtk.Application):
 		             # Description of a command line option
 		             GLib.OptionArg.NONE, _("Edit the clipboard content"), None)
 
-		icon_theme = Gtk.IconTheme.get_default()
+		icon_theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
 		icon_theme.add_resource_path(self.APP_PATH + '/icons')
 		icon_theme.add_resource_path(self.APP_PATH + '/tools/icons')
 
@@ -116,9 +116,14 @@ class Application(Gtk.Application):
 		if gfile is not None and check_duplicates:
 			w, already_opened_index = self.has_image_opened(gfile.get_path())
 			if w is not None:
-				if not w.confirm_open_twice(gfile):
-					w.notebook.set_current_page(already_opened_index)
-					return
+				def confirmed(open_again):
+					if open_again:
+						self.open_window_with_content(gfile, get_cb, False)
+					else:
+						w.notebook.set_current_page(already_opened_index)
+						w.present()
+				w.confirm_open_twice(gfile, confirmed)
+				return
 
 		win = DrWindow(application=self)
 		win.present()
@@ -229,7 +234,7 @@ class Application(Gtk.Application):
 	def on_report(self, *args):
 		"""Action callback, opening a page to the Github issue tracker."""
 		win = self.props.active_window
-		Gtk.show_uri_on_window(win, self.BUG_REPORT_URL, Gdk.CURRENT_TIME)
+		Gtk.UriLauncher.new(self.BUG_REPORT_URL).launch(win, None, None)
 
 	def on_prefs(self, *args):
 		"""Action callback, showing the preferences window."""
@@ -242,11 +247,8 @@ class Application(Gtk.Application):
 
 	def on_april_fools(self, *args):
 		"""Action callback, rickrolling the user."""
-		Gtk.show_uri_on_window(
-			self.props.active_window, \
-			'https://www.youtube.com/watch?v=dQw4w9WgXcQ',\
-			Gdk.CURRENT_TIME \
-		)
+		Gtk.UriLauncher.new('https://www.youtube.com/watch?v=dQw4w9WgXcQ').launch(
+			self.props.active_window, None, None)
 
 	def on_help_index(self, *args):
 		"""Action callback, showing the index of user help manual."""
@@ -299,37 +301,30 @@ class Application(Gtk.Application):
 		bug_report_btn = Gtk.LinkButton(halign=Gtk.Align.CENTER, visible=True, \
 		               label=_("Report bugs or ideas"), uri=self.BUG_REPORT_URL)
 		# about_dialog.get_content_area().add(bug_report_btn) # should i?
-		about_dialog.set_icon_name('com.github.maoschanz.drawing')
-
-		about_dialog.run()
-		about_dialog.destroy()
+		about_dialog.present()
 
 	def on_quit(self, *args):
-		"""Action callback, quitting the entire app."""
-		if self.shortcuts_window is not None:
-			self.shortcuts_window.destroy()
-		if self.prefs_window is not None:
-			self.prefs_window.destroy()
-
-		can_quit = True
-		# Try (= ask confirmation) to quit the main window(s)
-		main_windows = self.get_windows()
-		for w in main_windows:
-			if w.on_close():
-				# User clicked on "cancel"
-				can_quit = False
+		"""Await each window's save decisions before quitting."""
+		if getattr(self, '_quit_pending', False):
+			return
+		self._quit_pending = True
+		self.hold()
+		windows = [window for window in self.get_windows() if isinstance(window, DrWindow)]
+		def next_window(success=True):
+			if not success:
+				self._quit_pending = False
+				self.release()
+				return
+			while windows and windows[0] not in self.get_windows():
+				windows.pop(0)
+			if windows:
+				windows.pop(0).request_close(next_window)
 			else:
-				w.close()
-				w.destroy()
+				self._quit_pending = False
+				self.release()
+				self.quit()
+		next_window()
 
-		# The expected behavior, but now theoretically useless, since closing all
-		# appwindows should quit automatically. It's too violent to be left
-		# without a guard clause.
-		if can_quit:
-			self.quit()
-
-	############################################################################
-	# Utilities ################################################################
 
 	def is_beta(self):
 		"""Tells is the app version is even or odd, odd versions being considered
@@ -354,7 +349,7 @@ class Application(Gtk.Application):
 
 	def _show_help_page(self, suffix):
 		win = self.props.active_window
-		Gtk.show_uri_on_window(win, 'help:drawing' + suffix, Gdk.CURRENT_TIME)
+		Gtk.UriLauncher.new('help:drawing' + suffix).launch(win, None, None)
 
 	def has_image_opened(self, file_path):
 		"""Returns the window in which the given file is opened, and the index

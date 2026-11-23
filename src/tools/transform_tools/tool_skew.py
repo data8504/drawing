@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cairo
+from .utilities_colors import utilities_surface_from_pixbuf
 from gi.repository import Gdk
 from .abstract_transform_tool import AbstractCanvasTool
 from .optionsbar_skew import OptionsBarSkew
@@ -221,7 +222,7 @@ class ToolSkew(AbstractCanvasTool):
 			if operation['rgba'].alpha == 0.0:
 				# no need to compute so much shit if it's to paint it in alpha
 				prefill = False
-		surface0 = Gdk.cairo_surface_create_from_pixbuf(source_pixbuf, 0, None)
+		surface0 = utilities_surface_from_pixbuf(source_pixbuf)
 		surface0.set_device_scale(self.scale_factor(), self.scale_factor())
 		w0 = surface0.get_width()
 		h0 = surface0.get_height()

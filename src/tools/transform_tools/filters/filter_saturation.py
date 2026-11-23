@@ -1,5 +1,7 @@
 # Licensed under GPL3 https://github.com/maoschanz/drawing/blob/master/LICENSE
 
+from gi.repository import Gtk
+
 from .abstract_filter import AbstractFilter
 
 class FilterSaturation(AbstractFilter):
@@ -12,8 +14,8 @@ class FilterSaturation(AbstractFilter):
 		# it's [value, lower, upper, step_increment, page_increment, page_size]
 
 	def get_preferred_minimum_width(self):
-		return self._label.get_preferred_width()[0] + \
-		     self._spinbtn.get_preferred_width()[0]
+		return self._label.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
+		     self._spinbtn.measure(Gtk.Orientation.HORIZONTAL, -1)[0]
 
 	def set_filter_compact(self, is_active, is_compact):
 		self._label.set_visible(is_active and not is_compact)

@@ -40,10 +40,10 @@ class OptionsBarRotate(AbstractOptionsBar):
 
 	def init_adaptability(self):
 		super().init_adaptability()
-		temp_limit_size = self.centered_box.get_preferred_width()[0] + \
-		                    self.cancel_btn.get_preferred_width()[0] + \
-		                      self.help_btn.get_preferred_width()[0] + \
-		                     self.apply_btn.get_preferred_width()[0]
+		temp_limit_size = self.centered_box.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
+		                    self.cancel_btn.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
+		                      self.help_btn.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
+		                     self.apply_btn.measure(Gtk.Orientation.HORIZONTAL, -1)[0]
 		self._set_limit_size(temp_limit_size)
 
 	def update_for_new_tool(self, tool):

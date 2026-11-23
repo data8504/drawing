@@ -72,7 +72,8 @@ class DrWindow(Gtk.ApplicationWindow):
 		self.devel_mode = False
 		self.should_track_framerate = False
 
-		self.resize(self.gsettings.get_int("window-width"), self.gsettings.get_int("window-height"))
+		self.set_default_size(self.gsettings.get_int("window-width"),
+			self.gsettings.get_int("window-height"))
 		if self.gsettings.get_boolean('maximized'):
 			self.maximize()
 
@@ -233,41 +234,46 @@ class DrWindow(Gtk.ApplicationWindow):
 		self.update_picture_title()
 
 	def build_new_custom(self, *args):
-		"""Open a new tab with a drawable blank image using the custom values
-		defined by user's input."""
 		dialog = DrCustomImageDialog(self)
-		result = dialog.run()
-		if result == Gtk.ResponseType.OK:
-			width, height, rgba = dialog.get_values()
-			self._build_new_tab(width=width, height=height, background_rgba=rgba)
-			self.update_picture_title()
-		dialog.destroy()
+		def chosen(response):
+			if response == dialog.create_id:
+				width, height, rgba = dialog.get_values()
+				self._build_new_tab(width=width, height=height, background_rgba=rgba)
+				self.update_picture_title()
+		dialog.choose(chosen)
 
 	def async_build_from_clipboard(self, content_params):
-		"""This is used as a GSourceFunc so it should return False."""
-		temporary_tab = self.notebook.get_current_page()
-		if self.build_image_from_clipboard():
-			self.switch_to(self.active_tool_id)
-			self.notebook.get_nth_page(temporary_tab).try_close_tab()
-		return False
+		temporary = self.get_active_image()
+		self.build_image_from_clipboard(
+			lambda created: self.close_tab(temporary) if created else None)
+		return GLib.SOURCE_REMOVE
 
-	def build_image_from_clipboard(self, *args):
-		"""Open a new tab with the image in the clipboard. If the clipboard is
-		empty, and there is no existing tab, a new blank image will be created
-		to ensure the window can display the message.
-		It returns `True` if an image (blank or not idc) has been created."""
-		cb = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-		pixbuf = cb.wait_for_image()
-		if pixbuf is None:
-			self.reveal_message(_("The clipboard doesn't contain any image."), True)
-			if self.notebook.get_current_page() < 0:
-				# This condition means it's a new window.
-				self.build_blank_image()
-				return True
-			return False
-		else:
-			self._build_new_tab(pixbuf=pixbuf)
-			return True
+	def build_image_from_clipboard(self, *args, callback=None):
+		# Also accept the continuation used while replacing a startup placeholder.
+		if args and callable(args[0]):
+			callback = args[0]
+		def received(pixbuf):
+			if pixbuf is not None:
+				self._build_new_tab(pixbuf=pixbuf)
+			else:
+				self.reveal_message(_("The clipboard doesn't contain any image."), True)
+				if self.notebook.get_n_pages() == 0:
+					self.build_blank_image()
+			if callback is not None:
+				callback(pixbuf is not None)
+		self._read_clipboard_image(received)
+
+	def _read_clipboard_image(self, callback):
+		clipboard = self.get_display().get_clipboard()
+		def received(source, result):
+			try:
+				texture = source.read_texture_finish(result)
+				pixbuf = Gdk.pixbuf_get_from_texture(texture) if texture is not None else None
+			except GLib.Error:
+				pixbuf = None
+			if self.get_application() is not None:
+				callback(pixbuf)
+		clipboard.read_texture_async(None, received)
 
 	def build_image_from_selection(self, *args):
 		"""Open a new tab with the image in the selection."""
@@ -276,9 +282,15 @@ class DrWindow(Gtk.ApplicationWindow):
 
 	def build_new_from_file(self, gfile, check_duplicates=True):
 		if check_duplicates:
-			w, duplicate = self.app.has_image_opened(gfile.get_path())
-			if duplicate is not None and not self.confirm_open_twice(gfile):
-				w.notebook.set_current_page(duplicate)
+			window, duplicate = self.app.has_image_opened(gfile.get_path())
+			if duplicate is not None:
+				def confirmed(open_again):
+					if open_again:
+						self._build_new_tab(gfile=gfile)
+					else:
+						window.notebook.set_current_page(duplicate)
+						window.present()
+				self.confirm_open_twice(gfile, confirmed)
 				return
 		self._build_new_tab(gfile=gfile)
 
@@ -290,7 +302,7 @@ class DrWindow(Gtk.ApplicationWindow):
 
 		new_image = DrImage(self)
 		self.notebook.append_page(new_image, new_image.build_tab_widget())
-		self.notebook.child_set_property(new_image, 'reorderable', True)
+		self.notebook.set_tab_reorderable(new_image, True)
 		if gfile is not None:
 			new_image.try_load_file(gfile)
 		elif pixbuf is not None:
@@ -303,20 +315,12 @@ class DrWindow(Gtk.ApplicationWindow):
 		self._update_tabs_visibility()
 		self.notebook.set_current_page(self.notebook.get_n_pages()-1)
 
-	def confirm_open_twice(self, gfile):
-		image_name = gfile.get_path().split('/')[-1]
+	def confirm_open_twice(self, gfile, callback):
 		dialog = DrMessageDialog(self)
-		# Context: %s is a file name
-		label = _("The file %s is already opened")
-		dialog.add_string(label % image_name)
-		# Context: the user would click here to confirm they want to open the
-		# same file twice
-		open_again_id = dialog.set_action(_("Open again"), None)
-		switch_to_id = dialog.set_action(_("Switch to this image"), \
-		                                               'suggested-action', True)
-		result = dialog.run()
-		dialog.destroy()
-		return result == open_again_id
+		dialog.add_string(_("The file %s is already opened") % gfile.get_basename())
+		open_again = dialog.set_action(_("Open again"), None)
+		dialog.set_action(_("Switch to this image"), 'suggested-action', True)
+		dialog.choose(lambda response: callback(response == open_again))
 
 	def on_active_tab_changed(self, *args):
 		if not self._is_tools_initialisation_finished:
@@ -332,7 +336,7 @@ class DrWindow(Gtk.ApplicationWindow):
 		action = self.lookup_action('active_tab')
 		section = self._get_menubar_item([[True, 2], [False, 1]])
 		section.remove_all()
-		for page in self.notebook.get_children():
+		for page in [self.notebook.get_nth_page(i) for i in range(self.notebook.get_n_pages())]:
 			tab_title = page.update_title()
 			tab_index = self.notebook.page_num(page)
 			section.append(tab_title, 'win.active_tab(' + str(tab_index) + ')')
@@ -353,17 +357,27 @@ class DrWindow(Gtk.ApplicationWindow):
 		else:
 			self.notebook.set_current_page(current_page + 1)
 
-	def close_tab(self, tab):
-		"""Close a tab (after asking to save if needed)."""
+	def close_tab(self, tab, callback=None):
+		"""Close this specific image after its asynchronous save decision."""
 		index = self.notebook.page_num(tab)
-		if not self.notebook.get_nth_page(index).is_saved():
-			self.notebook.set_current_page(index)
-			is_saved = self.saving_manager.confirm_save_modifs()
-			if not is_saved:
-				return False
-		self.notebook.remove_page(index)
-		self._update_tabs_visibility()
-		return True
+		if index < 0:
+			if callback is not None:
+				callback(True)
+			return
+		self.notebook.set_current_page(index)
+		def confirmed(can_close):
+			if can_close:
+				index = self.notebook.page_num(tab)
+				if index >= 0:
+					tab._cancel_gfile_monitoring()
+					self.notebook.remove_page(index)
+					tab.selection.reset(False)
+					tab.main_pixbuf = tab.temp_pixbuf = None
+					tab._history.empty_history()
+					self._update_tabs_visibility()
+			if callback is not None:
+				callback(can_close)
+		self.saving_manager.confirm_save_modifs(confirmed, tab)
 
 	def action_close_tab(self, *args):
 		if self.notebook.get_n_pages() > 1:
@@ -375,23 +389,37 @@ class DrWindow(Gtk.ApplicationWindow):
 		self.close()
 
 	def on_close(self, *args):
-		"""Event callback when trying to close a window. It saves/closes each
-		tab and saves the current window settings in order to restore them.
-		Returns `False` on success, `True` otherwise."""
-		while self.notebook.get_n_pages() != 0:
-			if not self.get_active_image().try_close_tab():
-				return True
+		self.request_close()
+		# GTK must leave the window alive while the user decides or saves.
+		return True
 
-		self._decorations.remove_from_ui()
-		self.options_manager.persist_tools_options()
-		self.gsettings.set_string('last-active-tool', self.active_tool_id)
-		self.gsettings.set_int("window-width", self.get_size().width)
-		self.gsettings.set_int("window-height", self.get_size().height)
-		self.gsettings.set_boolean('maximized', self.is_maximized())
-		return False
-
-	############################################################################
-	# GENERAL PURPOSE METHODS ##################################################
+	def request_close(self, callback=None):
+		if (getattr(self, '_close_in_progress', False) or
+			getattr(self.saving_manager, '_saving', False)):
+			if callback is not None:
+				callback(False)
+			return
+		self._close_in_progress = True
+		def finished(success):
+			self._close_in_progress = False
+			if callback is not None:
+				callback(success)
+		def next_tab(success=True):
+			if not success:
+				finished(False)
+				return
+			if self.notebook.get_n_pages():
+				self.close_tab(self.get_active_image(), next_tab)
+				return
+			if self._is_tools_initialisation_finished:
+				self.options_manager.persist_tools_options()
+				self.gsettings.set_string('last-active-tool', self.active_tool_id)
+				self.gsettings.set_int('window-width', self.get_width())
+				self.gsettings.set_int('window-height', self.get_height())
+				self.gsettings.set_boolean('maximized', self.is_maximized())
+			self.destroy()
+			finished(True)
+		next_tab()
 
 	def connect_signals(self):
 		# Closing the info bar
@@ -399,10 +427,12 @@ class DrWindow(Gtk.ApplicationWindow):
 		self.info_bar.connect('response', self._hide_message)
 
 		# Closing the window
-		self.connect('delete-event', self.on_close)
+		self.connect('close-request', self.on_close)
 
 		# Resizing the window
-		self.connect('configure-event', self._adapt_to_window_size)
+		self.connect('realize', self._connect_surface_layout)
+		if self.get_realized():
+			self._connect_surface_layout()
 
 		# When a setting changes
 		self.gsettings.connect('changed::deco-type', self.on_layout_changed)
@@ -417,19 +447,23 @@ class DrWindow(Gtk.ApplicationWindow):
 		# What happens when the active image change
 		self.notebook.connect('switch-page', self.on_active_tab_changed)
 
-		# Change the active tool using "alt" mnemonics
-		self.connect('key-press-event', self._check_for_alt_key)
-		self.connect('key-release-event', self._check_for_alt_key)
+		# Window key controller also exposes mnemonic hints while Alt is held.
+		keys = Gtk.EventControllerKey.new()
+		keys.connect('key-pressed', lambda controller, key, code, state:
+			self._set_mnemonic_hints(key in (Gdk.KEY_Alt_L, Gdk.KEY_Alt_R)))
+		keys.connect('key-released', lambda controller, key, code, state:
+			self._set_mnemonic_hints(False))
+		self.add_controller(keys)
 
 		# Managing drag-and-drop
 		if self.app.runs_in_sandbox:
 			return # no dnd with actual file paths in the flatpak sandbox
 			# XXX i could test if the app has home:ro permissions instead? eg to
 			# help during development (where builder does have the permission)
-		self.notebook.drag_dest_set(Gtk.DestDefaults.ALL, [], Gdk.DragAction.MOVE)
-		self.notebook.connect('drag-data-received', self.on_data_dropped)
-		self.notebook.drag_dest_add_uri_targets()
-		# because drag_dest_add_image_targets doesn't work for files
+		drop = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY)
+		drop.connect('drop', self.on_data_dropped)
+		self.notebook.add_controller(drop)
+
 
 	def _get_menubar_item(self, path_description):
 		"""Get an item of the app-wide menubar. The `path_description` object
@@ -603,26 +637,19 @@ class DrWindow(Gtk.ApplicationWindow):
 		else:
 			name = 'default'
 		try:
-			cursor = Gdk.Cursor.new_from_name(Gdk.Display.get_default(), name)
-			self.get_window().set_cursor(cursor)
+			self.set_cursor_from_name(name)
 		except Exception as ex:
 			# the cursor theme may be incorrect (not contain the cursor)
-			self.reveal_message(ex.message)
+			self.reveal_message(str(ex))
 
 	############################################################################
 	# WINDOW DECORATIONS AND LAYOUTS ###########################################
 
 	def on_layout_changed(self, *args):
-		try:
-			is_narrow = self._decorations.remove_from_ui()
-			self._set_ui_bars()
-			self._decorations.set_compact(is_narrow)
-			self.update_picture_title()
-			self.set_window_subtitles()
-		except:
-			pass # Closed windows are not actually deleted from the array kept
-			# in main.py, so this can be called even after the window lost its
-			# data (and it will fail).
+		# GTK4 titlebars must be selected before realization. Existing windows
+		# retain their layout; each new window reads the updated preference.
+		if self.get_realized():
+			self.show_info_settings()
 
 	def show_info_settings(self, *args):
 		"""This is executed when a setting changed but the method to apply it
@@ -693,7 +720,7 @@ class DrWindow(Gtk.ApplicationWindow):
 			self._set_ui_bars() # yes, recursion.
 
 		if self.app.is_beta():
-			self.get_style_context().add_class('devel')
+			self.add_css_class('devel')
 
 	def action_main_menu(self, *args):
 		self._decorations.toggle_menu()
@@ -702,6 +729,23 @@ class DrWindow(Gtk.ApplicationWindow):
 		"""This displays/hides the tool's options menu, and is implemented as an
 		action to ease the accelerator (shift+f10)."""
 		self.options_manager.toggle_menu()
+
+	def _connect_surface_layout(self, *args):
+		surface = self.get_surface()
+		if surface is not getattr(self, '_layout_surface', None):
+			self._layout_surface = surface
+			surface.connect('layout', self._on_surface_layout)
+
+	def _on_surface_layout(self, *args):
+		if getattr(self, '_resize_pending', False):
+			return
+		self._resize_pending = True
+		def allocated():
+			self._resize_pending = False
+			if self.get_realized() and self.notebook.get_n_pages():
+				self._adapt_to_window_size()
+			return GLib.SOURCE_REMOVE
+		GLib.idle_add(allocated)
 
 	def _adapt_to_window_size(self, *args):
 		"""Adapts the headerbar (if any) and the default bottom pane to the new
@@ -846,11 +890,11 @@ class DrWindow(Gtk.ApplicationWindow):
 			self.tools_flowbox.set_min_children_per_line(nb_tools)
 			if parent_box == self.tools_nonscrollable_box:
 				self.tools_nonscrollable_box.remove(self.tools_flowbox)
-				self.tools_scrollable_box.add(self.tools_flowbox)
+				self.tools_scrollable_box.append(self.tools_flowbox)
 		else:
 			if parent_box == self.tools_scrollable_box:
 				self.tools_scrollable_box.remove(self.tools_flowbox)
-				self.tools_nonscrollable_box.add(self.tools_flowbox)
+				self.tools_nonscrollable_box.append(self.tools_flowbox)
 			nb_min = int( (nb_tools+(nb_tools % 3))/3 ) - 1
 			self.tools_flowbox.set_min_children_per_line(nb_min)
 		self.tools_flowbox.set_max_children_per_line(nb_tools)
@@ -858,12 +902,10 @@ class DrWindow(Gtk.ApplicationWindow):
 	def _update_show_labels(self, *args):
 		self.set_tools_labels_visibility(self.gsettings.get_boolean('show-labels'))
 
-	def _check_for_alt_key(self, *args):
-		if not args[1].state | Gdk.ModifierType.MOD1_MASK == args[1].state:
-			return
-		is_press = args[1].type == Gdk.EventType.KEY_PRESS
-		for tool_id in self.tools:
-			self.tools[tool_id].show_only_mnemonics(is_press)
+	def _set_mnemonic_hints(self, visible):
+		for tool in self.tools.values():
+			tool.show_only_mnemonics(visible)
+		return False
 
 	############################################################################
 	# TOOLS ####################################################################
@@ -999,7 +1041,7 @@ class DrWindow(Gtk.ApplicationWindow):
 		"""Development only: tracks and displays the framerate, thus it helps
 		debugging how Gdk/cairo draws on the widget."""
 		self.should_track_framerate = not self.should_track_framerate
-		for img in self.notebook.get_children():
+		for img in [self.notebook.get_nth_page(i) for i in range(self.notebook.get_n_pages())]:
 			img.reset_fps_counter()
 		args[0].set_state(GLib.Variant.new_boolean(self.should_track_framerate))
 
@@ -1013,133 +1055,126 @@ class DrWindow(Gtk.ApplicationWindow):
 		self.get_active_image().reset_to_initial_pixbuf()
 
 	def action_reload(self, *args):
-		self.get_active_image().reload_from_disk()
+		image = self.get_active_image()
+		try:
+			image.reload_from_disk()
+		except GLib.Error:
+			self.reveal_message(_("Failed to reload %s") % image.get_file_path())
 
 	def action_open(self, *args):
-		"""Handle the result of an "open" file chooser dialog, and open it in
-		the current tab, or in a new one, or in a new window. The decision is
-		made depending on what's in the current tab, and (if any doubt)
-		according to the user explicit decision."""
-		gfile = self.file_chooser_open()
+		self.file_chooser_open(self._open_chosen_file)
+
+	def _open_chosen_file(self, gfile):
 		if gfile is None:
 			return
-		else:
-			file_name = gfile.get_path().split('/')[-1]
-			self.reveal_message(_("Loading %s") % file_name)
-
+		file_name = gfile.get_basename()
+		self.reveal_message(_("Loading %s") % file_name)
 		if self.get_active_image().should_replace():
-			# XXX ne marche pas de ouf en pratique ^ issue #553
-			# If the current image is just a blank, unmodified canvas.
 			self._try_load_file(gfile)
 			self._hide_message()
 			return
+		def choose_destination(open_again=True):
+			if not open_again:
+				window, duplicate = self.app.has_image_opened(gfile.get_path())
+				if duplicate is not None:
+					window.notebook.set_current_page(duplicate)
+					window.present()
+				self._hide_message()
+				return
+			dialog = DrMessageDialog(self)
+			new_tab = dialog.set_action(_("New Tab"), None, True)
+			new_window = dialog.set_action(_("New Window"), None)
+			discard = dialog.set_action(_("Discard changes"), 'destructive-action')
+			image = self.get_active_image()
+			if not image.is_saved():
+				dialog.add_string(_("There are unsaved modifications to %s.") %
+			image.get_filename_for_display())
+			dialog.add_string(_("Where do you want to open %s?") % file_name)
+			def chosen(response):
+				if response == new_tab:
+					self.build_new_from_file(gfile, False)
+				elif response == discard:
+					self._load_into_image(image, gfile)
+				elif response == new_window:
+					self.app.open_window_with_content(gfile, False, False)
+				self._hide_message()
+			dialog.choose(chosen)
+		window, duplicate = self.app.has_image_opened(gfile.get_path())
+		if duplicate is not None:
+			self.confirm_open_twice(gfile, choose_destination)
+		else:
+			choose_destination()
 
-		# it makes more sense to ask *if* the user wants to open it BEFORE
-		# asking *where* to open it
-		w, duplicate = self.app.has_image_opened(gfile.get_path())
-		if duplicate is not None and not self.confirm_open_twice(gfile):
-			w.notebook.set_current_page(duplicate)
-			self._hide_message()
-			return # the user doesn't want to open it
-
-		dialog = DrMessageDialog(self)
-		new_tab_id = dialog.set_action(_("New Tab"), None, True)
-		new_window_id = dialog.set_action(_("New Window"), None)
-		discard_id = dialog.set_action(_("Discard changes"), 'destructive-action')
-		if not self.get_active_image().is_saved():
-			# Context: %s will be replaced by the name of a file.
-			dialog.add_string(_("There are unsaved modifications to %s.") % \
-			                 self.get_active_image().get_filename_for_display())
-		# Context: %s will be replaced by the name of a file.
-		dialog.add_string(_("Where do you want to open %s?") % file_name)
-		result = dialog.run()
-		dialog.destroy()
-		if result == new_tab_id:
-			self.build_new_from_file(gfile, False)
-		elif result == discard_id:
-			self._try_load_file(gfile, False)
-		elif result == new_window_id:
-			self.app.open_window_with_content(gfile, False, False)
-
-		self._hide_message()
-
-	def file_chooser_open(self, *args):
-		"""Opens an "open" file chooser dialog, and return a GioFile or None."""
-		gfile = None
-		file_chooser = Gtk.FileChooserNative.new(_("Open a picture"), self,
-		                     Gtk.FileChooserAction.OPEN, _("Open"), _("Cancel"))
-		utilities_add_filechooser_filters(file_chooser)
-		response = file_chooser.run()
-		if response == Gtk.ResponseType.ACCEPT:
-			gfile = file_chooser.get_file()
-		file_chooser.destroy()
-		return gfile
-
-	def on_data_dropped(self, widget, drag_context, x, y, data, info, time):
-		"""Signal callback: when files are dropped on `self.notebook`, a message
-		dialog is shown, asking if the user prefers to open them (one new tab
-		per image), or to import them (it will only import the first), or to
-		cancel (if the user dropped mistakenly)."""
-		dialog = DrMessageDialog(self)
-		cancel_id = dialog.set_action(_("Cancel"), None)
-		open_id = dialog.set_action(_("Open"), None)
-		import_id = dialog.set_action(_("Import"), None, True)
-
-		uris = data.get_uris()
-		gfiles = []
-		for uri in uris:
+	def file_chooser_open(self, callback, title=None):
+		dialog = Gtk.FileDialog(title=title or _("Open a picture"), modal=True)
+		utilities_add_filechooser_filters(dialog)
+		def chosen(source, result):
 			try:
-				gfile = Gio.File.new_for_uri(uri)
-				is_valid_image, error_msg = utilities_gfile_is_image(gfile)
-			except Exception as excp:
-				is_valid_image = False
-				error_msg = excp.message
-			if is_valid_image:
+				gfile = source.open_finish(result)
+			except GLib.Error as error:
+				if not error.matches(Gtk.dialog_error_quark(), Gtk.DialogError.DISMISSED):
+					self.reveal_message(str(error))
+				gfile = None
+			callback(gfile)
+		dialog.open(self, None, chosen)
+
+	def on_data_dropped(self, target, files, x, y):
+		gfiles = []
+		for gfile in files.get_files():
+			is_image, error = utilities_gfile_is_image(gfile)
+			if is_image:
 				gfiles.append(gfile)
 			else:
-				self.reveal_message(error_msg)
-
-		if len(gfiles) == 0:
-			return
-		elif len(gfiles) == 1:
-			label = gfiles[0].get_path().split('/')[-1]
-		else:
-			# Context for translation:
-			# "What do you want to do with *these files*?"
-			label = _("these files")
-		# Context: %s will be replaced by the name of a file. The possible
-		# answers are "cancel", "open", and "import"
+				self.reveal_message(error)
+		if not gfiles:
+			return False
+		dialog = DrMessageDialog(self)
+		dialog.set_action(_("Cancel"), None)
+		open_id = dialog.set_action(_("Open"), None)
+		import_id = dialog.set_action(_("Import"), None, True)
+		label = gfiles[0].get_basename() if len(gfiles) == 1 else _("these files")
 		dialog.add_string(_("What do you want to do with %s?") % label)
-		result = dialog.run()
-		dialog.destroy()
-
-		if result == open_id:
-			for f in gfiles:
-				self._build_new_tab(gfile=f)
-		elif result == import_id:
-			self.import_from_path(gfiles[0].get_path())
+		def chosen(response):
+			if response == open_id:
+				for gfile in gfiles:
+					self._build_new_tab(gfile=gfile)
+			elif response == import_id:
+				self.import_from_path(gfiles[0].get_path())
+		dialog.choose(chosen)
+		return True
 
 	def _try_load_file(self, gfile, check_duplicates=True):
 		if gfile is None:
 			return
-		if check_duplicates:
-			w, duplicate = self.app.has_image_opened(gfile.get_path())
-			if w is not None and not self.confirm_open_twice(gfile):
-				w.notebook.set_current_page(duplicate)
-				return
+		image = self.get_active_image()
+		def confirmed(open_again):
+			if open_again:
+				self._load_into_image(image, gfile)
+			else:
+				window, duplicate = self.app.has_image_opened(gfile.get_path())
+				if duplicate is not None:
+					window.notebook.set_current_page(duplicate)
+					window.present()
+		if check_duplicates and self.app.has_image_opened(gfile.get_path())[1] is not None:
+			self.confirm_open_twice(gfile, confirmed)
+		else:
+			confirmed(True)
 
-		self.get_active_image().try_load_file(gfile)
-		self.update_picture_title()
+	def _load_into_image(self, image, gfile):
+		index = self.notebook.page_num(image)
+		if index >= 0:
+			self.notebook.set_current_page(index)
+			image.try_load_file(gfile)
+			self.update_picture_title()
 
 	def has_image_opened(self, file_path):
-		for tab in self.notebook.get_children():
+		for tab in [self.notebook.get_nth_page(i) for i in range(self.notebook.get_n_pages())]:
 			if tab.get_file_path() == file_path:
 				return self.notebook.page_num(tab)
 		return None
 
 	def action_save(self, *args):
-		"""Try to save the active image, and return True if the image has been
-		successfully saved."""
+		"""Start saving the active image through asynchronous user decisions."""
 		return self.saving_manager.save_current_image(False, False, False, True)
 
 	def action_save_as(self, *args):
@@ -1156,12 +1191,9 @@ class DrWindow(Gtk.ApplicationWindow):
 		self.printing_manager.print_pixbuf(pixbuf)
 
 	def action_export_cb(self, *args):
-		cb = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-		cb.set_image(self.get_active_image().main_pixbuf)
+		self.get_display().get_clipboard().set(
+			Gdk.Texture.new_for_pixbuf(self.get_active_image().main_pixbuf))
 		self.reveal_message(_("Image copied to clipboard"), True)
-
-	############################################################################
-	# SELECTION MANAGEMENT #####################################################
 
 	def action_getvalues(self, *args):
 		"""Development only: helps debugging the selection."""
@@ -1182,37 +1214,40 @@ class DrWindow(Gtk.ApplicationWindow):
 		self.copy_operation()
 
 	def copy_operation(self):
-		cb = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-		cb.set_image(self.get_active_image().selection.get_pixbuf())
+		self.get_display().get_clipboard().set(
+			Gdk.Texture.new_for_pixbuf(self.get_active_image().selection.get_pixbuf()))
 
 	def action_delete(self, *args):
 		self.get_selection_tool().delete_selection()
 
 	def action_paste(self, *args):
-		"""By default, this action pastes an image, but if there is no image in
-		the clipboard, it will paste text using the text tool. Once the text
-		tool is active, this action is disabled to not interfere with the default
-		behavior of ctrl+v provided by the GTK text entry."""
-		cb = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-		pixbuf = cb.wait_for_image()
-		if pixbuf is not None:
-			self.force_selection()
-			self.get_selection_tool().import_selection(pixbuf)
-		else:
-			string = cb.wait_for_text()
-			if string is not None:
-				self.tools['text'].force_text_tool(string)
+		image = self.get_active_image()
+		def select_target():
+			index = self.notebook.page_num(image)
+			if index < 0:
+				return False
+			self.notebook.set_current_page(index)
+			return True
+		def text_received(source, result):
+			try:
+				text = source.read_text_finish(result)
+			except GLib.Error:
+				return
+			if text is not None and select_target():
+				self.tools['text'].force_text_tool(text)
+		def image_received(pixbuf):
+			if pixbuf is not None:
+				if select_target():
+					self.force_selection()
+					self.get_selection_tool().import_selection(pixbuf)
+			else:
+				self.get_display().get_clipboard().read_text_async(None, text_received)
+		self._read_clipboard_image(image_received)
 
 	def action_import(self, *args):
-		"""Handle the result of an 'open' file chooser dialog. It will then try
-		to import it as the selection."""
-		file_chooser = Gtk.FileChooserNative.new(_("Import a picture"), self,
-		                   Gtk.FileChooserAction.OPEN, _("Import"), _("Cancel"))
-		utilities_add_filechooser_filters(file_chooser)
-		response = file_chooser.run()
-		if response == Gtk.ResponseType.ACCEPT:
-			self.import_from_path(file_chooser.get_filename())
-		file_chooser.destroy()
+		self.file_chooser_open(
+			lambda gfile: self.import_from_path(gfile.get_path()) if gfile is not None else None,
+			_("Import a picture"))
 
 	def import_from_path(self, file_path):
 		"""Import a file as the selection pixbuf. Called by the 'win.import'

@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <interface domain="drawing">
+  <requires lib="gtk" version="4.0" />
   <object class="GtkBox" id="centered_box">
     <property name="spacing">10</property>
-
     <child>
       <object class="GtkMenuButton" id="menu_btn">
         <child>
@@ -10,7 +10,7 @@
             <property name="spacing">2</property>
             <child>
               <object class="GtkLabel" id="menu_label">
-                <property name="label" translatable="yes">Select a filter…</property>
+                <property name="label" translatable="1">Select a filter…</property>
               </object>
             </child>
             <child>
@@ -27,7 +27,5 @@
         </child>
       </object>
     </child>
-
   </object>
 </interface>
-

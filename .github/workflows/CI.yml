@@ -2,7 +2,7 @@ name: Native build
 on:
   pull_request:
   push:
-    branches: [master, stable/1.0]
+    branches: [master]
     tags: ['v*', '[0-9]*']
   workflow_dispatch:
     inputs:
@@ -30,8 +30,8 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && inputs.release_tag != ''
         run: |
           case "$GITHUB_REF" in
-            refs/heads/master|refs/heads/stable/1.0) ;;
-            *) echo 'Release dispatch must use protected master or stable/1.0' >&2; exit 1 ;;
+            refs/heads/master) ;;
+            *) echo 'Release dispatch must use protected master' >&2; exit 1 ;;
           esac
       # Keep release/build tooling from the triggering reviewed commit even when
       # manually rebuilding an older tag that predates these workflows.
@@ -141,7 +141,7 @@ jobs:
     if: |
       startsWith(github.ref, 'refs/tags/') ||
       (github.event_name == 'workflow_dispatch' && inputs.release_tag != '' &&
-       (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/stable/1.0'))
+       github.ref == 'refs/heads/master')
     needs: native
     runs-on: ubuntu-24.04
     permissions:

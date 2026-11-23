@@ -51,3 +51,11 @@ test(
 	timeout: 30,
 	env: ['PYTHONDONTWRITEBYTECODE=1'],
 )
+
+test(
+	'Pixel reading',
+	python3,
+	args: files('test_pixel_reader.py'),
+	timeout: 30,
+	env: ['PYTHONDONTWRITEBYTECODE=1'],
+)

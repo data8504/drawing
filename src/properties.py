@@ -84,14 +84,19 @@ class DrPropertiesDialog(Gtk.Window):
 			label_path = _("Unsaved file")
 			label_file_format = _("Unsaved file")
 		else:
-			label_path = self._image.get_file_path()
-			(pb_format, w, h) = GdkPixbuf.Pixbuf.get_file_info(label_path)
-			label_file_format = pb_format.get_name()
+			path = self._image.get_file_path()
+			label_path = self._image.gfile.get_parse_name()
+			label_file_format = None
+			if path is not None:
+				pb_format, _width, _height = GdkPixbuf.Pixbuf.get_file_info(path)
+				if pb_format is not None:
+					label_file_format = pb_format.get_name()
 
 		# Context: the path of the edited file
 		self._add_grid_row(0, _("Path"), label_path)
-		# Context: the file format of the edited file
-		self._add_grid_row(1, _("Format"), label_file_format)
+		if label_file_format is not None:
+			# Context: the file format of the edited file
+			self._add_grid_row(1, _("Format"), label_file_format)
 		self._add_grid_row(2, _("Colorspace"), self._set_colorspace_label())
 		# TODO display both the colorspace of the file and of the surface, with
 		# a warning if there might be a loss of data

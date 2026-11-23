@@ -22,7 +22,7 @@ from .canvas_input import CanvasInput
 from .history_manager import DrHistoryManager
 from .selection_manager import DrSelectionManager
 from .properties import DrPropertiesDialog
-from .utilities_files import InvalidFileFormatException
+from .utilities_files import utilities_image_load_error, utilities_load_pixbuf
 from .utilities_overlay import utilities_generic_canvas_outline
 
 class DrMotionBehavior():
@@ -267,7 +267,7 @@ class DrImage(Gtk.Box):
 		target = gfile or self.gfile
 		if target is None:
 			return
-		disk_pixbuf = GdkPixbuf.Pixbuf.new_from_file(target.get_path())
+		disk_pixbuf = utilities_load_pixbuf(target)
 		self._connect_gfile_monitoring(target)
 		self._load_pixbuf_common(disk_pixbuf)
 		self.use_stable_pixbuf()
@@ -279,14 +279,10 @@ class DrImage(Gtk.Box):
 
 	def try_load_file(self, gfile):
 		try:
-			self.gfile = gfile
-			pixbuf = GdkPixbuf.Pixbuf.new_from_file(self.get_file_path())
-			self._connect_gfile_monitoring()
-		except Exception as ex:
-			if not ex.message:
-				ex.message = "[exception without a valid message]"
-			ex = InvalidFileFormatException(ex.message, gfile.get_path())
-			self.window.reveal_action_report(ex.message)
+			pixbuf = utilities_load_pixbuf(gfile)
+			self._connect_gfile_monitoring(gfile)
+		except GLib.Error as error:
+			self.window.reveal_action_report(utilities_image_load_error(gfile, error))
 			self._cancel_gfile_monitoring()
 			self.gfile = None
 			pixbuf = self._new_blank_pixbuf(100, 100)
@@ -379,11 +375,9 @@ class DrImage(Gtk.Box):
 		return main_title
 
 	def get_filename_for_display(self):
-		if self.get_file_path() is None:
-			unsaved_file_name = _("Unsaved file")
-		else:
-			unsaved_file_name = self.get_file_path().split('/')[-1]
-		return unsaved_file_name
+		if self.gfile is None:
+			return _("Unsaved file")
+		return self.gfile.get_basename() or self.gfile.get_parse_name()
 
 	def try_close_tab(self, *args):
 		self.window.close_tab(self)

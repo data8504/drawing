@@ -114,7 +114,7 @@ class Application(Gtk.Application):
 		is true, the Gio.File is ignored and the picture is built from the
 		clipboard content."""
 		if gfile is not None and check_duplicates:
-			w, already_opened_index = self.has_image_opened(gfile.get_path())
+			w, already_opened_index = self.has_image_opened(gfile)
 			if w is not None:
 				def confirmed(open_again):
 					if open_again:
@@ -351,12 +351,12 @@ class Application(Gtk.Application):
 		win = self.props.active_window
 		Gtk.UriLauncher.new('help:drawing' + suffix).launch(win, None, None)
 
-	def has_image_opened(self, file_path):
+	def has_image_opened(self, gfile):
 		"""Returns the window in which the given file is opened, and the index
 		of the tab where it is in the window's notebook.
 		Or `None, None` otherwise."""
 		for win in self.get_windows():
-			position_in_window = win.has_image_opened(file_path)
+			position_in_window = win.has_image_opened(gfile)
 			if position_in_window is not None:
 				return win, position_in_window
 		return None, None

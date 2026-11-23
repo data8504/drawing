@@ -43,3 +43,11 @@ test(
 	timeout: 30,
 	env: ['PYTHONDONTWRITEBYTECODE=1'],
 )
+
+test(
+	'Scale proportions',
+	python3,
+	args: files('test_scale_ratio.py'),
+	timeout: 30,
+	env: ['PYTHONDONTWRITEBYTECODE=1'],
+)

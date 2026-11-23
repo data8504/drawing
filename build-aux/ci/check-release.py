@@ -19,11 +19,12 @@ commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(
 tag_commit = subprocess.check_output(['git', 'rev-parse', f'refs/tags/{tag}^{{commit}}'], text=True).strip()
 if tag_commit != commit:
 	raise SystemExit('Checkout differs from tag target')
-branches = ['refs/remotes/origin/master', 'refs/remotes/origin/stable/1.0']
-if not any(subprocess.run(['git', 'merge-base', '--is-ancestor', commit, branch],
-                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
-           for branch in branches):
-	raise SystemExit('Tag must belong to protected master or stable/1.0 history')
+ancestry = subprocess.run(
+	['git', 'merge-base', '--is-ancestor', commit, 'refs/remotes/origin/master'],
+	stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+)
+if ancestry.returncode != 0:
+	raise SystemExit('Tag must belong to protected master history')
 metadata = ET.parse('data/com.github.maoschanz.drawing.appdata.xml.in')
 if not any(r.get('version') == version for r in metadata.findall('./releases/release')):
 	raise SystemExit(f'AppStream metadata lacks release {version}')

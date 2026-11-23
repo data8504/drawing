@@ -1,6 +1,6 @@
 # Native validation and releases
 
-Every PR and push to `master` or `stable/1.0` runs a complete native Meson build,
+Every PR and push to `master` runs a complete native Meson build,
 including translations and documentation, on Ubuntu 24.04 and 26.04. The jobs
 run the registered tests, stage the installation, build a native Debian package,
 install that package on the disposable runner, and open a fresh image under a
@@ -17,9 +17,9 @@ A rollback reinstalls the previously saved package, preserving user data.
 
 For a stable release, merge reviewed changes through branch protection, update
 Meson and AppStream version metadata in that PR, then push its version tag
-(`v1.2.0`, for example). The tag must identify a commit in protected `master` or
-`stable/1.0` history. To publish an older, unpublished tag, run the workflow
-from the protected default branch and supply `release_tag`.
+(`v1.2.0`, for example). The tag must identify a commit in protected `master`
+history. To publish an older, unpublished tag in that history, run the workflow
+from `master` and supply `release_tag`.
 Release dispatch from other branches fails before building or publication.
 This retains the tag's source unchanged and uses the current reviewed build
 infrastructure. A blank dispatch runs CI only. Never move an existing tag.
@@ -38,7 +38,7 @@ bytes. Asset corrections require a new version.
 CI runs use read-only tokens and no project secrets. Only publication receives
 `contents: write`. External PR code runs on GitHub-hosted runners. Required branch
 checks should be the two stable `Native ubuntu-*` job names, without path filters
-that could leave required checks pending. Protect both release branches and tags
+that could leave required checks pending. Protect `master` and release tags
 without administrator or automation bypasses. A sole maintainer may merge their
 own PR after checks; requiring someone else's GitHub approval would prevent this.
 

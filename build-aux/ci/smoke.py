@@ -6,6 +6,7 @@ from pathlib import Path
 import runpy
 import sys
 import traceback
+from gtk_runtime import gtk_api
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--root', type=Path, default=Path('/'))
@@ -18,18 +19,19 @@ sys.path.insert(0, str(pkgdata))
 sys.path.insert(0, str(args.root / 'usr/lib/python3/dist-packages'))
 import gi
 
-gi.require_version('Gtk', '3.0')
+api = gtk_api(args.root, pkgdata)
+gi.require_version('Gtk', api)
 from gi.repository import Gio, GLib, Gtk
 
-if not Gtk.init_check([])[0]:
+display_ready = Gtk.init_check() if api == '4.0' else Gtk.init_check([])[0]
+if not display_ready:
 	raise SystemExit('GTK display is unavailable')
 
 resource = Gio.Resource.load(str(pkgdata / 'drawing.gresource'))
 resource._register()
 from drawing.main import Application
 
-# Dismiss the first-run help prompt through temporary, memory-only settings.
-# Otherwise its nested modal loop prevents a non-interactive smoke from exiting.
+# Keep first-run state temporary and consistent with the installed version.
 settings = Gio.Settings.new('com.github.maoschanz.drawing')
 settings.set_string('last-version', launcher['VERSION'])
 settings.set_int('default-width', 32)

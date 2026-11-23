@@ -708,11 +708,12 @@ class DrImage(Gtk.Box):
 		event_x = self.scroll_x + (event.x / self.zoom_level)
 		event_y = self.scroll_y + (event.y / self.zoom_level)
 		if as_integers:
-			# `int()` will truncate to the lower integer so we need this to get
-			# an accurate behavior when doing pixel-art for example
-			event_x += 0.5
-			event_y += 0.5
-			return int(event_x), int(event_y)
+			# Preserve the existing positive nearest-pixel rounding.
+			# Keep outside-image coordinates outside before rounding. Centered
+			# margins routinely produce negative fractional image positions.
+			pixel_x = int(event_x + 0.5) if event_x >= 0 else math.floor(event_x)
+			pixel_y = int(event_y + 0.5) if event_y >= 0 else math.floor(event_y)
+			return pixel_x, pixel_y
 		else:
 			return event_x, event_y
 
@@ -827,27 +828,26 @@ class DrImage(Gtk.Box):
 		return int(max_coord / 2)
 
 	def _scroll_needs_centering_fix(self):
-		"""True if an image smaller than the widget isn't centered on an axis,
-		or if a negative scroll coordinate remains while it shouldn't."""
-		for scroll, real, available in (
-		    (self.scroll_x, self.get_pixbuf_width(), self.get_widget_width()),
-		    (self.scroll_y, self.get_pixbuf_height(), self.get_widget_height())):
-			centered = self._get_centering_scroll(real, available)
-			if centered is not None:
-				if scroll != centered:
-					return True
-			elif scroll < 0:
+		"""Keep small previews centered and larger previews within pan bounds."""
+		for scroll, preview, real, available in (
+		    (self.scroll_x, self.get_previewed_width(),
+		        self.get_pixbuf_width(), self.get_widget_width()),
+		    (self.scroll_y, self.get_previewed_height(),
+		        self.get_pixbuf_height(), self.get_widget_height())):
+			if self._clamp_or_center(scroll, preview, real, available) != scroll:
 				return True
 		return False
 
 	def _clamp_or_center(self, wanted, previewed_size, real_size, available_size):
-		"""Keeps the scroll coordinate in the valid range, except when the image
-		is smaller than the widget: then the (negative) coordinate which centers
-		the image in the widget is returned."""
+		"""Center small previews; retain or pan the origin of enlarged ones."""
 		centered = self._get_centering_scroll(real_size, available_size)
-		if centered is not None:
-			return centered
 		max_coord = self.get_max_coord(previewed_size, available_size)
+		if centered is not None:
+			if max_coord <= 0:
+				return centered
+			# Growing a preview preserves its origin, while explicit panning
+			# can reach its newly enlarged bounds.
+			return max(min(wanted, max_coord), centered)
 		return max(min(wanted, max_coord), 0)
 
 	def update_scrollbar(self, is_vertical, allocated_size, pixbuf_size, coord):
@@ -856,15 +856,15 @@ class DrImage(Gtk.Box):
 		else:
 			scrollbar = self._h_scrollbar
 		scrollbar.set_visible(allocated_size / self.zoom_level < pixbuf_size)
-		scrollbar.set_range(0, pixbuf_size)
-		scrollbar.get_adjustment().set_page_size(allocated_size / self.zoom_level)
+		real_size = self.get_pixbuf_height() if is_vertical else \
+			self.get_pixbuf_width()
+		centered = self._get_centering_scroll(real_size, allocated_size)
+		lower = centered if centered is not None else 0
+		page_size = allocated_size / self.zoom_level
+		scrollbar.set_range(lower, max(pixbuf_size, lower + page_size))
+		scrollbar.get_adjustment().set_page_size(page_size)
 		scrollbar.set_value(coord)
-		# The scrollbar can't represent the negative values used to center a
-		# small image, so in this case the coordinate is used as is.
-		if coord < 0:
-			value = coord
-		else:
-			value = int(scrollbar.get_value())
+		value = int(scrollbar.get_value())
 		if is_vertical:
 			self.scroll_y = value
 		else:

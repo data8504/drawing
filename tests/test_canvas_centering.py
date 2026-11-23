@@ -7,6 +7,9 @@ from pathlib import Path
 import sys
 import types
 import unittest
+from unittest.mock import Mock
+
+import cairo
 
 import gi
 
@@ -22,6 +25,8 @@ gettext.install('drawing')
 from gi.repository import Gio
 Gio.Resource.load(os.environ['DRAWING_TEST_RESOURCE'])._register()
 DrImage = importlib.import_module('drawing.image').DrImage
+paint = importlib.import_module('drawing.tool_paint')
+select = importlib.import_module('drawing.select_color')
 
 
 class CanvasCenteringTest(unittest.TestCase):
@@ -44,6 +49,45 @@ class CanvasCenteringTest(unittest.TestCase):
 			with self.subTest(preview=preview):
 				self.assertEqual(image._clamp_or_center(-150, preview, 100, 400),
 					-150)
+
+	def test_enlarged_preview_can_pan_after_preserving_origin(self):
+		image = self.image(1)
+		self.assertEqual(image._clamp_or_center(-150, 800, 100, 400), -150)
+		self.assertEqual(image._clamp_or_center(-50, 800, 100, 400), -50)
+		self.assertEqual(image._clamp_or_center(100, 800, 100, 400), 100)
+		self.assertEqual(image._clamp_or_center(500, 800, 100, 400), 400)
+		self.assertEqual(image._clamp_or_center(-200, 800, 100, 400), -150)
+		image.scroll_x, image.scroll_y = 100, -175
+		image.get_previewed_width = lambda: 800
+		image.get_previewed_height = lambda: 50
+		image.get_pixbuf_width = lambda: 100
+		image.get_pixbuf_height = lambda: 50
+		image.get_widget_width = image.get_widget_height = lambda: 400
+		self.assertFalse(DrImage._scroll_needs_centering_fix(image))
+
+	def test_negative_margins_do_not_paint_or_select(self):
+		image = self.image(4)
+		image.scroll_x = image.scroll_y = -100
+		surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, 8, 8)
+		for x, y in ((-.1, 4), (-.5, 4), (-1, 4),
+		             (4, -.1), (4, -.5), (4, -1)):
+			with self.subTest(raw=(x, y)):
+				event = types.SimpleNamespace(x=(x - image.scroll_x) * 4,
+					y=(y - image.scroll_y) * 4)
+				mapped = DrImage.get_event_coords(image, event)
+				tool = paint.ToolPaint.__new__(paint.ToolPaint)
+				tool._magic_path = None
+				tool.get_option_value = Mock(return_value='replace')
+				tool.build_operation = Mock()
+				tool.apply_operation = Mock()
+				tool.on_release_on_area(None, surface, *mapped)
+				tool.apply_operation.assert_not_called()
+				tool = select.ToolColorSelect.__new__(select.ToolColorSelect)
+				tool._pre_load_path = Mock()
+				tool.build_operation = Mock()
+				tool.apply_operation = Mock()
+				tool.release_define(surface, *mapped)
+				tool.apply_operation.assert_not_called()
 
 	def test_large_canvas_scroll_is_clamped(self):
 		image = self.image(1)

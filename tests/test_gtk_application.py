@@ -329,6 +329,52 @@ class ApplicationSmokeTest(unittest.TestCase):
 					button.emit('clicked')
 					self.assertEqual(image.get_file_path(), str(exported))
 					self.assertIsNone(empty.gfile)
+					# Unlike a local file, a resource URI needs stream decoding.
+					manifest = Path(schema_dir) / 'file-open.gresource.xml'
+					manifest.write_text('<gresources><gresource prefix="/file-open">'
+						'<file>export.png</file><file>broken.png</file>'
+						'</gresource></gresources>')
+					bundle_path = Path(schema_dir) / 'file-open.gresource'
+					subprocess.run(['glib-compile-resources', '--target', str(bundle_path),
+						str(manifest)], cwd=schema_dir, check=True)
+					bundle = Gio.Resource.load(str(bundle_path))
+					Gio.resources_register(bundle)
+					try:
+						uri = 'resource:///file-open/export.png'
+						file = Gio.File.new_for_uri(uri)
+						self.assertIsNone(file.get_path())
+						cli = types.SimpleNamespace(create_file_for_arg=lambda arg: file)
+						info = Gio.FileInfo.new()
+						info.set_file_type(Gio.FileType.REGULAR)
+						info.set_attribute_string('standard::fast-content-type', 'image/png')
+						with patch.object(file, 'query_info', return_value=info):
+							self.assertIs(app._get_valid_file(cli, uri), file)
+							info.remove_attribute('standard::fast-content-type')
+							self.assertIs(app._get_valid_file(cli, uri), file)
+						opened = app.open_window_with_content(file)
+						try:
+							loaded = opened.get_active_image()
+							self.assertTrue(loaded.gfile.equal(file))
+							self.assertTrue(loaded.is_saved())
+							self.assertEqual(loaded.get_filename_for_display(), 'export.png')
+							self.assertEqual(app.has_image_opened(Gio.File.new_for_uri(uri)),
+								(opened, 0))
+							expected = GdkPixbuf.Pixbuf.new_from_file(str(exported))
+							self.assertEqual(loaded.main_pixbuf.get_pixels(), expected.get_pixels())
+							loaded.reload_from_disk()
+							self.assertEqual(loaded.main_pixbuf.get_pixels(), expected.get_pixels())
+							properties = DrPropertiesDialog(opened, loaded)
+							properties.destroy()
+							opened.import_from_file(loaded, file)
+							self.assertTrue(loaded.selection.is_active)
+							opened.action_unselect()
+							invalid = Gio.File.new_for_uri('resource:///file-open/broken.png')
+							loaded.try_load_file(invalid)
+							self.assertIsNone(loaded.gfile)
+						finally:
+							opened.destroy()
+					finally:
+						Gio.resources_unregister(bundle)
 					# Closing a second window stops its subtitle updates.
 					extra = app.open_window_with_content(None)
 					decorations = extra._decorations

@@ -1,6 +1,8 @@
 # Licensed under GPL3 https://github.com/maoschanz/drawing/blob/master/LICENSE
 
-from gi.repository import Gtk, Gio
+from contextlib import closing
+
+from gi.repository import GdkPixbuf, Gio, GLib, Gtk
 
 ################################################################################
 
@@ -39,39 +41,44 @@ def utilities_add_filechooser_filters(dialog):
 
 def utilities_gfile_is_image(gfile, error_msg=""):
 	try:
-		infos = gfile.query_info('standard::*', Gio.FileQueryInfoFlags.NONE, None)
-		if 'image/' in infos.get_content_type():
-			# The exact file format of the image isn't validated here because i
-			# can't assume what gdkpixbuf is able to read (it's modular, and it
-			# evolves). An InvalidFileFormatException will be raised by DrImage
-			# if the file can't be loaded.
+		infos = gfile.query_info('standard::type,standard::content-type,'
+			'standard::fast-content-type', Gio.FileQueryInfoFlags.NONE, None)
+		content_type = infos.get_attribute_string('standard::content-type')
+		if content_type is None:
+			content_type = infos.get_attribute_string('standard::fast-content-type')
+		if content_type is None and infos.get_file_type() != Gio.FileType.DIRECTORY:
+			basename = gfile.get_basename()
+			if basename is not None:
+				content_type, _uncertain = Gio.content_type_guess(basename, None)
+		# The decoder still validates the actual image data.
+		if content_type is not None and content_type.startswith('image/'):
 			return True, error_msg
-		else:
-			error_msg = error_msg + _("%s isn't an image.") % gfile.get_path()
-	except Exception as err:
-		error_msg = error_msg + str(err)
+		error_msg += _("%s isn't an image.") % gfile.get_parse_name()
+	except GLib.Error as error:
+		error_msg += str(error)
 	return False, error_msg
 
-class InvalidFileFormatException(Exception):
-	def __init__(self, initial_message, fpath):
-		self.message = initial_message
-		cpt = 0
-		with open(fpath, 'rb') as f:
-			riff_bytes = f.read(4)
-			size_bytes = f.read(4)
-			webp_bytes = f.read(4)
-			if riff_bytes == b'RIFF' and webp_bytes == b'WEBP':
-				msg = _("Sorry, WEBP images can't be loaded by this app.") + " 😢 "
-				if fpath[-5:] != '.webp':
-					# Context: an error message, %s is a file path
-					msg = msg + _("Despite its name, %s is a WEBP file.") % fpath
-				self.message = msg
-		super().__init__(self.message)
-	# This exception is meant to be raised when a file is detected as an image
-	# by Gio (see utility function above) BUT can't be loaded into a GdkPixbuf.
-	# It usually means the file is corrupted, or has a deceptive name (for
-	# example "xxx.jpeg" despite being a text file), or is just an image format
-	# not supported by the GdkPixbuf version installed by the user.
+def utilities_load_pixbuf(gfile):
+	path = gfile.get_path()
+	if path is not None:
+		return GdkPixbuf.Pixbuf.new_from_file(path)
+	with closing(gfile.read(None)) as stream:
+		return GdkPixbuf.Pixbuf.new_from_stream(stream, None)
+
+def utilities_image_load_error(gfile, error):
+	path = gfile.get_path()
+	if path is not None:
+		try:
+			with open(path, 'rb') as file:
+				header = file.read(12)
+		except OSError:
+			return str(error)
+		if header[:4] == b'RIFF' and header[8:12] == b'WEBP':
+			message = _("Sorry, WEBP images can't be loaded by this app.") + " 😢 "
+			if not path.endswith('.webp'):
+				# Context: an error message, %s is a file path
+				message += _("Despite its name, %s is a WEBP file.") % path
+			return message
+	return str(error)
 
 ################################################################################
-

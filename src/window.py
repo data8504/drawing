@@ -17,7 +17,7 @@
 
 # Import libs
 import os
-from gi.repository import Gtk, Gdk, Gio, GdkPixbuf, GLib
+from gi.repository import Gtk, Gdk, Gio, GLib
 
 # Import various classes
 from .image import DrImage
@@ -34,7 +34,8 @@ from .tools_initializer import DrToolsInitializer
 
 # Import various functions
 from .utilities_files import utilities_add_filechooser_filters, \
-                             utilities_gfile_is_image
+                             utilities_gfile_is_image, utilities_image_load_error, \
+                             utilities_load_pixbuf
 
 UI_PATH = '/com/github/maoschanz/drawing/ui/'
 DEFAULT_TOOL_ID = 'pencil'
@@ -281,7 +282,7 @@ class DrWindow(Gtk.ApplicationWindow):
 
 	def build_new_from_file(self, gfile, check_duplicates=True):
 		if check_duplicates:
-			window, duplicate = self.app.has_image_opened(gfile.get_path())
+			window, duplicate = self.app.has_image_opened(gfile)
 			if duplicate is not None:
 				def confirmed(open_again):
 					if open_again:
@@ -1061,7 +1062,7 @@ class DrWindow(Gtk.ApplicationWindow):
 		try:
 			image.reload_from_disk()
 		except GLib.Error:
-			self.reveal_message(_("Failed to reload %s") % image.get_file_path())
+			self.reveal_message(_("Failed to reload %s") % image.gfile.get_parse_name())
 
 	def action_open(self, *args):
 		image = self.get_active_image()
@@ -1080,7 +1081,7 @@ class DrWindow(Gtk.ApplicationWindow):
 				self._hide_message()
 				return
 			if not open_again:
-				window, duplicate = self.app.has_image_opened(gfile.get_path())
+				window, duplicate = self.app.has_image_opened(gfile)
 				if duplicate is not None:
 					window.notebook.set_current_page(duplicate)
 					window.present()
@@ -1110,7 +1111,7 @@ class DrWindow(Gtk.ApplicationWindow):
 					self.app.open_window_with_content(gfile, False, False)
 				self._hide_message()
 			dialog.choose(chosen)
-		window, duplicate = self.app.has_image_opened(gfile.get_path())
+		window, duplicate = self.app.has_image_opened(gfile)
 		if duplicate is not None:
 			self.confirm_open_twice(gfile, choose_destination)
 		else:
@@ -1151,7 +1152,7 @@ class DrWindow(Gtk.ApplicationWindow):
 				for gfile in gfiles:
 					self._build_new_tab(gfile=gfile)
 			elif response == import_id:
-				self.import_from_path(image, gfiles[0].get_path())
+				self.import_from_file(image, gfiles[0])
 		dialog.choose(chosen)
 		return True
 
@@ -1162,10 +1163,14 @@ class DrWindow(Gtk.ApplicationWindow):
 			image.try_load_file(gfile)
 			self.update_picture_title()
 
-	def has_image_opened(self, file_path):
-		for tab in [self.notebook.get_nth_page(i) for i in range(self.notebook.get_n_pages())]:
-			if tab.get_file_path() == file_path:
-				return self.notebook.page_num(tab)
+	def has_image_opened(self, gfile):
+		path = gfile.get_path()
+		for index in range(self.notebook.get_n_pages()):
+			tab = self.notebook.get_nth_page(index)
+			if tab.gfile is None:
+				continue
+			if tab.gfile.equal(gfile) or (path is not None and tab.get_file_path() == path):
+				return index
 		return None
 
 	def action_save(self, *args):
@@ -1243,10 +1248,10 @@ class DrWindow(Gtk.ApplicationWindow):
 		image = self.get_active_image()
 		def chosen(gfile):
 			if gfile is not None:
-				self.import_from_path(image, gfile.get_path())
+				self.import_from_file(image, gfile)
 		self.file_chooser_open(chosen, _("Import a picture"))
 
-	def import_from_path(self, image, file_path):
+	def import_from_file(self, image, gfile):
 		"""Import a file as the selection pixbuf. Called by the 'win.import'
 		action or when an image is imported by drag-and-drop."""
 		if image is None or self.get_application() is None:
@@ -1254,7 +1259,11 @@ class DrWindow(Gtk.ApplicationWindow):
 		index = self.notebook.page_num(image)
 		if index < 0:
 			return
-		pixbuf = GdkPixbuf.Pixbuf.new_from_file(file_path)
+		try:
+			pixbuf = utilities_load_pixbuf(gfile)
+		except GLib.Error as error:
+			self.reveal_message(utilities_image_load_error(gfile, error))
+			return
 		self.notebook.set_current_page(index)
 		self.force_selection()
 		self.get_selection_tool().import_selection(pixbuf)

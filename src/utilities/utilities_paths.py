@@ -1,46 +1,37 @@
 # Licensed under GPL3 https://github.com/maoschanz/drawing/blob/master/LICENSE
 
-import cairo, math
+import cairo, math, sys
 from gi.repository import Gdk
 
 ################################################################################
 
-def _read_pixel_rgba(data, stride, x, y):
-	"""Read a single pixel from a cairo ARGB32 buffer, returning RGBA bytes.
-
-	Cairo ARGB32 stores pixels as premultiplied BGRA on little-endian systems.
-	This un-premultiplies and converts to standard RGBA byte order."""
-	offset = y * stride + x * 4
-	# Cairo ARGB32 on little-endian: B, G, R, A
-	b = data[offset]
-	g = data[offset + 1]
-	r = data[offset + 2]
-	a = data[offset + 3]
-	# Un-premultiply alpha (cairo stores color values pre-multiplied by alpha)
-	if 0 < a < 255:
-		r = min(255, r * 255 // a)
-		g = min(255, g * 255 // a)
-		b = min(255, b * 255 // a)
-	return bytes((r, g, b, a))
-
 def utilities_get_rgba_for_xy(surface, x, y):
-	"""Read the RGBA color at pixel (x, y) from a cairo ImageSurface.
-
-	Returns a bytes object with 4 values (R, G, B, A) in 0-255 range,
-	or None if the coordinates are outside the surface bounds.
-
-	This reads directly from the surface pixel buffer, avoiding the overhead
-	of allocating a GdkPixbuf for each pixel read."""
-	x = int(x)
-	y = int(y)
-	w = surface.get_width()
-	h = surface.get_height()
-	if x < 0 or x >= w or y < 0 or y >= h:
+	# Check before truncating: a pointer just outside the canvas must not
+	# sample its first row or column.
+	if x < 0 or x >= surface.get_width() or y < 0 or y >= surface.get_height():
 		return None
+	x, y = int(x), int(y)
+	surface_format = surface.get_format()
+	if surface_format not in (cairo.FORMAT_ARGB32, cairo.FORMAT_RGB24):
+		return Gdk.pixbuf_get_from_surface(surface, x, y, 1, 1).get_pixels()
+
 	surface.flush()
-	data = surface.get_data()
-	stride = surface.get_stride()
-	return _read_pixel_rgba(data, stride, x, y)
+	offset = y * surface.get_stride() + x * 4
+	pixel = int.from_bytes(surface.get_data()[offset:offset + 4], sys.byteorder)
+	red, green, blue = (pixel >> 16) & 255, (pixel >> 8) & 255, pixel & 255
+	if surface_format == cairo.FORMAT_RGB24:
+		# RGB24's high byte is unused, not an alpha channel. Gdk returns RGB.
+		return bytes((red, green, blue))
+
+	alpha = pixel >> 24
+	if alpha == 0:
+		return bytes((0, 0, 0, 0))
+	if alpha != 255:
+		# Match Gdk's rounded conversion from premultiplied channels.
+		red = min(255, (red * 255 + alpha // 2) // alpha)
+		green = min(255, (green * 255 + alpha // 2) // alpha)
+		blue = min(255, (blue * 255 + alpha // 2) // alpha)
+	return bytes((red, green, blue, alpha))
 
 
 def utilities_get_magic_path(surface, x, y):

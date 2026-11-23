@@ -110,6 +110,10 @@ meson compile -C _build
 meson test -C _build --print-errorlogs
 ```
 
+GUI regressions use a private Xvfb display and session bus with in-memory
+settings. Install `xvfb`, `xauth`, and `dbus-x11` to run the full suite, as
+native CI does. Builds without those tools report that GUI tests are omitted.
+
 A regression test should protect behavior rather than reproduce the code's
 implementation. Prefer small deterministic tests using the real Cairo/GTK APIs.
 Keep one-time exhaustive probes and benchmarks out of the maintained suite unless

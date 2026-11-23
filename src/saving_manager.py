@@ -79,30 +79,23 @@ class DrSavingManager():
 				return self.save_current_image(False, True, False, True)
 			except WantToCancelException as e:
 				# the user clicks on "cancel"
-				return True
+				return False
 			except Exception as e:
 				print(e) # an actual error occurred!
 				# Context: an error message
 				self._window.reveal_message(_("Failed to replace transparency"))
 
-		if not is_export:
-			image.pre_save(gfile)
-			# The "reload?" message shouldn't be shown, i force the reload later
-			image.disable_monitoring()
-
 		try:
 			# Actually save the pixbuf to the given file path
 			pixbuf.savev(file_path, file_format, [None], [])
+			if not is_export:
+				# Finish saved-state bookkeeping before another input event.
+				image.reload_from_disk(gfile)
 		except Exception as e:
 			print(e)
 			# Context: an error message
 			self._window.reveal_message(_("Failed to save %s") % file_path)
-			image.enable_monitoring()
 			return False
-
-		# The file monitoring flag shall reset itself asynchronously.
-		# If it doesn't, i don't care that much tbh it's just a message for a
-		# smoother UX.
 
 		# everything went fine, return true
 		return True

@@ -34,6 +34,18 @@
   </description>
 
   <releases>
+    <release version="1.2.1" date="2026-11-23">
+      <description>
+        <p>
+          Drawing now uses GTK 4.10 or newer. File selection, saving, clipboard
+          access and window closure use asynchronous GTK workflows.
+        </p>
+        <p>
+          Locked scaling preserves the aspect ratio across pixel and percentage
+          edits, even when the preview is still updating.
+        </p>
+      </description>
+    </release>
     <release version="1.2.0" date="2026-11-23">
       <description>
         <p>

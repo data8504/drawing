@@ -20,6 +20,7 @@ Meson and AppStream version metadata in that PR, then push its version tag
 (`v1.2.0`, for example). The tag must identify a commit in protected `master` or
 `stable/1.0` history. Existing older tags such as `1.0.2` can be rebuilt by running
 the workflow from the protected default branch and supplying `release_tag`.
+Release dispatch from other branches fails before building or publication.
 This retains the tag's source unchanged and uses the current reviewed build
 infrastructure. A blank dispatch runs CI only. Never move an existing tag.
 

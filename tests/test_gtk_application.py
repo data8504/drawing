@@ -250,7 +250,42 @@ class ApplicationSmokeTest(unittest.TestCase):
 					self.assertEqual(window.get_active_image(), image)
 					self.assertTrue(image.selection.is_active)
 					self.assertFalse(other.selection.is_active)
+					# A delayed Deselect & save must not deselect another tab.
+					result = []
+					late_save = Path(schema_dir) / 'late-save.png'
+					with patch.object(manager, '_file_chooser_save',
+						side_effect=lambda image, callback: callback(
+							Gio.File.new_for_path(str(late_save)))) as chooser:
+						manager.save_current_image(False, True, False, True,
+							result.append, image)
+						dialog = next(w for w in Gtk.Window.get_toplevels()
+							if isinstance(w, DrMessageDialog) and w.get_visible())
+						window.notebook.set_current_page(window.notebook.page_num(other))
+						window.action_select_all()
+						button = next(b for b in dialog._actions
+							if b.get_label() == 'Deselect & save')
+						button.emit('clicked')
+						chooser.assert_not_called()
+					self.assertEqual(result, [False])
+					self.assertTrue(other.selection.is_active)
+					self.assertTrue(image.selection.is_active)
+					self.assertFalse(late_save.exists())
 					window.action_unselect()
+					window.notebook.set_current_page(window.notebook.page_num(image))
+					window.action_unselect()
+					# Closing a saved tab with a pending chooser invalidates it.
+					temporary = window._build_new_tab()
+					self.assertTrue(temporary.is_saved())
+					result = []
+					chooser = []
+					with patch.object(manager, '_file_chooser_save',
+						side_effect=lambda image, callback: chooser.append(callback)):
+						manager.save_current_image(False, True, False, True,
+							result.append, temporary)
+					window.close_tab(temporary)
+					chooser.pop()(Gio.File.new_for_path(str(late_save)))
+					self.assertEqual(result, [False])
+					self.assertFalse(late_save.exists())
 					# A failed replacement no longer belongs to the former file.
 					window.notebook.set_current_page(window.notebook.page_num(image))
 					old_monitor = image._gfile_monitor

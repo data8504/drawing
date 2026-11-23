@@ -40,21 +40,31 @@ class DrSavingManager():
 		self._saving = True
 		image = image or self._window.get_active_image()
 
+		def image_is_attached():
+			return (image is not None and self._window.get_application() is not None
+			        and self._window.notebook.page_num(image) >= 0)
+
 		def finished(success):
 			self._saving = False
 			if callback is not None:
 				callback(success)
 
+		def pick_destination():
+			if image_is_attached():
+				self._file_chooser_save(image, got_file)
+			else:
+				finished(False)
+
 		def choose_file(confirmed):
-			if not confirmed:
+			if not confirmed or not image_is_attached():
 				finished(False)
 			elif image.get_file_path() is None or to_new or is_export or selection_only:
-				self._file_chooser_save(image, got_file)
+				pick_destination()
 			else:
 				got_file(image.gfile)
 
 		def got_file(gfile):
-			if gfile is None:
+			if gfile is None or not image_is_attached():
 				finished(False)
 				return
 			file_path = gfile.get_path()
@@ -66,6 +76,9 @@ class DrSavingManager():
 			pixbuf = image.selection.get_pixbuf() if selection_only else image.main_pixbuf
 
 			def write(replacement=None):
+				if not image_is_attached():
+					finished(False)
+					return
 				try:
 					output = (self._replace_alpha(pixbuf, replacement, image)
 			if replacement else pixbuf)
@@ -94,15 +107,17 @@ class DrSavingManager():
 				if action == 'replace':
 					write(replacement)
 				elif action == 'save-as':
-					self._file_chooser_save(image, got_file)
+					pick_destination()
 				else:
 					finished(False)
 			self._ask_overwrite_alpha(supports_alpha, allow_alpha and not is_export, alpha_chosen)
 
-		if selection_only:
+		if not image_is_attached():
+			finished(False)
+		elif selection_only:
 			choose_file(True)
 		else:
-			self._confirm_despite_ongoing_operation(choose_file)
+			self._confirm_despite_ongoing_operation(image, choose_file)
 
 	def confirm_save_modifs(self, callback, image=None):
 		"""Ask whether an image may close, awaiting any requested save."""
@@ -128,18 +143,22 @@ class DrSavingManager():
 				callback(response == discard_id)
 		dialog.choose(chosen)
 
-	def _confirm_despite_ongoing_operation(self, callback):
+	def _confirm_despite_ongoing_operation(self, image, callback):
+		if self._window.get_active_image() is not image:
+			callback(False)
+			return
+		tool = self._window.active_tool()
 		message = None
-		if self._window.get_selection_tool().selection_is_active():
+		if image.selection.is_active:
 			message = _("A part of the image is selected: the pixels beneath " +
 			            "the selection will be saved with a color you might not expect!")
-		elif self._window.active_tool().has_ongoing_operation():
+		elif tool.has_ongoing_operation():
 			message = _("Modifications from the current tool haven't been applied.")
 		if message is None:
 			callback(True)
 			return
 		can_apply = self._window.lookup_action('apply_transform').get_enabled()
-		can_unselect = (self._window.active_tool().apply_to_selection if can_apply
+		can_unselect = (tool.apply_to_selection if can_apply
 		                else self._window.lookup_action('unselect').get_enabled())
 		dialog = DrMessageDialog(self._window)
 		dialog.set_action(_("Cancel"), None, not (can_apply or can_unselect))
@@ -154,6 +173,12 @@ class DrSavingManager():
 
 		def chosen(response):
 			if response == apply_id:
+				# These actions use the active tab and window-scoped tool state.
+				# A delayed response must never apply them to a different tab.
+				if (self._window.get_active_image() is not image or
+				    self._window.active_tool() is not tool):
+					callback(False)
+					return
 				if can_apply:
 					self._window.action_apply_transform()
 				if can_unselect:

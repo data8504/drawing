@@ -47,3 +47,8 @@ establishes continuity; it does not establish that later development changes are
 safe. Keep exhaustive comparison probes and host-specific evidence out of the
 maintained suite. Retain focused regression tests where recurring coverage
 justifies their maintenance cost.
+
+The publishing token needs `contents: write`, not repository administration.
+Enable immutable releases in repository settings before the first publication.
+The workflow verifies the published release's `immutable` flag and exact assets;
+GitHub's administration-only policy endpoint is not accessible to GITHUB_TOKEN.

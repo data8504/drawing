@@ -17,7 +17,9 @@ def api(path, payload=None):
 	if payload is not None:
 		cmd += ['--method', 'POST', '--input', '-']
 	result = subprocess.run(cmd, input=json.dumps(payload) if payload else None,
-	                        text=True, capture_output=True, check=True)
+	                        text=True, capture_output=True)
+	if result.returncode:
+		raise SystemExit(result.stderr.strip())
 	return json.loads(result.stdout) if result.stdout else None
 
 
@@ -27,8 +29,9 @@ commit = os.environ['RELEASE_COMMIT']
 assert re.fullmatch(r'v?\d+\.\d+\.\d+', tag)
 assert re.fullmatch(r'[0-9a-f]{40}', commit)
 endpoint = f'repos/{repo}'
-if not api(f'{endpoint}/immutable-releases')['enabled']:
-	raise SystemExit('Repository release immutability must be enabled before publication')
+# Immutability is configured by the repository administrator. GITHUB_TOKEN
+# cannot read that administration-only endpoint. GitHub applies the setting
+# atomically at publication; verify the resulting immutable release below.
 output = Path('release-assets')
 output.mkdir()
 for path in sorted(Path(sys.argv[1]).glob('*/*')):

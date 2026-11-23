@@ -236,8 +236,8 @@ class HistoryTest(unittest.TestCase):
 			filename = str(Path(directory) / 'image.png')
 			self.image.gfile = Gio.File.new_for_path(filename)
 			self.image.get_file_path = lambda: filename
-			self.image.pre_save = lambda gfile: None
-			self.image.disable_monitoring = lambda: None
+			self.image.reload_from_disk = lambda gfile: self.assertEqual(
+				gfile, self.image.gfile)
 			window = types.SimpleNamespace(get_active_image=lambda: self.image)
 			SavingManager = importlib.import_module(
 				'drawing.saving_manager').DrSavingManager

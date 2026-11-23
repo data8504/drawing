@@ -64,7 +64,8 @@ class DrImage(Gtk.Box):
 		self.gfile = None
 		self.filename = None
 		self._gfile_monitor = None
-		self.enable_monitoring()
+		self._file_etag = None
+		self.connect('destroy', self._cancel_gfile_monitoring)
 		self._update_can_reload_action()
 
 		# Closing the info bar
@@ -219,16 +220,22 @@ class DrImage(Gtk.Box):
 		                                pixbuf.get_width(), pixbuf.get_height())
 		self.set_main_pixbuf(pixbuf)
 
-	def reload_from_disk(self):
+	def reload_from_disk(self, gfile=None):
 		"""Safely reloads the image from the disk."""
-		if self.gfile is None:
+		gfile = gfile or self.gfile
+		if gfile is None:
 			# the action shouldn't be active in the first place
 			return
-		disk_pixbuf = GdkPixbuf.Pixbuf.new_from_file(self.get_file_path())
+		# Decode before committing a Save As destination. Failed writes or
+		# readback must leave the original document identity intact.
+		disk_pixbuf = GdkPixbuf.Pixbuf.new_from_file(gfile.get_path())
+		self._connect_gfile_monitoring(gfile)
+		self.gfile = gfile
 		self._load_pixbuf_common(disk_pixbuf)
 		self.use_stable_pixbuf()
 		self.update()
 		self.remember_current_state()
+		self._update_can_reload_action()
 		self.window.update_picture_title()
 
 	def try_load_file(self, gfile):
@@ -241,6 +248,7 @@ class DrImage(Gtk.Box):
 				ex.message = "[exception without a valid message]"
 			ex = InvalidFileFormatException(ex.message, gfile.get_path())
 			self.window.reveal_action_report(ex.message)
+			self._cancel_gfile_monitoring()
 			self.gfile = None
 			pixbuf = self._new_blank_pixbuf(100, 100)
 			# XXX dans l'idéal on devrait ne rien ouvrir non ? ou si besoin (si
@@ -249,45 +257,36 @@ class DrImage(Gtk.Box):
 		self.try_load_pixbuf(pixbuf)
 		self._update_can_reload_action()
 
-	def _connect_gfile_monitoring(self):
-		if self._gfile_monitor:
-			# Probably no need to reconnect it again.
-			# XXX est-il vraiment bon ? on devrait le déconnecter, le refaire ?
-			# Tout cela n'est pas débuggable parce que le fichier que je traque
-			# est le proxy de la sandbox (/run/user/1000/...)
-			self._gfile_monitor = None
+	def _connect_gfile_monitoring(self, gfile=None):
+		gfile = gfile or self.gfile
 		flags = Gio.FileMonitorFlags.WATCH_MOUNTS
-		self._gfile_monitor = self.gfile.monitor(flags)
-		self._gfile_monitor.connect('changed', self.reveal_reload_message)
+		monitor = gfile.monitor(flags)
+		monitor.connect('changed', self.reveal_reload_message)
+		self._cancel_gfile_monitoring()
+		self._gfile_monitor = monitor
+		self._file_etag = self._get_file_etag(gfile)
 
-	def disable_monitoring(self):
-		self._monitoring_disabled = True
+	def _cancel_gfile_monitoring(self, *args):
+		if self._gfile_monitor:
+			self._gfile_monitor.cancel()
+			self._gfile_monitor = None
+		self._file_etag = None
 
-	def enable_monitoring(self):
-		"""This should only be called initially, or asynchronously, or in case
-		of an exception"""
-		self._monitoring_disabled = False
+	def _get_file_etag(self, gfile=None):
+		try:
+			info = (gfile or self.gfile).query_info('etag::value',
+				Gio.FileQueryInfoFlags.NONE, None)
+			return info.get_attribute_string('etag::value')
+		except GLib.Error:
+			return None
 
-	def reveal_reload_message(self, *args):
-		"""This method is called when the file changed, which is async: we can't
-		enable or disable the monitoring in the DrSavingManager's method because
-		saving the pixbuf takes longer to trigger the 'changed' signal on the
-		monitor than it takes to run the end of the saving process."""
-		# I'm not sure this lock is 100% correct because i'm monitoring the
-		# portal proxy file when testing with flatpak.
-		if self._monitoring_disabled:
-			# The idea is that the message banner is temporarily disabled until
-			# the monitor sends its next "changed" event, which we expect (it's
-			# the one from our own saving process).
-			if args[3] != Gio.FileMonitorEvent.CHANGED:
-				try:
-					self.reload_from_disk()
-				except Exception as ex:
-					print(e)
-					# Context: an error message
-					self._window.reveal_message(_("Failed to reload %s") % \
-					                                      self.gfile.get_path())
-				self.enable_monitoring()
+	def reveal_reload_message(self, monitor, *args):
+		# Notifications are delayed. Never reload here: the user may have
+		# edited since saving. An unchanged etag identifies our own write.
+		if monitor != self._gfile_monitor:
+			return
+		if self._file_etag is not None \
+		and self._get_file_etag() == self._file_etag:
 			return
 		self._update_can_reload_action()
 		self.reload_label.set_visible(self.window.get_allocated_width() > 500)
@@ -577,12 +576,6 @@ class DrImage(Gtk.Box):
 
 	def on_leave_image(self, *args):
 		self.window.set_cursor(False)
-
-	def pre_save(self, gfile):
-		"""The gfile is set before saving, because reveal_reload_message expects
-		self.gfile to be correct."""
-		self.gfile = gfile
-		self._connect_gfile_monitoring()
 
 	def set_surface_as_stable_pixbuf(self):
 		w = self.surface.get_width()

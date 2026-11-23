@@ -309,8 +309,14 @@ class DrSavingManager():
 		else: # if replacement == 'black':
 			pcolor1 = utilities_rgb_to_hexadecimal(0, 0, 0)
 			pcolor2 = utilities_rgb_to_hexadecimal(0, 0, 0)
-		return pixbuf.composite_color_simple(width, height,
-		                   GdkPixbuf.InterpType.TILES, 255, 8, pcolor1, pcolor2)
+		# Flatten to RGB instead of retaining the source alpha channel.
+		# At unchanged dimensions, nearest interpolation keeps opaque colors.
+		result = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8,
+		                            width, height)
+		pixbuf.composite_color(result, 0, 0, width, height, 0, 0, 1, 1,
+		                       GdkPixbuf.InterpType.NEAREST, 255,
+		                       0, 0, 8, pcolor1, pcolor2)
+		return result
 
 	############################################################################
 ################################################################################

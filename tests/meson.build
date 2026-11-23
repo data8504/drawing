@@ -23,3 +23,11 @@ if gui_runner.found() and private_bus.found()
 else
 	warning('GUI regression tests require xvfb-run and dbus-run-session')
 endif
+
+test(
+	'Opaque image export',
+	python3.find_python(),
+	args: files('test_opaque_export.py'),
+	timeout: 30,
+	env: ['PYTHONDONTWRITEBYTECODE=1'],
+)

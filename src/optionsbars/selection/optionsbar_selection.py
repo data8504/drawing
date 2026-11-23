@@ -1,5 +1,7 @@
 # Licensed under GPL3 https://github.com/maoschanz/drawing/blob/master/LICENSE
 
+from gi.repository import Gtk
+
 from .abstract_optionsbar import AbstractOptionsBar
 
 class OptionsBarSelection(AbstractOptionsBar):
@@ -36,12 +38,12 @@ class OptionsBarSelection(AbstractOptionsBar):
 
 	def init_adaptability(self):
 		super().init_adaptability()
-		temp_limit_size = self.import_box.get_preferred_width()[0] + \
-		                    self.clipboard_box.get_preferred_width()[0] + \
-		                      self.actions_btn.get_preferred_width()[0] + \
-		                 self.options_long_box.get_preferred_width()[0] + \
-		                         self.help_btn.get_preferred_width()[0] + \
-		                      self.minimap_btn.get_preferred_width()[0]
+		temp_limit_size = self.import_box.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
+		                    self.clipboard_box.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
+		                      self.actions_btn.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
+		                 self.options_long_box.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
+		                         self.help_btn.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
+		                      self.minimap_btn.measure(Gtk.Orientation.HORIZONTAL, -1)[0]
 		self._set_limit_size(temp_limit_size)
 
 	def set_compact(self, state):

@@ -15,9 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gtk, GdkPixbuf, Pango
+from gi.repository import Gtk, Gdk, GdkPixbuf, Pango
 
-class DrPropertiesDialog(Gtk.Dialog):
+class DrPropertiesDialog(Gtk.Window):
 	__gtype_name__ = 'DrPropertiesDialog'
 
 	units_dict = {
@@ -28,24 +28,37 @@ class DrPropertiesDialog(Gtk.Dialog):
 
 	def __init__(self, parent_window, image):
 		wants_csd = 'h' in parent_window.deco_layout
-		super().__init__(use_header_bar=wants_csd, \
-		                 destroy_with_parent=True, \
+		super().__init__(destroy_with_parent=True, \
 		                 transient_for=parent_window, \
 		                 title=_("Image properties"))
 		self._image = image
 		self._build_ui()
 		if wants_csd:
 			subtitle = self._image.get_filename_for_display()
-			self.get_titlebar().set_subtitle(subtitle)
+			headerbar = Gtk.HeaderBar()
+			titles = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+			title = Gtk.Label(label=_("Image properties"))
+			title.add_css_class('title')
+			name = Gtk.Label(label=subtitle, ellipsize=Pango.EllipsizeMode.END)
+			name.add_css_class('subtitle')
+			titles.append(title)
+			titles.append(name)
+			headerbar.set_title_widget(titles)
+			self.set_titlebar(headerbar)
 			# put stackswitcher [Image|Metadata] as title_widget instead
 		self.set_default_size(400, 150)
-		self.show()
+		shortcuts = Gtk.ShortcutController()
+		shortcuts.add_shortcut(Gtk.Shortcut.new(
+			Gtk.KeyvalTrigger.new(Gdk.KEY_Escape, Gdk.ModifierType(0)),
+			Gtk.NamedAction.new('window.close')))
+		self.add_controller(shortcuts)
+		self.present()
 
 	def _build_ui(self):
 		"""Fill the dialog with labels displaying correct information."""
 		ui_file_path = '/com/github/maoschanz/drawing/ui/properties.ui'
 		builder = Gtk.Builder.new_from_resource(ui_file_path)
-		self.get_content_area().add(builder.get_object('main_widget'))
+		self.set_child(builder.get_object('main_widget'))
 		self._grid = builder.get_object('image_props_grid')
 
 		# Size (and size unit) #################################################
@@ -57,8 +70,8 @@ class DrPropertiesDialog(Gtk.Dialog):
 		btn_px = builder.get_object('units_pixels')
 		btn_in = builder.get_object('units_inches')
 		btn_cm = builder.get_object('units_cm')
-		btn_in.join_group(btn_px)
-		btn_cm.join_group(btn_px)
+		btn_in.set_group(btn_px)
+		btn_cm.set_group(btn_px)
 		btn_px.connect('toggled', self._set_unit, 'px')
 		btn_cm.connect('toggled', self._set_unit, 'cm')
 		btn_in.connect('toggled', self._set_unit, 'in')
@@ -89,7 +102,7 @@ class DrPropertiesDialog(Gtk.Dialog):
 		self._grid.attach(key_label, 0, index, 1, 1)
 		value_label = Gtk.Label(label=value, halign=Gtk.Align.START, \
 		                 wrap=True, wrap_mode=Pango.WrapMode.CHAR, visible=True)
-		value_label.get_style_context().add_class('dim-label')
+		value_label.add_css_class('dim-label')
 		self._grid.attach(value_label, 1, index, 2, 1)
 
 	def _set_colorspace_label(self):

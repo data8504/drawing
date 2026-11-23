@@ -55,7 +55,7 @@ class AbstractOptionsBar():
 		if actions_menu:
 			self.options_btn.set_menu_model(actions_menu)
 		else:
-			self.options_btn.destroy()
+			self.action_bar.remove(self.options_btn)
 			self.options_btn = None
 		return builder
 
@@ -95,7 +95,7 @@ class AbstractOptionsBar():
 		gives it to the `_set_limit_size` method.
 		Any implementation HAS TO end with a call to `_set_limit_size`!"""
 		self.set_compact(False)
-		self.action_bar.show_all()
+		self.action_bar.set_visible(True)
 		# + implementation-specific instructions
 
 	def _set_limit_size(self, temp_limit_size):

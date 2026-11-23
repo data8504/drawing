@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cairo
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 from .utilities_colors import utilities_get_rgba_name
 
 PREFIX = '/com/github/maoschanz/drawing/'
@@ -68,7 +68,7 @@ class OptionsBarClassicColorPopover(Gtk.Popover):
 		builder = Gtk.Builder.new_from_resource(PREFIX + suffix)
 
 		main_box = builder.get_object('main-box')
-		self.add(main_box)
+		self.set_child(main_box)
 		self._button = btn
 		self._button.set_popover(self)
 		self._thumbnail_image = thumbn
@@ -126,30 +126,30 @@ class OptionsBarClassicColorPopover(Gtk.Popover):
 		menu_model = builder.get_object('highlight-operators-menu')
 		btn = self._build_op_menu(menu_model, 'tool-highlight-symbolic')
 		btn.set_tooltip_text(_("Highlight"))
-		box.add(btn)
-		self._operator_box_1.add(box)
+		box.append(btn)
+		self._operator_box_1.append(box)
 
 		box = self._build_radios(radio_group, ['hsl-hue', 'hsl-saturation',
 		                                       'hsl-color', 'hsl-luminosity'])
 		menu_model = builder.get_object('hsl-operators-menu')
 		btn = self._build_op_menu(menu_model, 'display-brightness-symbolic')
 		btn.set_tooltip_text(_("HSL modes"))
-		box.add(btn)
-		self._operator_box_1.add(box)
+		box.append(btn)
+		self._operator_box_1.append(box)
 
 		box = self._build_radios(radio_group, ['source', 'difference'])
 		menu_model = builder.get_object('other-operators-menu')
 		btn = self._build_op_menu(menu_model, 'view-more-symbolic')
 		btn.set_tooltip_text(_("Other modes"))
-		box.add(btn)
-		self._operator_box_1.add(box)
+		box.append(btn)
+		self._operator_box_1.append(box)
 
 	def _build_radios(self, radio_group, ops_list):
 		groupbox = Gtk.Box(visible=True)
-		groupbox.get_style_context().add_class('linked')
+		groupbox.add_css_class('linked')
 		for operator_id in ops_list:
-			button = Gtk.RadioButton(visible=False, draw_indicator=False)
-			button.join_group(radio_group)
+			button = Gtk.ToggleButton(visible=False)
+			button.set_group(radio_group)
 			button.set_detailed_action_name ('win.cairo_op_mirror::' + operator_id)
 
 			# To avoid buttons bigger than the popover the label is ellipsized
@@ -160,13 +160,13 @@ class OptionsBarClassicColorPopover(Gtk.Popover):
 			button.set_label(button_label)
 
 			self._operators_hideable_radiobtns[operator_id] = button
-			groupbox.add(button)
+			groupbox.append(button)
 		return groupbox
 
 	def _build_op_menu(self, menu_model, icon_name):
 		menu_btn = Gtk.MenuButton(visible=True)
-		image = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
-		menu_btn.set_image(image)
+		image = Gtk.Image.new_from_icon_name(icon_name)
+		menu_btn.set_child(image)
 		menu_btn.set_menu_model(menu_model)
 		self._operators_menus.append(menu_btn.get_popover())
 		return menu_btn
@@ -222,15 +222,15 @@ class OptionsBarClassicColorPopover(Gtk.Popover):
 
 		# Draw the thumbnail of the button
 		if op_as_string == 'clear':
-			self._thumbnail_image.set_from_icon_name('tool-eraser-symbolic', \
-			                                         Gtk.IconSize.SMALL_TOOLBAR)
+			self._thumbnail_image.set_from_icon_name('tool-eraser-symbolic')
 		else:
 			surface = cairo.ImageSurface(cairo.Format.ARGB32, 16, 16)
 			cairo_context = cairo.Context(surface)
 			cairo_context.set_source_rgba(red, green, blue, alpha)
 			cairo_context.paint()
 			# it could explicit whether it's normal/source/difference
-			self._thumbnail_image.set_from_surface(surface)
+			self._thumbnail_image.set_from_paintable(Gdk.Texture.new_for_pixbuf(
+				Gdk.pixbuf_get_from_surface(surface, 0, 0, 16, 16)))
 
 		# Set the tooltip of the button
 		tooltip_string = utilities_get_rgba_name(rgba)

@@ -1,6 +1,7 @@
 # Licensed under GPL3 https://github.com/maoschanz/drawing/blob/master/LICENSE
 
-from gi.repository import Gdk
+from .utilities_colors import utilities_surface_from_pixbuf
+from gi.repository import Gtk, Gdk
 from .abstract_filter import AbstractFilter
 from .utilities_blur import utilities_blur_surface, BlurType, BlurDirection
 
@@ -15,8 +16,8 @@ class FilterBlur(AbstractFilter):
 		# it's [value, lower, upper, step_increment, page_increment, page_size]
 
 	def get_preferred_minimum_width(self):
-		return self._label.get_preferred_width()[0] + \
-		     self._spinbtn.get_preferred_width()[0]
+		return self._label.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
+		     self._spinbtn.measure(Gtk.Orientation.HORIZONTAL, -1)[0]
 
 	def set_filter_compact(self, is_active, is_compact):
 		self._label.set_visible(is_active and not is_compact)
@@ -48,7 +49,7 @@ class FilterBlur(AbstractFilter):
 		b_radius = operation['radius']
 		b_direction = operation['blur_direction']
 
-		surface = Gdk.cairo_surface_create_from_pixbuf(source_pixbuf, 0, None)
+		surface = utilities_surface_from_pixbuf(source_pixbuf)
 		scale = self._tool.scale_factor()
 		surface.set_device_scale(scale, scale)
 

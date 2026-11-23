@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <interface domain="drawing">
-
+  <requires lib="gtk" version="4.0" />
   <object class="GtkAdjustment" id="adj_width">
     <property name="lower">1</property>
     <property name="upper">8127</property>
@@ -15,57 +15,45 @@
     <property name="page_increment">20</property>
     <property name="value">10</property>
   </object>
-
-  <!-- -->
-
   <object class="GtkBox" id="centered_box">
     <property name="spacing">10</property>
-
     <child>
       <object class="GtkBox">
         <property name="spacing">10</property>
-        <property name="orientation">horizontal</property>
         <child>
           <object class="GtkLabel" id="width_label">
-            <property name="label" translatable="yes">Width</property>
+            <property name="label" translatable="1">Width</property>
           </object>
         </child>
         <child>
           <object class="GtkSpinButton" id="width_btn">
             <property name="adjustment">adj_width</property>
-            <property name="tooltip_text" translatable="yes">Width</property>
+            <property name="tooltip_text" translatable="1">Width</property>
           </object>
         </child>
       </object>
     </child>
-
     <child>
-      <object class="GtkSeparator" id="separator"></object>
+      <object class="GtkSeparator" id="separator">
+        </object>
     </child>
-
     <child>
       <object class="GtkBox">
         <property name="spacing">10</property>
-        <property name="orientation">horizontal</property>
         <child>
           <object class="GtkLabel" id="height_label">
-            <property name="label" translatable="yes">Height</property>
+            <property name="label" translatable="1">Height</property>
           </object>
         </child>
         <child>
           <object class="GtkSpinButton" id="height_btn">
             <property name="adjustment">adj_height</property>
-            <property name="tooltip_text" translatable="yes">Height</property>
+            <property name="tooltip_text" translatable="1">Height</property>
           </object>
         </child>
       </object>
     </child>
-
   </object>
-
-  <!-- -->
-
-  <!-- Menu shown in the action bar (bottom-right) -->
   <menu id="actions-menu">
     <section>
       <attribute name="label" translatable="yes">Expand with…</attribute>
@@ -104,5 +92,4 @@
       </item>
     </section>
   </menu>
-
 </interface>

@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gtk, GdkPixbuf, GLib
+from gi.repository import Gtk, Gdk, Gio, GdkPixbuf, GLib
 from .message_dialog import DrMessageDialog
 from .utilities_files import utilities_add_filechooser_filters
 from .utilities_colors import utilities_rgb_to_hexadecimal
@@ -30,199 +30,156 @@ class DrSavingManager():
 	def __init__(self, window):
 		self._window = window
 
-	def save_current_image(self, is_export, to_new, selection_only, allow_alpha):
-		"""All parameters are booleans. The value of `allow_alpha` reflects the
-		user's intention (action they activated), not a technical capability.
-		It returns a boolean (true if success)."""
-		if not selection_only and not self._confirm_despite_ongoing_operation():
-			return False
+	def save_current_image(self, is_export, to_new, selection_only, allow_alpha,
+	                       callback=None, image=None):
+		"""Save one image, completing with True only after a successful write."""
+		if getattr(self, '_saving', False):
+			if callback is not None:
+				callback(False)
+			return
+		self._saving = True
+		image = image or self._window.get_active_image()
 
-		if is_export:
-			to_new = True
+		def finished(success):
+			self._saving = False
+			if callback is not None:
+				callback(success)
 
-		image = self._window.get_active_image()
+		def choose_file(confirmed):
+			if not confirmed:
+				finished(False)
+			elif image.get_file_path() is None or to_new or is_export or selection_only:
+				self._file_chooser_save(image, got_file)
+			else:
+				got_file(image.gfile)
 
-		if image.get_file_path() is None or to_new or selection_only:
-			gfile = self._file_chooser_save()
-		else:
-			gfile = image.gfile
+		def got_file(gfile):
+			if gfile is None:
+				finished(False)
+				return
+			file_path = gfile.get_path()
+			if file_path is None:
+				self._window.reveal_message(_("Failed to save %s") % gfile.get_uri())
+				finished(False)
+				return
+			file_format = self._get_format(file_path)
+			pixbuf = image.selection.get_pixbuf() if selection_only else image.main_pixbuf
 
-		if gfile is None:
-			return False
-		file_path = gfile.get_path()
-		file_format = self._get_format(file_path)
+			def write(replacement=None):
+				try:
+					output = (self._replace_alpha(pixbuf, replacement, image)
+			if replacement else pixbuf)
+					output.savev(file_path, file_format, [], [])
+					if not is_export:
+						# Preserve the encoded representation, including JPEG and
+						# flattened alpha, before completing the asynchronous save.
+						image.reload_from_disk(gfile)
+				except Exception as error:
+					print(error)
+					self._window.reveal_message(_("Failed to save %s") % file_path)
+					finished(False)
+					return
+				finished(True)
+
+			supports_alpha = file_format == 'png'
+			if allow_alpha and supports_alpha:
+				write()
+				return
+			replacement = self._window.gsettings.get_string('replace-alpha')
+			if replacement != 'ask':
+				write(replacement)
+				return
+
+			def alpha_chosen(action, replacement):
+				if action == 'replace':
+					write(replacement)
+				elif action == 'save-as':
+					self._file_chooser_save(image, got_file)
+				else:
+					finished(False)
+			self._ask_overwrite_alpha(supports_alpha, allow_alpha and not is_export, alpha_chosen)
 
 		if selection_only:
-			pixbuf = image.selection.get_pixbuf()
+			choose_file(True)
 		else:
-			pixbuf = image.main_pixbuf
+			self._confirm_despite_ongoing_operation(choose_file)
 
-		# Ask the user what to do concerning formats with no alpha channel
-		if not allow_alpha:
-			# the user clicked on "save without alpha", i'll not suggest the
-			# exact opposite in the dialog
-			can_save_as = False
-		else:
-			# no need to suggest "save as png" if it's an export, because
-			# the file chooser dialog allows any format
-			can_save_as = not is_export
-
-		supports_alpha = file_format in ['png']
-		if not allow_alpha or not supports_alpha:
-			try:
-				replacement = self._window.gsettings.get_string('replace-alpha')
-				if replacement == 'ask':
-					replacement = self._ask_overwrite_alpha(supports_alpha, can_save_as)
-				pixbuf = self._replace_alpha(pixbuf, replacement, image)
-			except WantAnotherFormatException as e:
-				# the user wants to save the file under an other format
-				return self.save_current_image(False, True, False, True)
-			except WantToCancelException as e:
-				# the user clicks on "cancel"
-				return False
-			except Exception as e:
-				print(e) # an actual error occurred!
-				# Context: an error message
-				self._window.reveal_message(_("Failed to replace transparency"))
-
-		try:
-			# Actually save the pixbuf to the given file path
-			pixbuf.savev(file_path, file_format, [None], [])
-			if not is_export:
-				# Finish saved-state bookkeeping before another input event.
-				image.reload_from_disk(gfile)
-		except Exception as e:
-			print(e)
-			# Context: an error message
-			self._window.reveal_message(_("Failed to save %s") % file_path)
-			return False
-
-		# everything went fine, return true
-		return True
-
-	############################################################################
-	# Confirmation and file-chooser dialogs ####################################
-
-	def confirm_save_modifs(self):
-		"""Return True if the image can be closed/overwritten (whether it's
-		saved or not), or False otherwise (usually if the user clicked 'cancel',
-		or if an error occurred)."""
-		image = self._window.get_active_image()
+	def confirm_save_modifs(self, callback, image=None):
+		"""Ask whether an image may close, awaiting any requested save."""
+		image = image or self._window.get_active_image()
 		if image.is_saved():
-			return True
-		fn = image.get_file_path()
-		if fn is None:
-			unsaved_file_name = _("Untitled") + '.png'
-			# Context: the sentence "There are unsaved modifications to %s."
-			display_name = _("this picture")
-		else:
-			unsaved_file_name = fn.split('/')[-1]
-			display_name = image.get_filename_for_display()
+			callback(True)
+			return
+		display_name = (image.get_filename_for_display()
+			if image.get_file_path() else _("this picture"))
 		dialog = DrMessageDialog(self._window)
 		discard_id = dialog.set_action(_("Discard"), 'destructive-action')
-		cancel_id = dialog.set_action(_("Cancel"), None)
+		dialog.set_action(_("Cancel"), None)
 		save_id = dialog.set_action(_("Save"), None, True)
-		dialog.add_string( _("There are unsaved modifications to %s.") % display_name)
-		self._window.minimap.update_content()
-		image = Gtk.Image().new_from_pixbuf(self._window.minimap.mini_pixbuf)
-		frame = Gtk.Frame(valign=Gtk.Align.CENTER, halign=Gtk.Align.CENTER)
-		frame.add(image)
-		dialog.add_widget(frame)
-		result = dialog.run()
-		dialog.destroy()
-		if result == save_id:
-			return self._window.action_save()
-		elif result == discard_id:
-			return True
-		else: # cancel_id
-			return False
+		dialog.add_string(_("There are unsaved modifications to %s.") % display_name)
+		preview = Gtk.Picture.new_for_paintable(Gdk.Texture.new_for_pixbuf(image.main_pixbuf))
+		preview.set_size_request(160, 100)
+		dialog.add_widget(preview)
 
-	def _confirm_despite_ongoing_operation(self):
-		"""Ask to the user whether or not they want to apply the operation of
-		the current tool (curve, shape, transform, selection) before saving."""
-		msg = None
+		def chosen(response):
+			if response == save_id:
+				self.save_current_image(False, False, False, True, callback, image)
+			else:
+				callback(response == discard_id)
+		dialog.choose(chosen)
+
+	def _confirm_despite_ongoing_operation(self, callback):
+		message = None
 		if self._window.get_selection_tool().selection_is_active():
-			msg = _("A part of the image is selected: the pixels beneath " + \
-			   "the selection will be saved with a color you might not expect!")
+			message = _("A part of the image is selected: the pixels beneath " +
+			            "the selection will be saved with a color you might not expect!")
 		elif self._window.active_tool().has_ongoing_operation():
-			# Context: the user tries to save the image while previewing an
-			# unapplied "transform" operation (scaling, cropping, whatever)
-			msg = _("Modifications from the current tool haven't been applied.")
-		if msg is None:
-			return True
-		dialog = DrMessageDialog(self._window)
-
-		# If we know how to finish the ongoing operation, then let's go
+			message = _("Modifications from the current tool haven't been applied.")
+		if message is None:
+			callback(True)
+			return
 		can_apply = self._window.lookup_action('apply_transform').get_enabled()
-		if can_apply:
-			can_unselect = self._window.active_tool().apply_to_selection
-		else:
-			can_unselect = self._window.lookup_action('unselect').get_enabled()
-		# Otherwise the user should cancel, and apply manually
-
-		only_2_items = not (can_apply or can_unselect)
-		cancel_id = dialog.set_action(_("Cancel"), None, only_2_items)
-		if only_2_items:
-			save_style = 'destructive-action'
-		else:
-			save_style = None
+		can_unselect = (self._window.active_tool().apply_to_selection if can_apply
+		                else self._window.lookup_action('unselect').get_enabled())
+		dialog = DrMessageDialog(self._window)
+		dialog.set_action(_("Cancel"), None, not (can_apply or can_unselect))
 		apply_id = None
 		if can_apply:
-			# To translators: this string should be quite short
-			apply_id = dialog.set_action(_("Apply & save"), \
-			                                           'suggested-action', True)
-			# same label whether or not `can_unselect` too ^
+			apply_id = dialog.set_action(_("Apply & save"), 'suggested-action', True)
 		elif can_unselect:
-			# To translators: this string should be quite short
-			apply_id = dialog.set_action(_("Deselect & save"), \
-			                                           'suggested-action', True)
-		save_id = dialog.set_action(_("Save anyway"), save_style)
-
-		dialog.add_string(msg)
+			apply_id = dialog.set_action(_("Deselect & save"), 'suggested-action', True)
+		save_id = dialog.set_action(_("Save anyway"), None)
+		dialog.add_string(message)
 		dialog.add_string(_("Do you want to save anyway?"))
-		self._window.minimap.update_content()
-		image = Gtk.Image().new_from_pixbuf(self._window.minimap.mini_pixbuf)
-		frame = Gtk.Frame(valign=Gtk.Align.CENTER, halign=Gtk.Align.CENTER)
-		frame.add(image)
-		dialog.add_widget(frame)
-		result = dialog.run()
-		dialog.destroy()
 
-		if result == save_id:
-			return True
-		elif result == cancel_id:
-			return False
-		elif result == apply_id:
-			if can_apply:
-				self._window.action_apply_transform()
-			if can_unselect:
-				self._window.action_unselect()
-			return True
-		else: # unknown id
-			return False
+		def chosen(response):
+			if response == apply_id:
+				if can_apply:
+					self._window.action_apply_transform()
+				if can_unselect:
+					self._window.action_unselect()
+			callback(response in (apply_id, save_id))
+		dialog.choose(chosen)
 
-	def _file_chooser_save(self):
-		"""Opens an "save" file chooser dialog, and return a GioFile or None."""
-		gfile = None
-		file_chooser = Gtk.FileChooserNative.new(_("Save picture as…"),
-		       self._window, Gtk.FileChooserAction.SAVE, _("Save"), _("Cancel"))
-		utilities_add_filechooser_filters(file_chooser)
-
+	def _file_chooser_save(self, image, callback):
+		dialog = Gtk.FileDialog(title=_("Save picture as…"), modal=True)
+		utilities_add_filechooser_filters(dialog)
 		images_dir = GLib.get_user_special_dir(GLib.USER_DIRECTORY_PICTURES)
-		if images_dir != None: # no idea why it sometimes fails
-			file_chooser.set_current_folder(images_dir)
-		# Context: Untitled(.png) is the default name of a newly saved file
-		default_file_name = str(_("Untitled") + '.png')
-		file_chooser.set_current_name(default_file_name)
+		if images_dir is not None:
+			dialog.set_initial_folder(Gio.File.new_for_path(images_dir))
+		dialog.set_initial_name(image.get_filename_for_display() if image.get_file_path()
+		                        else _("Untitled") + '.png')
 
-		response = file_chooser.run()
-		if response == Gtk.ResponseType.ACCEPT:
-			gfile = file_chooser.get_file()
-		file_chooser.destroy()
-		return gfile
+		def chosen(source, result):
+			try:
+				gfile = source.save_finish(result)
+			except GLib.Error as error:
+				if not error.matches(Gtk.dialog_error_quark(), Gtk.DialogError.DISMISSED):
+					self._window.reveal_message(str(error))
+				gfile = None
+			callback(gfile)
+		dialog.save(self._window, None, chosen)
 
-	############################################################################
-	# Pixbuf transparency ######################################################
 
 	def _get_format(self, file_path):
 		"""Build a short string which will be recognized as a file format by the
@@ -235,7 +192,7 @@ class DrSavingManager():
 			file_format = 'png'
 		return file_format
 
-	def _ask_overwrite_alpha(self, supports_alpha, can_save_as):
+	def _ask_overwrite_alpha(self, supports_alpha, can_save_as, callback):
 		"""Warn the user about the replacement of the alpha channel for JPG or
 		BMP files, but it may quickly annoy users to see a dialog so it's an
 		option. Can be used on PNG files (if 'supports_alpha' is true)."""
@@ -276,14 +233,14 @@ class DrSavingManager():
 		# the default value to something more pertinent.
 		dialog.add_widget(alpha_combobox)
 
-		result = dialog.run()
-		repl = alpha_combobox.get_active_id()
-		dialog.destroy()
-		if result == cancel_id:
-			raise WantToCancelException()
-		if result == save_as_id:
-			raise WantAnotherFormatException()
-		return repl
+		def chosen(response):
+			if response == replace_id:
+				callback('replace', alpha_combobox.get_active_id())
+			elif response == save_as_id:
+				callback('save-as', None)
+			else:
+				callback('cancel', None)
+		dialog.choose(chosen)
 
 	def _replace_alpha(self, pixbuf, replacement, image):
 		if replacement == 'nothing':
@@ -320,14 +277,3 @@ class DrSavingManager():
 
 	############################################################################
 ################################################################################
-
-class WantToCancelException(Exception):
-	def __init__(self):
-		super().__init__(_("Cancel"))
-
-class WantAnotherFormatException(Exception):
-	def __init__(self):
-		super().__init__(_("Replace"))
-
-################################################################################
-

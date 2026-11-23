@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import math
+from .utilities_colors import utilities_surface_from_pixbuf
 from gi.repository import Gdk
 from .abstract_transform_tool import AbstractCanvasTool
 from .optionsbar_rotate import OptionsBarRotate
@@ -201,7 +202,7 @@ class ToolRotate(AbstractCanvasTool):
 
 		# Image rotation, using methods from cairo.Context (only if needed)
 		if cairo_rotation != 0:
-			surface0 = Gdk.cairo_surface_create_from_pixbuf(new_pixbuf, 0, None)
+			surface0 = utilities_surface_from_pixbuf(new_pixbuf)
 			surface0.set_device_scale(self.scale_factor(), self.scale_factor())
 			coefs = self._get_rotation_matrix(cairo_rotation, \
 			                        surface0.get_width(), surface0.get_height())

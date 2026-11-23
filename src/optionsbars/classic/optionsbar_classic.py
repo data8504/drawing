@@ -1,5 +1,7 @@
 # Licensed under GPL3 https://github.com/maoschanz/drawing/blob/master/LICENSE
 
+from gi.repository import Gtk
+
 import cairo
 from .abstract_optionsbar import AbstractOptionsBar
 from .optionsbar_color_popover import OptionsBarClassicColorPopover
@@ -70,10 +72,10 @@ class OptionsBarClassic(AbstractOptionsBar):
 
 	def init_adaptability(self):
 		super().init_adaptability()
-		temp_limit_size = self.color_box.get_preferred_width()[0] + \
-		          self.thickness_spinbtn.get_preferred_width()[0] + \
-		           self.options_long_box.get_preferred_width()[0] + \
-		                self.minimap_btn.get_preferred_width()[0] + 50
+		temp_limit_size = self.color_box.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
+		          self.thickness_spinbtn.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
+		           self.options_long_box.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + \
+		                self.minimap_btn.measure(Gtk.Orientation.HORIZONTAL, -1)[0] + 50
 		# assuming 50px is enough to compensate the length of the label
 		self._set_limit_size(temp_limit_size)
 

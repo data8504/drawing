@@ -281,44 +281,26 @@ sudo apt -t experimental install drawing
 
 ##### Dependencies to run the app
 
-- GObject Introspection (GI) for python3 (on Debian, it's `python3-gi`).
-- `cairo` library's GI for python3 (on Debian, it's `python3-gi-cairo`).
-- GTK libraries' GI (on Debian, it's `gir1.2-gtk-3.0`).
+- GTK 4.10 or newer, including introspection data (`gir1.2-gtk-4.0`).
+- Python 3 with PyGObject (`python3-gi`), PyCairo (`python3-cairo`), and the
+  Cairo introspection bridge (`python3-gi-cairo`).
 
-Minimal versions of the dependencies:
-
-|                 | `python3-gi` | `python3-gi-cairo` | `gir1.2-gtk-3.0` |
-|-----------------|--------------|--------------------|------------------|
-| 0.2             | any          | any?               | 3.22             |
-| --------------- | ------------ | ------------------ | ---------------- |
-| 0.4.1, 0.4.2    | **≥3.30**    | any?               | 3.22             |
-| 0.4.3 to 0.4.13 | any          | any?               | 3.22             |
-| 0.4.14          | **≥3.32**    | any?               | 3.22             |
-| 0.4.15          | any          | any?               | 3.22             |
-| --------------- | ------------ | ------------------ | ---------------- |
-| 0.6.0 to 0.6.1  | **≥3.32**    | any?               | 3.22             |
-| 0.6.2           | **≥3.30**    | any?               | 3.22             |
-| 0.6.3 to 0.6.5  | any          | any?               | 3.22             |
-| --------------- | ------------ | ------------------ | ---------------- |
-| 0.8.0, 0.8.1    | **≥3.30**    | any?               | 3.22             |
-| 0.8.2 to 0.8.5  | any          | any?               | 3.22             |
-| --------------- | ------------ | ------------------ | ---------------- |
-| 0.1.0           | **≥3.30**    | any?               | 3.22             |
-| --------------- | ------------ | ------------------ | ---------------- |
-| `master`'s HEAD | **≥3.30**    | any?               | 3.22             |
+The Flatpak development manifest uses the GNOME 51 SDK. The native build checks
+that the Python runtime can load GTK 4.10 and its Cairo bridge; GTK C development
+headers are not required for this Python application.
 
 ##### Dependencies to **build** the app
 
 Here, "optional" means you may succeed without them if you use the correct meson
 options, the right building tools, and luck.
 
-- `meson`. The version of meson required by the `meson.build` file at the root
-of the project can be changed if necessary, but please don't add this change to
-your commit(s).
+- Meson 0.56 or newer.
 - [optional] `appstreamcli` (validation of the `.appdata.xml` file)
 - `libglib2.0-dev-bin` (IIRC that one is to compress the `.ui` files and the
 icons into a `.gresource` file: 100% necessary)
-- [optional] `itstool` (to generate translation files for the help manual)
+- `itstool` and its Python XML dependencies (to generate the help manual).
+- `xvfb` and `dbus` enable the application controls smoke test. The raster
+  correctness tests run without a display.
 
 ----
 

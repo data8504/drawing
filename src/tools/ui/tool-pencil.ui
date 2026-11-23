@@ -1,16 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <interface domain="drawing">
+  <requires lib="gtk" version="4.0" />
   <menu id="options-menu">
     <section>
       <attribute name="label" translatable="yes">Line shape</attribute>
       <item>
-        <!-- Context: this is the name of a line shape -->
         <attribute name="label" translatable="yes">Round</attribute>
         <attribute name="action">win.line_shape</attribute>
         <attribute name="target">round</attribute>
       </item>
       <item>
-        <!-- Context: this is the name of a line shape -->
         <attribute name="label" translatable="yes">Square</attribute>
         <attribute name="action">win.line_shape</attribute>
         <attribute name="target">thin</attribute>

@@ -99,7 +99,7 @@ class AbstractAbstractTool():
 		# CONTROL_MASK can't be used, because it already has an effect app-wide.
 		if (event_state & Gdk.ModifierType.SHIFT_MASK) == Gdk.ModifierType.SHIFT_MASK:
 			modifier_keys.append('SHIFT')
-		if (event_state & Gdk.ModifierType.MOD1_MASK) == Gdk.ModifierType.MOD1_MASK:
+		if (event_state & Gdk.ModifierType.ALT_MASK) == Gdk.ModifierType.ALT_MASK:
 			modifier_keys.append('ALT')
 		self._modifier_keys = modifier_keys
 
@@ -168,27 +168,31 @@ class AbstractAbstractTool():
 		"""Build the icon and its label for the sidebar."""
 		# The icon
 		if self.window.gsettings.get_boolean('big-icons'):
-			size = Gtk.IconSize.LARGE_TOOLBAR
+			size = 32
 		else:
-			size = Gtk.IconSize.SMALL_TOOLBAR
-		image = Gtk.Image().new_from_icon_name(self._icon_name, size)
+			size = 24
+		image = Gtk.Image.new_from_icon_name(self._icon_name)
 		self._label_box = Gtk.Box( \
 			orientation=Gtk.Orientation.HORIZONTAL, \
 			spacing=8, \
-			margin=8 \
+			margin_start=8, margin_end=8, margin_top=8, margin_bottom=8 \
 		)
-		self._label_box.add(image)
+		self._icon_widget = image
+		image.set_pixel_size(size)
+		self._label_box.append(image)
 
 		# The readable label
 		label_widget = Gtk.Label(use_underline=True, label=self._mnemo_label)
-		self._label_box.add(label_widget)
-		self._label_box.show_all()
+		self._name_label = label_widget
+		self._label_box.append(label_widget)
+		self._label_box.set_visible(True)
 
 		# The "mini-label" is shown only when pressing <Alt>
 		mini_label = Gtk.Label(use_underline=True, label="_" + self._mnemo_char)
-		self._label_box.add(mini_label)
+		self._mnemonic_label = mini_label
+		self._label_box.append(mini_label)
 
-		flowbox.add(self._label_box)
+		flowbox.insert(self._label_box, -1)
 		self._fb_child = self._label_box.get_parent()
 
 		# The item's tooltip
@@ -205,30 +209,31 @@ class AbstractAbstractTool():
 		return self._fb_child.is_selected()
 
 	def set_show_label(self, label_visible):
-		label_widget = self._label_box.get_children()[1]
+		label_widget = self._name_label
 		label_widget.set_visible(label_visible)
-		icon = self._label_box.get_children()[0]
+		icon = self._icon_widget
 		if label_visible:
 			icon.set_halign(Gtk.Align.START)
 		else:
 			icon.set_halign(Gtk.Align.CENTER)
 
 	def update_icon_size(self):
-		image = self._label_box.get_children()[0]
+		image = self._icon_widget
 		if self.window.gsettings.get_boolean('big-icons'):
-			size = Gtk.IconSize.LARGE_TOOLBAR
+			size = 32
 		else:
-			size = Gtk.IconSize.SMALL_TOOLBAR
-		image.set_from_icon_name(self._icon_name, size)
+			size = 24
+		image.set_from_icon_name(self._icon_name)
+		image.set_pixel_size(size)
 
 	def show_only_mnemonics(self, should_show):
 		if self._mnemo_char == "":
 			return
-		label_widget = self._label_box.get_children()[1]
+		label_widget = self._name_label
 		if label_widget.get_visible():
 			return
-		image = self._label_box.get_children()[0]
-		mini_label = self._label_box.get_children()[2]
+		image = self._icon_widget
+		mini_label = self._mnemonic_label
 
 		image.set_visible(not should_show)
 		mini_label.set_visible(should_show)

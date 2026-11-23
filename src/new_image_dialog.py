@@ -15,30 +15,28 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk
+from .utilities_colors import utilities_normalized_array_to_gdk_rgba
 from .utilities_units import utilities_add_unit_to_spinbtn
+from .message_dialog import DrMessageDialog
 
-class DrCustomImageDialog(Gtk.Dialog):
+class DrCustomImageDialog(DrMessageDialog):
 	__gtype_name__ = 'DrCustomImageDialog'
 
 	def __init__(self, appwindow):
-		wants_csd = 'h' in appwindow.deco_layout
-		super().__init__(use_header_bar=wants_csd, destroy_with_parent=True, \
-		         transient_for=appwindow, title=_("New Image With Custom Size"))
+		super().__init__(appwindow, title=_("New Image With Custom Size"))
 		self._app_settings = appwindow.gsettings
 		self._build_ui()
 		self.set_default_size(450, 200)
 
 	def _build_ui(self):
-		self.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
-		# Context: Create a new image
-		btn = self.add_button(_("Create"), Gtk.ResponseType.OK)
-		btn.get_style_context().add_class('suggested-action')
+		self.set_action(_("Cancel"), None)
+		self.create_id = self.set_action(_("Create"), 'suggested-action', True)
 
 		resource_path = '/com/github/maoschanz/drawing/ui/new-image-dialog.ui'
 		builder = Gtk.Builder.new_from_resource(resource_path)
 		props_content_area = builder.get_object('props_content_area')
-		self.get_content_area().add(props_content_area)
+		self.add_widget(props_content_area)
 
 		self._width_btn = builder.get_object('spin_width')
 		utilities_add_unit_to_spinbtn(self._width_btn, 4, 'px')
@@ -56,7 +54,7 @@ class DrCustomImageDialog(Gtk.Dialog):
 		g = float(background_rgba[1])
 		b = float(background_rgba[2])
 		a = float(background_rgba[3])
-		color = Gdk.RGBA(red=r, green=g, blue=b, alpha=a)
+		color = utilities_normalized_array_to_gdk_rgba(r, g, b, a)
 		self._color_btn.set_rgba(color)
 
 		self._default_checkbtn = builder.get_object('default_checkbtn')

@@ -1,67 +1,54 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <interface domain="drawing">
+  <requires lib="gtk" version="4.0" />
   <template class="DrImage" parent="GtkBox">
-    <property name="visible">True</property>
     <property name="orientation">vertical</property>
-
     <child>
       <object class="GtkInfoBar" id="reload_info_bar">
-        <property name="visible">False</property>
-        <property name="show-close-button">True</property>
-        <property name="revealed">True</property>
+        <property name="visible">0</property>
+        <property name="show-close-button">1</property>
         <property name="message-type">question</property>
-        <child internal-child="content_area">
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <child>
-              <object class="GtkLabel" id="reload_label">
-                <property name="visible">True</property>
-                <property name="wrap">True</property>
-                <property name="label" translatable="yes">The image changed on the disk, do you want to reload it?</property>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="visible">True</property>
-            <child>
-              <object class="GtkButton" id="reload_action">
-                <property name="visible">True</property>
-                <property name="action-name">win.reload_file</property>
-                <property name="label" translatable="yes">Reload</property>
-              </object>
-            </child>
-          </object>
-        </child>
         <action-widgets>
           <action-widget response="ok">reload_action</action-widget>
         </action-widgets>
+        <child>
+          <object class="GtkBox">
+            <child>
+              <object class="GtkLabel" id="reload_label">
+                <property name="wrap">1</property>
+                <property name="label" translatable="1">The image changed on the disk, do you want to reload it?</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child type="action">
+          <object class="GtkButton" id="reload_action">
+            <property name="action-name">win.reload_file</property>
+            <property name="label" translatable="1">Reload</property>
+          </object>
+        </child>
       </object>
     </child>
-
     <child>
       <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="expand">True</property>
+        <property name="hexpand">1</property>
+        <property name="vexpand">1</property>
         <child>
           <object class="GtkDrawingArea" id="_drawing_area">
-            <property name="expand">True</property>
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="hexpand">1</property>
+            <property name="vexpand">1</property>
           </object>
         </child>
         <child>
-          <object class="GtkVScrollbar" id="_v_scrollbar">
-            <!-- <property name="visible">True</property> -->
+          <object class="GtkScrollbar" id="_v_scrollbar">
+            <property name="orientation">vertical</property>
           </object>
         </child>
       </object>
     </child>
-
     <child>
-      <object class="GtkHScrollbar" id="_h_scrollbar">
-        <!-- <property name="visible">True</property> -->
+      <object class="GtkScrollbar" id="_h_scrollbar">
+        <property name="orientation">horizontal</property>
       </object>
     </child>
   </template>

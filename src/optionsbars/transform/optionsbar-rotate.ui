@@ -1,43 +1,39 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <interface domain="drawing">
-
+  <requires lib="gtk" version="4.0" />
   <object class="GtkAdjustment" id="adj_angle">
     <property name="lower">-360</property>
     <property name="upper">360</property>
     <property name="step_increment">1</property>
     <property name="page_increment">90</property>
-    <property name="value">0</property>
   </object>
-
-  <!-- -->
-
   <object class="GtkBox" id="centered_box">
     <property name="spacing">10</property>
-
     <child>
       <object class="GtkBox" id="angle_box">
         <property name="spacing">10</property>
-        <property name="tooltip_text" translatable="yes">Angle (degrees)</property>
+        <property name="tooltip_text" translatable="1">Angle (degrees)</property>
         <child>
           <object class="GtkLabel" id="angle_label">
-            <property name="label" translatable="yes">Angle</property>
+            <property name="label" translatable="1">Angle</property>
           </object>
         </child>
         <child>
           <object class="GtkSpinButton" id="angle_btn">
-            <property name="wrap">True</property>
+            <property name="wrap">1</property>
             <property name="adjustment">adj_angle</property>
           </object>
         </child>
       </object>
     </child>
-
     <child>
       <object class="GtkBox" id="rotate_box">
-        <style><class name="linked"/></style>
+        <style>
+          <class name="linked" />
+        </style>
         <child>
           <object class="GtkButton">
-            <property name="tooltip_text" translatable="yes">Rotate left</property>
+            <property name="tooltip_text" translatable="1">Rotate left</property>
             <property name="valign">center</property>
             <property name="action-name">win.rotate-counter-cw</property>
             <child>
@@ -49,7 +45,7 @@
         </child>
         <child>
           <object class="GtkButton">
-            <property name="tooltip_text" translatable="yes">Rotate right</property>
+            <property name="tooltip_text" translatable="1">Rotate right</property>
             <property name="valign">center</property>
             <property name="action-name">win.rotate-clockwise</property>
             <child>
@@ -61,13 +57,14 @@
         </child>
       </object>
     </child>
-
     <child>
       <object class="GtkBox" id="flip_box">
-        <style><class name="linked"/></style>
+        <style>
+          <class name="linked" />
+        </style>
         <child>
           <object class="GtkButton">
-            <property name="tooltip_text" translatable="yes">Flip horizontally</property>
+            <property name="tooltip_text" translatable="1">Flip horizontally</property>
             <property name="valign">center</property>
             <property name="action-name">win.rotate-flip-h</property>
             <child>
@@ -79,7 +76,7 @@
         </child>
         <child>
           <object class="GtkButton">
-            <property name="tooltip_text" translatable="yes">Flip vertically</property>
+            <property name="tooltip_text" translatable="1">Flip vertically</property>
             <property name="valign">center</property>
             <property name="action-name">win.rotate-flip-v</property>
             <child>
@@ -91,14 +88,9 @@
         </child>
       </object>
     </child>
-
   </object>
-
-  <!-- -->
-
   <menu id="actions-menu">
     <section>
-      <!-- <attribute name="display-hint">horizontal-buttons</attribute> -->
       <item>
         <attribute name="label" translatable="yes">Rotate left</attribute>
         <attribute name="action">win.rotate-counter-cw</attribute>
@@ -111,7 +103,6 @@
       </item>
     </section>
     <section>
-      <!-- <attribute name="display-hint">horizontal-buttons</attribute> -->
       <item>
         <attribute name="label" translatable="yes">Flip horizontally</attribute>
         <attribute name="action">win.rotate-flip-h</attribute>
@@ -124,5 +115,4 @@
       </item>
     </section>
   </menu>
-
 </interface>

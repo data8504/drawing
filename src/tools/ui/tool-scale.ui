@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <interface domain="drawing">
-
+  <requires lib="gtk" version="4.0" />
   <menu id="options-menu">
     <section>
       <item>
@@ -19,30 +19,24 @@
     <section>
       <attribute name="label" translatable="yes">Keep proportions</attribute>
       <item>
-        <!-- Context for translations: "Always [keep proportions]" -->
         <attribute name="label" translatable="yes">Always</attribute>
         <attribute name="action">win.scale-proportions</attribute>
         <attribute name="target">always</attribute>
       </item>
       <item>
-        <!-- Context for translations: "[Keep proportions only] when scaling from corners" -->
         <attribute name="label" translatable="yes">When scaling from corners</attribute>
         <attribute name="action">win.scale-proportions</attribute>
         <attribute name="target">corners</attribute>
       </item>
       <item>
-        <!-- Context for translations: "[Keep proportions only] when setting values manually" -->
         <attribute name="label" translatable="yes">When setting values manually</attribute>
         <attribute name="action">win.scale-ratio-spinbtns</attribute>
       </item>
       <item>
-        <!-- Context for translations: "Never [keep proportions]" -->
         <attribute name="label" translatable="yes">Never</attribute>
         <attribute name="action">win.scale-proportions</attribute>
         <attribute name="target">never</attribute>
       </item>
     </section>
   </menu>
-
 </interface>
-

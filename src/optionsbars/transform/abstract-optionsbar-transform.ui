@@ -1,16 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <interface domain="drawing">
+  <requires lib="gtk" version="4.0" />
   <object class="GtkActionBar" id="bottom-pane">
-    <property name="visible">False</property>
-    <property name="expand">True</property>
-
+    <property name="visible">0</property>
+    <property name="hexpand">1</property>
+    <property name="vexpand">1</property>
     <child>
       <object class="GtkButton" id="cancel_btn">
-        <property name="tooltip_text" translatable="yes">Cancel transformation</property>
+        <property name="tooltip_text" translatable="1">Cancel transformation</property>
         <property name="valign">center</property>
         <property name="action_name">win.cancel_transform</property>
         <style>
-          <class name="destructive-action"/>
+          <class name="destructive-action" />
         </style>
         <child>
           <object class="GtkImage">
@@ -19,18 +20,13 @@
         </child>
       </object>
     </child>
-
-    <!-- <child type="center"> -->
-      <!-- Filled by the implementations -->
-    <!-- </child> -->
-
-    <child>
+    <child type="end">
       <object class="GtkButton" id="apply_btn">
         <property name="action_name">win.apply_transform</property>
-        <property name="tooltip-text" translatable="yes">Apply transformation</property>
+        <property name="tooltip-text" translatable="1">Apply transformation</property>
         <property name="valign">center</property>
         <style>
-          <class name="suggested-action"/>
+          <class name="suggested-action" />
         </style>
         <child>
           <object class="GtkImage">
@@ -38,14 +34,10 @@
           </object>
         </child>
       </object>
-      <packing>
-        <property name="pack-type">end</property>
-      </packing>
     </child>
-
-    <child>
+    <child type="end">
       <object class="GtkMenuButton" id="options_btn">
-        <property name="tooltip-text" translatable="yes">More options</property>
+        <property name="tooltip-text" translatable="1">More options</property>
         <property name="valign">center</property>
         <property name="halign">center</property>
         <child>
@@ -54,15 +46,11 @@
           </object>
         </child>
       </object>
-      <packing>
-        <property name="pack-type">end</property>
-      </packing>
     </child>
-
-    <child>
+    <child type="end">
       <object class="GtkButton" id="help_btn">
-        <property name="relief">none</property>
-        <property name="tooltip-text" translatable="yes">Help about transformation tools</property>
+        <property name="has-frame">false</property>
+        <property name="tooltip-text" translatable="1">Help about transformation tools</property>
         <property name="action-name">app.help_transform</property>
         <child>
           <object class="GtkImage">
@@ -70,11 +58,6 @@
           </object>
         </child>
       </object>
-      <packing>
-        <property name="pack-type">end</property>
-      </packing>
     </child>
-
   </object>
 </interface>
-

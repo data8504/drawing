@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import cairo
+from .utilities_colors import utilities_surface_from_pixbuf
 from gi.repository import Gtk, Gdk, GdkPixbuf
 
 class NoSelectionPixbufException(Exception):
@@ -40,9 +41,11 @@ class DrSelectionManager():
 		builder = Gtk.Builder.new_from_resource( \
 		                '/com/github/maoschanz/drawing/ui/selection-manager.ui')
 		menu_r = builder.get_object('inactive-selection-menu')
-		self.menu_if_inactive = Gtk.Popover.new_from_model(self.image, menu_r)
+		self.menu_if_inactive = Gtk.PopoverMenu.new_from_model(menu_r)
 		menu_l = builder.get_object('active-selection-menu')
-		self.menu_if_active = Gtk.Popover.new_from_model(self.image, menu_l)
+		self.menu_if_active = Gtk.PopoverMenu.new_from_model(menu_l)
+		self.menu_if_inactive.set_parent(self.image)
+		self.menu_if_active.set_parent(self.image)
 		self.set_popovers_position(1.0, 1.0)
 
 	def init_pixbuf(self):
@@ -64,7 +67,7 @@ class DrSelectionManager():
 		main_pixbuf = self.image.main_pixbuf
 
 		# Erase everything outside of the path
-		surface = Gdk.cairo_surface_create_from_pixbuf(main_pixbuf, 0, None)
+		surface = utilities_surface_from_pixbuf(main_pixbuf)
 		surface.set_device_scale(self.image.SCALE_FACTOR, self.image.SCALE_FACTOR)
 		cairo_context = cairo.Context(surface)
 		cairo_context.set_operator(cairo.Operator.DEST_IN)

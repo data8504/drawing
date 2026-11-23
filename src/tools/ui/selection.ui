@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <interface domain="drawing">
-
-  <!-- For the menubar of any selection tool -->
-  <!-- (the optionsbar uses a different model, in optionsbar-selection.ui) -->
+  <requires lib="gtk" version="4.0" />
   <menu id="options-menu">
     <section>
       <item>
@@ -24,7 +22,6 @@
       </item>
     </section>
     <section>
-
       <submenu>
         <attribute name="label" translatable="yes">More actions</attribute>
         <section>
@@ -65,7 +62,6 @@
           </item>
         </section>
       </submenu>
-
     </section>
     <section>
       <attribute name="label" translatable="yes">Replace with…</attribute>
@@ -90,6 +86,4 @@
       </item>
     </section>
   </menu>
-
 </interface>
-

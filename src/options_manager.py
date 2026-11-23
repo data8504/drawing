@@ -15,7 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import GLib, Gio, Gdk
+from gi.repository import GLib, Gio
+from .utilities_colors import utilities_normalized_array_to_gdk_rgba
 
 class DrOptionsManager():
 	__gtype_name__ = 'DrOptionsManager'
@@ -171,7 +172,7 @@ class DrOptionsManager():
 			if new_pane is None:
 				return
 			self._bottom_panes_dict[pane_id] = new_pane
-			self.window.bottom_panes_box.add(new_pane.action_bar)
+			self.window.bottom_panes_box.append(new_pane.action_bar)
 
 	def try_enable_pane(self, pane_id):
 		if pane_id == self._active_pane_id:
@@ -224,10 +225,12 @@ class DrOptionsManager():
 	def update_minimap_position(self):
 		"""Move the minimap popover to the currently active optionsbar."""
 		btn = self.get_active_pane().get_minimap_btn()
-		if btn is not None:
-			self.window.minimap.set_relative_to(btn)
-		else:
-			self.window.minimap.set_relative_to(self.window.bottom_panes_box)
+		parent = btn if btn is not None else self.window.bottom_panes_box
+		minimap = self.window.minimap
+		if minimap.get_parent() is not parent:
+			if minimap.get_parent() is not None:
+				minimap.unparent()
+			minimap.set_parent(parent)
 
 	############################################################################
 	# Methods specific to the optionsbar for classic tools #####################
@@ -272,7 +275,7 @@ class DrOptionsManager():
 		g = float(color_array[1])
 		b = float(color_array[2])
 		a = float(color_array[3])
-		return Gdk.RGBA(red=r, green=g, blue=b, alpha=a)
+		return utilities_normalized_array_to_gdk_rgba(r, g, b, a)
 
 	def get_operator(self):
 		# XXX répugnant, on duplique la donnée dans les 2 popovers, puis on

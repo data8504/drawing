@@ -66,27 +66,22 @@ class ToolText(AbstractClassicTool):
 	# Options ##################################################################
 
 	def _set_font(self, *args):
-		dialog = Gtk.FontChooserDialog(show_preview_entry=False)
-		dialog.set_level(Gtk.FontChooserLevel.FAMILY)
-		dialog.set_font(self._font_fam_name)
-
-		# for f in PangoCairo.font_map_get_default().list_families():
-		# 	print(f.get_name())
-
-		try:
-			status = dialog.run()
-			# ^ FIXME #479
-		except Exception as ex:
-			# probablement qu'on ne catchera rien
-			pass
-		if(status == Gtk.ResponseType.OK):
-			self._font_fam_name = dialog.get_font_family().get_name()
-			# print(dialog.get_font())
-			font_gvar = GLib.Variant.new_string(self._font_fam_name)
-			self.window.lookup_action('text-active-family').set_state(font_gvar)
+		dialog = Gtk.FontDialog(modal=True)
+		family = next((font for font in PangoCairo.FontMap.get_default().list_families()
+		               if font.get_name() == self._font_fam_name), None)
+		def chosen(source, result):
+			try:
+				selected = source.choose_family_finish(result)
+			except GLib.Error:
+				return
+			if self.window.get_application() is None:
+				return
+			self._font_fam_name = selected.get_name()
+			state = GLib.Variant.new_string(self._font_fam_name)
+			self.window.lookup_action('text-active-family').set_state(state)
 			self._preview_text()
-		dialog.destroy()
-		self.window.on_tool_options_changed()
+			self.window.on_tool_options_changed()
+		dialog.choose_family(self.window, family, None, chosen)
 
 	def _set_font_options(self, *args):
 		# XXX incomplete? OBLIQUE exists
@@ -206,7 +201,10 @@ class ToolText(AbstractClassicTool):
 		rectangle.height = 1
 		rectangle.width = 1
 		self._popover.set_pointing_to(rectangle)
-		self._popover.set_relative_to(self.get_image())
+		if self._popover.get_parent() is not self.get_image():
+			if self._popover.get_parent() is not None:
+				self._popover.unparent()
+			self._popover.set_parent(self.get_image())
 		self._popover.popup()
 		self._entry.grab_focus()
 		self._preview_text()

@@ -13,8 +13,8 @@ from unittest.mock import Mock
 import cairo
 import gi
 
-gi.require_version('Gdk', '3.0')
-gi.require_version('Gtk', '3.0')
+gi.require_version('Gdk', '4.0')
+gi.require_version('Gtk', '4.0')
 
 # Meson installs these modules together, flattening the source directories.
 source_dir = Path(__file__).resolve().parents[1] / 'src'
@@ -225,6 +225,29 @@ class MagicPathTests(unittest.TestCase):
 		tool.release_define(surface, 2, 0)
 		tool._pre_load_path.assert_not_called()
 		tool.apply_operation.assert_not_called()
+
+
+class PixelSurfaceBridgeTests(unittest.TestCase):
+	def test_rgb_and_premultiplied_rgba_survive_surface_conversion(self):
+		from gi.repository import GLib, GdkPixbuf
+		from drawing.utilities_colors import utilities_surface_from_pixbuf
+		pixels = bytes([255, 0, 0, 128, 0, 0, 255, 255, 255, 255, 255, 0])
+		pixbuf = GdkPixbuf.Pixbuf.new_from_bytes(GLib.Bytes.new(pixels),
+			GdkPixbuf.Colorspace.RGB, True, 8, 3, 1, 12)
+		surface = utilities_surface_from_pixbuf(pixbuf)
+		surface.flush()
+		data = bytes(surface.get_data())
+		self.assertEqual(surface.get_format(), cairo.Format.ARGB32)
+		self.assertEqual([int.from_bytes(data[i:i + 4], sys.byteorder)
+			for i in range(0, 12, 4)], [0x80800000, 0xff0000ff, 0])
+		self.assertEqual(bytes(pixbuf.get_pixels()), pixels)
+		rgb = GdkPixbuf.Pixbuf.new_from_bytes(GLib.Bytes.new(bytes([12, 34, 56])),
+			GdkPixbuf.Colorspace.RGB, False, 8, 1, 1, 3)
+		surface = utilities_surface_from_pixbuf(rgb)
+		surface.flush()
+		self.assertEqual(surface.get_format(), cairo.Format.RGB24)
+		word = int.from_bytes(bytes(surface.get_data())[:4], sys.byteorder)
+		self.assertEqual(word & 0xffffff, 0x0c2238)
 
 
 if __name__ == '__main__':

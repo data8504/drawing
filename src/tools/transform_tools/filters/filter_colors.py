@@ -1,6 +1,7 @@
 # Licensed under GPL3 https://github.com/maoschanz/drawing/blob/master/LICENSE
 
 import cairo
+from .utilities_colors import utilities_surface_from_pixbuf
 from gi.repository import Gdk
 from .abstract_filter import AbstractFilter
 
@@ -13,7 +14,7 @@ class FilterColors(AbstractFilter):
 	# this filter could be so much more, but what's pertinent?
 
 	def do_filter_operation(self, source_pixbuf, operation):
-		surface = Gdk.cairo_surface_create_from_pixbuf(source_pixbuf, 0, None)
+		surface = utilities_surface_from_pixbuf(source_pixbuf)
 		cairo_context = cairo.Context(surface)
 		cairo_context.set_operator(cairo.Operator.DIFFERENCE)
 		cairo_context.set_source_rgba(1.0, 1.0, 1.0, 1.0)

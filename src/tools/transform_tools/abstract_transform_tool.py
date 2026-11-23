@@ -19,6 +19,7 @@ import cairo
 from gi.repository import Gtk, Gdk, GdkPixbuf
 
 from .abstract_tool import AbstractAbstractTool
+from .utilities_colors import utilities_normalized_array_to_gdk_rgba
 
 class AbstractCanvasTool(AbstractAbstractTool):
 	__gtype_name__ = 'AbstractCanvasTool'
@@ -247,7 +248,7 @@ class AbstractCanvasTool(AbstractAbstractTool):
 		elif color_type == 'secondary' and event_btn == 3:
 			exp_rgba = self.window.options_manager.get_left_color()
 		else: # color_type == 'alpha':
-			exp_rgba = Gdk.RGBA(red=1.0, green=1.0, blue=1.0, alpha=0.0)
+			exp_rgba = utilities_normalized_array_to_gdk_rgba(1.0, 1.0, 1.0, 0.0)
 		self._expansion_rgba = exp_rgba
 
 	############################################################################

@@ -10,7 +10,7 @@
   <bug-database rdf:resource="https://github.com/data8504/drawing/issues"/>
 
   <programming-language>Python</programming-language>
-  <platform>GTK 3</platform>
+  <platform>GTK 4</platform>
 
   <maintainer>
     <foaf:Person>

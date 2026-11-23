@@ -1,6 +1,7 @@
 # Licensed under GPL3 https://github.com/maoschanz/drawing/blob/master/LICENSE
 
 import cairo
+from .utilities_colors import utilities_surface_from_pixbuf
 from gi.repository import Gtk, Gdk, GdkPixbuf
 
 class DrMinimap(Gtk.Popover):
@@ -23,17 +24,18 @@ class DrMinimap(Gtk.Popover):
 
 		self._minimap_area = builder.get_object('_minimap_area')
 		self._minimap_area.set_size_request(200, 200)
-		self._minimap_area.add_events(Gdk.EventMask.BUTTON_PRESS_MASK | \
-		                              Gdk.EventMask.BUTTON_MOTION_MASK | \
-		                              Gdk.EventMask.BUTTON_RELEASE_MASK)
-		self._minimap_area.connect('draw', self._on_mm_draw)
-		self._minimap_area.connect('button-press-event', self._on_mm_press)
-		self._minimap_area.connect('motion-notify-event', self._on_mm_motion)
-		self._minimap_area.connect('button-release-event', self._on_mm_motion)
+		self._minimap_area.set_draw_func(self._on_mm_draw)
+		drag = Gtk.GestureDrag.new()
+		drag.connect('drag-begin', self._on_drag_begin)
+		drag.connect('drag-update', self._on_drag_update)
+		drag.connect('drag-end', self._on_drag_update)
+		self._minimap_area.add_controller(drag)
 
-		self.add(box)
+		self.set_child(box)
 		self.connect('closed', self._on_popover_dismissed)
-		self.set_relative_to(minimap_btn)
+
+		if minimap_btn is not None:
+			self.set_parent(minimap_btn)
 
 		# TODO custom "moving hand" cursor?
 
@@ -65,8 +67,7 @@ class DrMinimap(Gtk.Popover):
 		if not self.get_visible() and not force_update:
 			return
 		image = self._window.get_active_image()
-		self._mini_surface = Gdk.cairo_surface_create_from_pixbuf( \
-		                                              self.mini_pixbuf, 0, None)
+		self._mini_surface = utilities_surface_from_pixbuf(self.mini_pixbuf)
 		if image.get_minimap_need_overlay():
 			size_ratio = image.get_minimap_ratio(self.mini_pixbuf.get_width())
 			mini_x = int(image.scroll_x * size_ratio)
@@ -122,34 +123,23 @@ class DrMinimap(Gtk.Popover):
 	def _on_popover_dismissed(self, *args):
 		"""Callback of the 'closed' signal, updating the state of the action."""
 		try:
-			self.get_relative_to().set_active(False)
+			self.get_parent().set_active(False)
 		except:
 			pass
 
-	def _on_mm_draw(self, area, cairo_context):
+	def _on_mm_draw(self, area, cairo_context, width, height):
 		"""Callback of the 'draw' signal, painting the area with the surface."""
 		cairo_context.set_source_surface(self._mini_surface, 0, 0)
 		cairo_context.paint()
 
-	def _on_mm_press(self, area, event):
-		"""Callback of the 'button-press-event' signal."""
-		self._press_x = event.x
-		self._press_y = event.y
+	def _on_drag_begin(self, gesture, x, y):
 		image = self._window.get_active_image()
 		self._old_scroll_x = image.scroll_x
 		self._old_scroll_y = image.scroll_y
 
-	def _on_mm_motion(self, area, event):
-		"""Callback of the 'button-release-event' signal (and also the
-		'motion-notify-event' signal)."""
+	def _on_drag_update(self, gesture, dx, dy):
 		image = self._window.get_active_image()
 		image.scroll_x = self._old_scroll_x
 		image.scroll_y = self._old_scroll_y
-		size_ratio = image.get_minimap_ratio(self.mini_pixbuf.get_width())
-		delta_x = int((event.x - self._press_x) / size_ratio)
-		delta_y = int((event.y - self._press_y) / size_ratio)
-		image.add_deltas(delta_x, delta_y, 1)
-
-	############################################################################
-################################################################################
-
+		ratio = image.get_minimap_ratio(self.mini_pixbuf.get_width())
+		image.add_deltas(round(dx / ratio), round(dy / ratio), 1)

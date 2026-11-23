@@ -1,41 +1,44 @@
 test(
 	'Contour tracing',
-	python3.find_python(),
+	python3,
 	args: files('test_utilities_paths.py'),
 	timeout: 30,
 	env: ['PYTHONDONTWRITEBYTECODE=1'],
 )
 
-gui_runner = find_program('xvfb-run', required: false)
-private_bus = find_program('dbus-run-session', required: false)
-if gui_runner.found() and private_bus.found()
+# This exercises production widgets and tool transitions, not screenshots or
+# timing thresholds. Ordinary raster correctness stays in the headless oracle.
+xvfb_run = find_program('xvfb-run', required: false)
+dbus_run = find_program('dbus-run-session', required: false)
+if xvfb_run.found() and dbus_run.found()
 	test(
 		'Selection bounds',
-		gui_runner,
-		args: ['-a', private_bus.path(), '--', python3.find_python().path(),
+		xvfb_run,
+		args: ['-a', dbus_run.full_path(), '--', python3.full_path(),
 			files('test_selection_bounds.py')],
 		timeout: 30,
 		env: ['PYTHONDONTWRITEBYTECODE=1', 'GSETTINGS_BACKEND=memory',
 			'GIO_USE_VFS=local', 'NO_AT_BRIDGE=1'],
 	)
 	test(
-		'Saved document state',
-		gui_runner,
-		args: ['-a', private_bus.path(), '--', python3.find_python().path(),
-			files('test_save_state.py'),
-			join_paths(meson.build_root(), 'src', 'drawing.gresource')],
-		timeout: 30,
+		'Application controls',
+		xvfb_run,
 		depends: drawing_resources,
-		env: ['PYTHONDONTWRITEBYTECODE=1', 'GSETTINGS_BACKEND=memory',
-			'GIO_USE_VFS=local', 'NO_AT_BRIDGE=1'],
+		args: ['-a', dbus_run.full_path(), '--', python3.full_path(),
+			files('test_gtk_application.py'),
+			meson.project_build_root() / 'src/drawing.gresource'],
+		timeout: 30,
+		env: ['GSETTINGS_BACKEND=memory', 'PYTHONDONTWRITEBYTECODE=1',
+			'GSK_RENDERER=cairo',
+			'DRAWING_TEST_VERSION=' + meson.project_version()],
 	)
 else
-	warning('GUI regression tests require xvfb-run and dbus-run-session')
+	message('Application controls and selection bounds tests skipped: install xvfb and dbus')
 endif
 
 test(
 	'Opaque image export',
-	python3.find_python(),
+	python3,
 	args: files('test_opaque_export.py'),
 	timeout: 30,
 	env: ['PYTHONDONTWRITEBYTECODE=1'],

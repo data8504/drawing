@@ -1,7 +1,6 @@
-<?xml version="1.0"?>
+<?xml version='1.0' encoding='utf-8'?>
 <interface domain="drawing">
-
-  <!-- Hamburger menu for smartphone -->
+  <requires lib="gtk" version="4.0" />
   <menu id="long-window-menu">
     <section>
       <item>
@@ -62,8 +61,6 @@
         <attribute name="label" translatable="yes">Save without transparency</attribute>
       </item>
       <item>
-        <!-- This "feature" is only visible on April Fools' day, and it -->
-        <!-- will just rickroll the user. -->
         <attribute name="label" translatable="yes">Prepare as NFT…</attribute>
         <attribute name="action">app.april-fools</attribute>
         <attribute name="hidden-when">action-missing</attribute>
@@ -88,17 +85,11 @@
       </item>
     </section>
     <section>
-      <!-- <attribute name="display-hint">horizontal-buttons</attribute> -->
       <item>
         <attribute name="label" translatable="yes">Show tools names</attribute>
         <attribute name="action">win.show-labels</attribute>
         <attribute name="verb-icon">view-list-symbolic</attribute>
       </item>
-      <!-- <item> -->
-      <!--   <attribute name="label" translatable="yes">Dark theme variant</attribute> -->
-      <!--   <attribute name="action">win.dark-theme-variant</attribute> -->
-      <!--   <attribute name="verb-icon">night-light-symbolic</attribute> -->
-      <!-- </item> -->
       <item>
         <attribute name="label" translatable="yes">Preferences</attribute>
         <attribute name="action">app.settings</attribute>
@@ -134,8 +125,6 @@
       </item>
     </section>
   </menu>
-
-  <!-- Hamburger menu for desktop -->
   <menu id="short-window-menu">
     <section>
       <attribute name="display-hint">horizontal-buttons</attribute>
@@ -161,8 +150,6 @@
         <attribute name="label" translatable="yes">Save without transparency</attribute>
       </item>
       <item>
-        <!-- This "feature" is only visible on April Fools' day, and it -->
-        <!-- will just rickroll the user. -->
         <attribute name="label" translatable="yes">Prepare as NFT…</attribute>
         <attribute name="action">app.april-fools</attribute>
         <attribute name="hidden-when">action-missing</attribute>
@@ -191,10 +178,6 @@
         <attribute name="label" translatable="yes">Show tools names</attribute>
         <attribute name="action">win.show-labels</attribute>
       </item>
-      <!-- <item> -->
-      <!--   <attribute name="label" translatable="yes">Dark theme variant</attribute> -->
-      <!--   <attribute name="action">win.dark-theme-variant</attribute> -->
-      <!-- </item> -->
       <item>
         <attribute name="label" translatable="yes">Preferences</attribute>
         <attribute name="action">app.settings</attribute>
@@ -229,8 +212,6 @@
       </item>
     </section>
   </menu>
-
-  <!-- Hamburger menu for layouts with a more rich toolbar -->
   <menu id="minimal-window-menu">
     <section>
       <item>
@@ -254,10 +235,6 @@
         <attribute name="label" translatable="yes">Show tools names</attribute>
         <attribute name="action">win.show-labels</attribute>
       </item>
-      <!-- <item> -->
-      <!--   <attribute name="label" translatable="yes">Dark theme variant</attribute> -->
-      <!--   <attribute name="action">win.dark-theme-variant</attribute> -->
-      <!-- </item> -->
       <item>
         <attribute name="label" translatable="yes">Preferences</attribute>
         <attribute name="action">app.settings</attribute>
@@ -292,6 +269,4 @@
       </item>
     </section>
   </menu>
-
 </interface>
-

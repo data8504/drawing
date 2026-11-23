@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import importlib
+import os
 from pathlib import Path
 import sys
 import tempfile
@@ -92,6 +93,8 @@ class OpaqueExportTest(unittest.TestCase):
 				expected = (channel * 152 + background * 103 + 127) // 255
 				self.assertLessEqual(abs(actual - expected), 1)
 
+	@unittest.skipIf(os.environ.get('DRAWING_SKIP_CODEC_ROUNDTRIP') == '1',
+		'Flatpak SDK build sandbox has no portal for Glycin subprocesses')
 	def test_core_formats_write_and_reopen(self):
 		for format_name in ('png', 'jpeg', 'bmp'):
 			for color in ((255, 255, 255), (23, 91, 187)):

@@ -14,6 +14,9 @@
 	"modules" : [{
 		"name" : "drawing",
 		"buildsystem" : "meson",
+		"build-options" : {
+			"test-args" : ["--env=DRAWING_SKIP_CODEC_ROUNDTRIP=1"]
+		},
 		"sources" : [{
 			"type" : "dir",
 			"path" : "."

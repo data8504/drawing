@@ -311,6 +311,24 @@ class ApplicationSmokeTest(unittest.TestCase):
 					self.assertEqual(window.notebook.page_num(untouched), -1)
 					self.assertIs(window.get_active_image(), image)
 					self.assertEqual(crop.width_btn.get_value_as_int(), 34)
+					window.action_cancel_transform()
+					# Open must ask about the initiating tab even if an empty
+					# tab becomes active while the file chooser is pending.
+					self.assertFalse(image.should_replace())
+					chooser = []
+					with patch.object(window, 'file_chooser_open',
+						side_effect=chooser.append):
+						window.action_open()
+					empty = window._build_new_tab()
+					self.assertTrue(empty.should_replace())
+					chooser.pop()(Gio.File.new_for_path(str(exported)))
+					dialog = next(w for w in Gtk.Window.get_toplevels()
+						if isinstance(w, DrMessageDialog) and w.get_visible())
+					button = next(b for b in dialog._actions
+						if b.get_label() == 'Discard changes')
+					button.emit('clicked')
+					self.assertEqual(image.get_file_path(), str(exported))
+					self.assertIsNone(empty.gfile)
 					# Closing a second window stops its subtitle updates.
 					extra = app.open_window_with_content(None)
 					decorations = extra._decorations

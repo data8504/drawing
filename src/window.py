@@ -1064,18 +1064,21 @@ class DrWindow(Gtk.ApplicationWindow):
 			self.reveal_message(_("Failed to reload %s") % image.get_file_path())
 
 	def action_open(self, *args):
-		self.file_chooser_open(self._open_chosen_file)
+		image = self.get_active_image()
+		self.file_chooser_open(lambda gfile: self._open_chosen_file(image, gfile))
 
-	def _open_chosen_file(self, gfile):
-		if gfile is None:
+	def _open_chosen_file(self, image, gfile):
+		def image_is_attached():
+			return (image is not None and self.get_application() is not None
+			        and self.notebook.page_num(image) >= 0)
+		if gfile is None or not image_is_attached():
 			return
 		file_name = gfile.get_basename()
 		self.reveal_message(_("Loading %s") % file_name)
-		if self.get_active_image().should_replace():
-			self._try_load_file(gfile)
-			self._hide_message()
-			return
 		def choose_destination(open_again=True):
+			if not image_is_attached():
+				self._hide_message()
+				return
 			if not open_again:
 				window, duplicate = self.app.has_image_opened(gfile.get_path())
 				if duplicate is not None:
@@ -1083,16 +1086,22 @@ class DrWindow(Gtk.ApplicationWindow):
 					window.present()
 				self._hide_message()
 				return
+			if image.should_replace():
+				self._load_into_image(image, gfile)
+				self._hide_message()
+				return
 			dialog = DrMessageDialog(self)
 			new_tab = dialog.set_action(_("New Tab"), None, True)
 			new_window = dialog.set_action(_("New Window"), None)
 			discard = dialog.set_action(_("Discard changes"), 'destructive-action')
-			image = self.get_active_image()
 			if not image.is_saved():
 				dialog.add_string(_("There are unsaved modifications to %s.") %
 			image.get_filename_for_display())
 			dialog.add_string(_("Where do you want to open %s?") % file_name)
 			def chosen(response):
+				if not image_is_attached():
+					self._hide_message()
+					return
 				if response == new_tab:
 					self.build_new_from_file(gfile, False)
 				elif response == discard:
@@ -1145,23 +1154,6 @@ class DrWindow(Gtk.ApplicationWindow):
 				self.import_from_path(image, gfiles[0].get_path())
 		dialog.choose(chosen)
 		return True
-
-	def _try_load_file(self, gfile, check_duplicates=True):
-		if gfile is None:
-			return
-		image = self.get_active_image()
-		def confirmed(open_again):
-			if open_again:
-				self._load_into_image(image, gfile)
-			else:
-				window, duplicate = self.app.has_image_opened(gfile.get_path())
-				if duplicate is not None:
-					window.notebook.set_current_page(duplicate)
-					window.present()
-		if check_duplicates and self.app.has_image_opened(gfile.get_path())[1] is not None:
-			self.confirm_open_twice(gfile, confirmed)
-		else:
-			confirmed(True)
 
 	def _load_into_image(self, image, gfile):
 		index = self.notebook.page_num(image)

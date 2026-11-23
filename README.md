@@ -5,7 +5,14 @@ desktop.
 
 PNG, JPEG and BMP files are supported.
 
-[<img alt="" height="100" src="https://gitlab.gnome.org/Teams/Circle/-/raw/master/assets/button/circle-button-i.svg">](https://circle.gnome.org/)
+This repository is a maintained continuation of
+[maoschanz/drawing](https://github.com/maoschanz/drawing), led by Matthew Hiltner.
+Drawing is an independent application for the GNOME desktop; this continuation
+is not a GNOME Circle application. Existing authorship and licensing are retained.
+
+Use this repository's [issues](https://github.com/data8504/drawing/issues) and
+[pull requests](https://github.com/data8504/drawing/pulls) for continuation work.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development and review practices.
 
 Besides GNOME, the app is well integrated in traditional-looking desktops, as
 well as [elementaryOS](./docs/screenshots/0.8/elementary_labels.png).
@@ -25,22 +32,17 @@ It should also be compatible with the *Pinephone* and *Librem 5*
 
 ## Installation
 
-### Last stable version
+### Releases
 
->**Recommended**
+Continuation releases are published in this repository's
+[Releases](https://github.com/data8504/drawing/releases). Use a tagged release
+for deployment. Source installation instructions are in
+[CONTRIBUTING.md](CONTRIBUTING.md#install-from-source-code).
 
-You can install it from flathub.org using the instructions on
-[this page](https://flathub.org/apps/details/com.github.maoschanz.drawing).
-
-[<img alt="" height="100" src="https://flathub.org/assets/badges/flathub-badge-en.png">](https://flathub.org/apps/details/com.github.maoschanz.drawing).
-
-### Other packages available
-
-[![Packaging status](https://repology.org/badge/vertical-allrepos/drawing.svg)](https://repology.org/project/drawing/versions)
-
-- Ubuntu 18.04, 20.10 and 21.04: [PPA](https://launchpad.net/~cartes/+archive/ubuntu/drawing/)
-- [Gentoo package](https://gitlab.com/src_prepare/src_prepare-overlay/-/tree/master/media-gfx/drawing) from an external overlay
-- ["Snap" package](https://snapcraft.io/drawing)
+Distribution packages and the existing
+[Flathub package](https://flathub.org/apps/com.github.maoschanz.drawing) are
+maintained separately and may contain the original project's releases rather
+than this continuation. Check the version and source before reporting a bug.
 
 ### Unstable/nightly version
 
@@ -163,8 +165,6 @@ With flatpak however, the settings are stored in a key-value file, which can be
 found (and edited) at `~/.var/app/com.github.maoschanz.drawing/config/glib-2.0/settings/keyfile`.
 
 ----
-
-[Donations (paypal)](https://paypal.me/maoschannz)
 
 [To contribute](./CONTRIBUTING.md)
 

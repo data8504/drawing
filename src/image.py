@@ -312,7 +312,9 @@ class DrImage(Gtk.Box):
 		self.tab_label.set_ellipsize(Pango.EllipsizeMode.END)
 		event_box = Gtk.EventBox()
 		event_box.add(self.tab_label)
-		event_box.connect('button-press-event', self.on_tab_title_clicked)
+		self._tab_close_gesture = Gtk.GestureMultiPress.new(event_box)
+		self._tab_close_gesture.set_button(Gdk.BUTTON_MIDDLE)
+		self._tab_close_gesture.connect('pressed', self.on_tab_title_pressed)
 		# These widgets are packed in a regular box, which is returned.
 		tab_title = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, expand=True)
 		if self.window.deco_layout == 'he':
@@ -324,12 +326,9 @@ class DrImage(Gtk.Box):
 		tab_title.show_all()
 		return tab_title
 	
-	def on_tab_title_clicked(self, widget, event_button):
-		if event_button.type == Gdk.EventType.BUTTON_PRESS \
-		and event_button.button == Gdk.BUTTON_MIDDLE:
+	def on_tab_title_pressed(self, gesture, n_press, x, y):
+		if n_press == 1:
 			self.try_close_tab()
-			return True
-		return False # This callback HAS TO return a boolean
 
 	def update_title(self):
 		main_title = self.get_filename_for_display()

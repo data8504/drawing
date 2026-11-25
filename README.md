@@ -74,7 +74,7 @@ If your language is not here, or is incompletely translated, you can
 | hu   | Hungarian    | **48%**    | @kami911                                  |
 | id   | Indonesian   | **59%**    | @ekickx                                   |
 | it   | Italian      | 99%        | @amivaleo and @albanobattistella          |
-| ja   | Japanese     | 86%        | @rlbxku1r                                 |
+| ja   | Japanese     | 100%       | @rlbxku1r                                 |
 | kr   | Korean       | 90%        | @chaeya                                   |
 | nl   | Dutch        | 97%        | @Vistaus                                  |
 | oc   | Occitan      | **33%**    | @Mejans                                   |

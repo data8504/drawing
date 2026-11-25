@@ -75,6 +75,7 @@ If your language is not here, or is incompletely translated, you can
 | id   | Indonesian   | **59%**    | @ekickx                                   |
 | it   | Italian      | 99%        | @amivaleo and @albanobattistella          |
 | ja   | Japanese     | 86%        | @rlbxku1r                                 |
+| ka   | Georgian     | 95%        | @NorwayFun                                |
 | kr   | Korean       | 90%        | @chaeya                                   |
 | nl   | Dutch        | 97%        | @Vistaus                                  |
 | oc   | Occitan      | **33%**    | @Mejans                                   |

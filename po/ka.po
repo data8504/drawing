@@ -12,6 +12,7 @@ msgstr ""
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: \n"
 "Language: ka\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -457,7 +458,7 @@ msgstr "სულ ზემოთ ასვლა"
 #. but this one goes all the way to the bottom.
 #: src/ui/app-menus.ui src/ui/shortcuts.ui
 msgid "Go to the bottom"
-msgstr "სულ ქვემოთ ჩასმოსვლა"
+msgstr "ბოლომდე ქვემოთ ჩასვლა"
 
 #. Context: this action scrolls to the right end of the
 #. canvas. The "go right" action only goes a few centimeters
@@ -468,11 +469,11 @@ msgstr "მარჯვენა ბოლოში გადასვლა"
 
 #: src/ui/app-menus.ui src/ui/shortcuts.ui
 msgid "Tab at the left"
-msgstr "ტაბულაცია მარცხნივ"
+msgstr "ჩანართი მარცხნივ"
 
 #: src/ui/app-menus.ui src/ui/shortcuts.ui
 msgid "Tab at the right"
-msgstr "ტაბულაცია მარჯვნივ"
+msgstr "ჩანართი მარჯვნივ"
 
 #: src/ui/app-menus.ui
 msgid "Refresh"
@@ -481,7 +482,7 @@ msgstr "განახლება"
 #. Label shown only in developer mode
 #: src/ui/app-menus.ui
 msgid "Track framerate"
-msgstr "ტრეკის კადრების სიჩქარე"
+msgstr "კადრების სიხშირის თვალყურის დევნება"
 
 #: src/ui/app-menus.ui
 msgid "Dark theme variant"
@@ -518,7 +519,7 @@ msgstr "ფერების მიმოცვლა"
 
 #: src/ui/app-menus.ui
 msgid "Color application mode"
-msgstr "ფერადი აპლიკაციის რეჟიმი"
+msgstr "ფერის გამოყენების რეჟიმი"
 
 #: src/ui/app-menus.ui src/optionsbars/classic/optionsbar_color_popover.py
 #: src/optionsbars/classic/optionsbar-color-popover.ui
@@ -567,7 +568,7 @@ msgstr "მხოლოდ გაჯერებულობა"
 #: src/ui/app-menus.ui src/optionsbars/classic/optionsbar_color_popover.py
 #: src/optionsbars/classic/optionsbar-operator-menus.ui
 msgid "Hue and saturation"
-msgstr "ფონი და გაჯერებულობა"
+msgstr "ტონი და გაჯერებულობა"
 
 #. Context: a possible way to apply the color to the canvas
 #: src/ui/app-menus.ui src/optionsbars/classic/optionsbar_color_popover.py
@@ -629,7 +630,7 @@ msgstr "უფრო მცირე სიგანე"
 
 #: src/ui/app-menus.ui
 msgid "Troubleshoot selection"
-msgstr "პრობლემების გადაწყვეტის არჩევანი"
+msgstr "მონიშვნის პრობლემების მოგვარება"
 
 #: src/ui/app-menus.ui
 #: src/optionsbars/transform/abstract-optionsbar-transform.ui
@@ -782,7 +783,7 @@ msgstr "მონიშნულის დახურვა"
 #: src/ui/selection-manager.ui src/ui/shortcuts.ui
 #: src/optionsbars/selection/optionsbar-selection.ui src/tools/ui/selection.ui
 msgid "Deselect"
-msgstr "არჩევის მოხსნა"
+msgstr "მონიშვნის მოხსნა"
 
 #: src/ui/selection-manager.ui src/tools/transform_tools/tool_crop.py
 msgid "Crop"
@@ -821,7 +822,7 @@ msgstr "მონიშვნის ინვერსია"
 #: src/ui/selection-manager.ui
 #: src/optionsbars/selection/optionsbar-selection.ui src/tools/ui/selection.ui
 msgid "Define as current image"
-msgstr "აღწერა, როგორც მიმდინარე გამოსახულება"
+msgstr "მიმდინარე გამოსახულებად დაყენება"
 
 #. Expand the canvas of the current image to make the current selection fit in it.
 #. Can be translated as "Expand to this size".
@@ -833,7 +834,7 @@ msgstr "გამოსახულების გაფართოება �
 #: src/ui/selection-manager.ui
 #: src/optionsbars/selection/optionsbar-selection.ui src/tools/ui/selection.ui
 msgid "Open As New Image"
-msgstr "გახსნა როგორ ახალი გამოსახულების"
+msgstr "ახალ გამოსახულებად გახსნა"
 
 #: src/ui/shortcuts.ui
 msgid "Keyboard Shortcuts"
@@ -1021,7 +1022,7 @@ msgstr "შეცდომების ან იდეების მიწე
 #. per line), they will be displayed in the "about" dialog
 #: src/main.py
 msgid "translator-credits"
-msgstr "ეკატერინე პაპავა"
+msgstr "ეკატერინე პაპავა\nთემური დოღონაძე"
 
 #. To translators: this is credits for the icons, consider that "Art
 #. Libre" is proper name
@@ -1190,7 +1191,7 @@ msgstr "ფუნჯი"
 #. the elements of an image.
 #: src/preferences.py src/tools/classic_tools/tool_points.py
 msgid "Points"
-msgstr "ქულები"
+msgstr "წერტილები"
 
 #. Context: this is a tool to select an area according to a shape that
 #. can be freely defined by the user.
@@ -1203,7 +1204,7 @@ msgstr "თავისუფალი მონიშვნა"
 #. surrounding area made of white pixels.
 #: src/preferences.py src/tools/selection_tools/select_color.py
 msgid "Color selection"
-msgstr "ფერის არჩევანი"
+msgstr "ფერით მონიშვნა"
 
 #. Context: this is a tool to pick a RGBA color in the image in order to
 #. use it to draw with other tools
@@ -1220,7 +1221,7 @@ msgstr "დახატვა"
 #. it can be used instead of the default simple RGB palette
 #: src/preferences.py
 msgid "Use color editor by default"
-msgstr "ფერადი რედაქტორის ნაგულისხმევად გამოყენება"
+msgstr "ფერის რედაქტორის ნაგულისხმევად გამოყენება"
 
 #: src/preferences.py
 msgid "You can use a simple color palette, or use a full RGBA color editor."
@@ -1393,11 +1394,11 @@ msgstr "გადატარება და შენახვა"
 #. To translators: this string should be quite short
 #: src/saving_manager.py
 msgid "Deselect & save"
-msgstr "შენახვის მოხსნა და სენახვა"
+msgstr "მონიშვნის მოხსნა და შენახვა"
 
 #: src/saving_manager.py
 msgid "Save anyway"
-msgstr "დაიმახსოვრე ყველაფრის მიუხედავად"
+msgstr "მაინც შენახვა"
 
 #: src/saving_manager.py
 msgid "Do you want to save anyway?"
@@ -1471,7 +1472,7 @@ msgstr ""
 
 #: src/window.py
 msgid "Press F11 to exit fullscreen."
-msgstr "F11 სრულეკრანიანი რეჟიმიდან გასასვლელად."
+msgstr "დააჭირეთ F11-ს სრულეკრანიანი რეჟიმიდან გასასვლელად."
 
 #: src/window.py
 #, python-format
@@ -1620,13 +1621,13 @@ msgstr "%s გამოსახულება არაა."
 
 #: src/utilities/utilities_files.py
 msgid "Sorry, WEBP images can't be loaded by this app."
-msgstr "WEB გამოსახულებებს ამ აპში ვერ გახსნით."
+msgstr "WEBP გამოსახულებებს ამ აპში ვერ გახსნით."
 
 #. Context: an error message, %s is a file path
 #: src/utilities/utilities_files.py
 #, python-format
 msgid "Despite its name, %s is a WEBP file."
-msgstr "მიუხედავად სახელისა, %s WEP ფაილია."
+msgstr "მიუხედავად სახელისა, %s WEBP ფაილია."
 
 #: src/utilities/utilities_paths.py
 msgid "Continue"
@@ -2079,7 +2080,7 @@ msgstr "ნომრის გაზრდა"
 
 #: src/tools/ui/tool-shape.ui src/tools/classic_tools/tool_shape.py
 msgid "Solid outline"
-msgstr "სქელი კონტური"
+msgstr "უწყვეტი კონტური"
 
 #: src/tools/ui/tool-shape.ui src/tools/classic_tools/tool_shape.py
 msgid "Dashed outline"
@@ -2219,11 +2220,11 @@ msgstr "ფუნჯის მორგება"
 
 #: src/tools/classic_tools/tool_eraser.py
 msgid "Press <Shift> to erase a path instead"
-msgstr "<Shift> სამაგიეროდ ბილიკის წასაშლელად"
+msgstr "გეჭიროთ <Shift>, რომ ამის ნაცვლად ბილიკი წაშალოთ"
 
 #: src/tools/classic_tools/tool_eraser.py
 msgid "Press <Shift> to erase a rectangle area instead"
-msgstr "<Shift> სამაგიეროდ მართკუთხედი არეს წასაშლელად"
+msgstr "გეჭიროთ <Shift>, რომ ამის ნაცვლად მართკუთხა არე წაშალოთ"
 
 #: src/tools/classic_tools/tool_eraser.py
 msgid "Eraser options"
@@ -2231,11 +2232,11 @@ msgstr "საშლელის მორგება"
 
 #: src/tools/classic_tools/tool_highlight.py
 msgid "Press <Shift> to temporarily highlight on dark background instead"
-msgstr "გეჭიროთ ღილაკზე <Shift> მუქ ფონზე დროებით გამოსაკვეთად"
+msgstr "გეჭიროთ <Shift>, რომ ამის ნაცვლად მუქ ფონზე დროებით გამოკვეთოთ"
 
 #: src/tools/classic_tools/tool_highlight.py
 msgid "Press <Shift> to temporarily highlight on light background instead"
-msgstr "გეჭიროთ ღილაკზე <Shift> ღია ფონზე დროებით გამოსაკვეთად"
+msgstr "გეჭიროთ <Shift>, რომ ამის ნაცვლად ღია ფონზე დროებით გამოკვეთოთ"
 
 #: src/tools/classic_tools/tool_highlight.py
 msgid "Highlighter options"
@@ -2268,11 +2269,11 @@ msgstr "ხაზის მორგება"
 
 #: src/tools/classic_tools/tool_line.py
 msgid "Press <Shift> to unlock the line direction"
-msgstr "გეჭიროთ ღილაკზე <Shift> ხაზის მიმართულების განბლოკვისთვის"
+msgstr "გეჭიროთ <Shift>, რომ ხაზის მიმართულება განბლოკოთ"
 
 #: src/tools/classic_tools/tool_line.py
 msgid "Press <Shift> to lock the line direction"
-msgstr "გეჭიროთ ღილაკზე <Shift> ხაზის მიმართულების ჩასაკეტად"
+msgstr "გეჭიროთ <Shift>, რომ ხაზის მიმართულება ჩაკეტოთ"
 
 #: src/tools/classic_tools/tool_paint.py
 msgid "Painting options"
@@ -2387,15 +2388,15 @@ msgstr "სიგანე დამოკიდებულია თაგუ�
 
 #: src/tools/selection_tools/abstract_select.py
 msgid "Drag the selection or right-click on the canvas"
-msgstr "გადაათრიეთ მონიშნული, ამ მარჯვენა წკაპი ტილოზე"
+msgstr "გადაათრიეთ მონიშნული, ან ტილოზე მარჯვენა ღილაკით დააწკაპუნეთ"
 
 #: src/tools/selection_tools/abstract_select.py
 msgid "Select an area or right-click on the canvas"
-msgstr "მონიშნეთ არე, ან მარჯვენა წკაპი ტილოზე"
+msgstr "მონიშნეთ არე, ან ტილოზე მარჯვენა ღილაკით დააწკაპუნეთ"
 
 #: src/tools/selection_tools/select_rect.py
 msgid "Rectangle selection"
-msgstr "მონიშვნის ოთხკუთხედი"
+msgstr "მართკუთხა მონიშვნა"
 
 #: src/tools/transform_tools/abstract_transform_tool.py
 msgid "Error: invalid values"

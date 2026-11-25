@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: github.com/maoschanz/drawing/issues/new/choose\n"
 "POT-Creation-Date: 2025-06-14 23:35+0900\n"
 "PO-Revision-Date: 2025-10-01 15:48+0900\n"
-"Last-Translator: \n"
+"Last-Translator: rlbxku1r\n"
 "Language-Team: \n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -34,7 +34,7 @@ msgstr "シンプルな描画ユーティリティ"
 #. Don't forget the semicolons.
 #: data/com.github.maoschanz.drawing.desktop.in
 msgid "Paint;Sketch;Pencil;"
-msgstr "Paint;ペイント;描画;スケッチ;ペンシル;"
+msgstr "Paint;ペイント;描画;スケッチ;ペンシル;鉛筆;"
 
 #: data/com.github.maoschanz.drawing.desktop.in src/ui/app-menus.ui
 #: src/ui/shortcuts.ui src/ui/win-menus.ui src/window.py
@@ -83,7 +83,7 @@ msgstr ""
 #. IMPORTANT: complete description of the application (3/3)
 #: data/com.github.maoschanz.drawing.appdata.xml.in
 msgid "Supported file types include PNG, JPEG and BMP."
-msgstr "ファイル形式には PNG, JPEG, BMP をサポートしています。"
+msgstr "PNG、JPEG、BMP 形式をサポートしています。"
 
 #: data/com.github.maoschanz.drawing.appdata.xml.in
 msgid ""
@@ -91,8 +91,9 @@ msgid ""
 "consistently applied when you change the active tool without clicking on "
 "\"apply\"."
 msgstr ""
-"バージョン 1.2.0 では、変換ツールが改善されました: 使用中のツールで変換を行っ"
-"たとき、\"適用\" をクリックしなくてもすぐにプレビューに反映されます。"
+"バージョン 1.2.0 では変換ツールが改善され、\"適用\" をクリックせずに別のツー"
+"ルへ切り替えた場合でも、プレビュー中の変更が確実に適用されるようになりまし"
+"た。"
 
 #: data/com.github.maoschanz.drawing.appdata.xml.in
 msgid ""
@@ -115,7 +116,7 @@ msgid ""
 "Transparency is henceforth correctly preserved when the \"skew\" tool "
 "expands the canvas with a solid color."
 msgstr ""
-"単色のキャンバスを \"傾斜\" ツールで伸張したときに、透過部分が正しく維持され"
+"\"傾斜\" ツールでキャンバスを単色で拡張した場合でも、透明度が正しく維持され"
 "るようになりました。"
 
 #: data/com.github.maoschanz.drawing.appdata.xml.in
@@ -305,7 +306,7 @@ msgstr "画像を開く"
 
 #: src/ui/app-menus.ui src/ui/shortcuts.ui src/ui/win-menus.ui
 msgid "New Blank Image"
-msgstr "新しい白紙の画像"
+msgstr "新しい空の画像"
 
 #: src/ui/app-menus.ui src/ui/win-menus.ui src/new_image_dialog.py
 msgid "New Image With Custom Size"
@@ -1093,7 +1094,7 @@ msgstr "バグやアイデアを報告"
 #. per line), they will be displayed in the "about" dialog
 #: src/main.py
 msgid "translator-credits"
-msgstr ""
+msgstr "rlbxku1r, 2025"
 
 #. To translators: this is credits for the icons, consider that "Art
 #. Libre" is proper name
@@ -1817,11 +1818,11 @@ msgstr "右へ回転"
 
 #: src/optionsbars/transform/optionsbar-rotate.ui src/tools/ui/tool-rotate.ui
 msgid "Flip horizontally"
-msgstr "水平にひっくり返す"
+msgstr "左右反転"
 
 #: src/optionsbars/transform/optionsbar-rotate.ui src/tools/ui/tool-rotate.ui
 msgid "Flip vertically"
-msgstr "垂直にひっくり返す"
+msgstr "上下反転"
 
 #. Context: the title of a menu to chose how the image will be scaled
 #: src/optionsbars/transform/optionsbar-scale.ui src/tools/ui/tool-scale.ui
@@ -1838,7 +1839,7 @@ msgstr "常時"
 #. Context for translations: "[Keep proportions only] when scaling from corners"
 #: src/optionsbars/transform/optionsbar-scale.ui src/tools/ui/tool-scale.ui
 msgid "When scaling from corners"
-msgstr "四隅からの伸縮時"
+msgstr "四隅からの伸縮時のみ"
 
 #. Context for translations: "[Keep proportions only] when setting values manually"
 #: src/optionsbars/transform/optionsbar-scale.ui src/tools/ui/tool-scale.ui
@@ -1982,7 +1983,7 @@ msgstr "消しゴム"
 
 #: src/tools/ui/tool-eraser.ui src/tools/classic_tools/erasers/eraser_area.py
 msgid "Rectangle area"
-msgstr "四辺形領域"
+msgstr "長方形の領域"
 
 #. Context: this feature erases the color where the user clicked.
 #. For example to cut out an object from its solid background.
@@ -2069,7 +2070,7 @@ msgstr "色を反転"
 
 #: src/tools/ui/tool-highlight.ui
 msgid "Straighten the line"
-msgstr "線を整える"
+msgstr "線を直線にする"
 
 #: src/tools/ui/tool-line.ui
 msgid "Color gradient"
@@ -2245,12 +2246,12 @@ msgstr "影"
 #. Context: a type of background behind the inserted text
 #: src/tools/ui/tool-text.ui src/tools/classic_tools/tool_text.py
 msgid "Thin outline"
-msgstr "薄い輪郭"
+msgstr "細い輪郭線"
 
 #. Context: a type of background behind the inserted text
 #: src/tools/ui/tool-text.ui src/tools/classic_tools/tool_text.py
 msgid "Thick outline"
-msgstr "厚い輪郭"
+msgstr "太い輪郭線"
 
 #. Context: a type of background behind the inserted text
 #: src/tools/ui/tool-text.ui src/tools/classic_tools/tool_text.py
@@ -2267,7 +2268,7 @@ msgstr "曲線のオプション"
 
 #: src/tools/classic_tools/tool_arc.py
 msgid "Draw a second segment to complete the curve"
-msgstr "2 つ目の端点を描き、曲線を完成させます"
+msgstr "2 本目の線分を描いて曲線を完成させます"
 
 #: src/tools/classic_tools/tool_arc.py src/tools/classic_tools/tool_line.py
 msgid "Dashed arrow"
@@ -2305,11 +2306,11 @@ msgstr "消しゴムのオプション"
 
 #: src/tools/classic_tools/tool_highlight.py
 msgid "Press <Shift> to temporarily highlight on dark background instead"
-msgstr "<Shift> キーで暗い背景に着色します"
+msgstr "<Shift> キーで一時的に暗い背景に着色します"
 
 #: src/tools/classic_tools/tool_highlight.py
 msgid "Press <Shift> to temporarily highlight on light background instead"
-msgstr "<Shift> キーで明るい背景に着色します"
+msgstr "<Shift> キーで一時的に明るい背景に着色します"
 
 #: src/tools/classic_tools/tool_highlight.py
 msgid "Highlighter options"
@@ -2363,12 +2364,12 @@ msgstr "クリックでキャンバス全体を染色します"
 #: src/tools/classic_tools/tool_paint.py
 #: src/tools/selection_tools/select_color.py
 msgid "May not work for complex shapes"
-msgstr "複雑な図形は塗り潰せないかもしれません"
+msgstr "複雑な形状では機能しない場合があります"
 
 #: src/tools/classic_tools/tool_paint.py
 #: src/tools/selection_tools/select_color.py
 msgid "It will not work well if the area's edges are blurry"
-msgstr "端が粗い領域は、うまく塗り潰せないかもしれません"
+msgstr "領域の境界がぼやけているとうまく機能しません"
 
 #: src/tools/classic_tools/tool_pencil.py
 msgid "Pencil"
@@ -2571,4 +2572,4 @@ msgstr "ぼかしの半径"
 
 #: src/tools/transform_tools/filters/filter_saturation.py
 msgid "Saturation"
-msgstr "輝度"
+msgstr "彩度"

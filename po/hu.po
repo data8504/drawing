@@ -290,7 +290,7 @@ msgstr "A kiválasztás és a hozzá kapcsolódó műveletek"
 #. Caption of a screenshot, for appstores
 #: data/com.github.maoschanz.drawing.appdata.xml.in
 msgid "Zooming in various shapes"
-msgstr "Külöböző alakzatokra való nagyítás"
+msgstr "Különböző alakzatokra való nagyítás"
 
 #. Caption of a screenshot, for appstores
 #: data/com.github.maoschanz.drawing.appdata.xml.in
@@ -396,7 +396,7 @@ msgstr "Visszavonás"
 #: src/ui/shortcuts.ui src/ui/toolbar.ui src/ui/toolbar-symbolic.ui
 #: src/deco_manager.py
 msgid "Redo"
-msgstr "Mégis"
+msgstr "Újra"
 
 #: src/ui/app-menus.ui
 msgid "Rebuild from history"
@@ -504,7 +504,7 @@ msgstr "Ugrás jobbra"
 #. to the left, but this one goes all the way left.
 #: src/ui/app-menus.ui src/ui/shortcuts.ui
 msgid "Go to the left end"
-msgstr "A bal oldalára"
+msgstr "Ugrás a bal szélre"
 
 #. Context: this action scrolls to the top of the canvas
 #. The "go up" action only goes a few centimeters up, but
@@ -525,7 +525,7 @@ msgstr "Az aljára"
 #. to the right, but this one goes all the way right.
 #: src/ui/app-menus.ui src/ui/shortcuts.ui
 msgid "Go to the right end"
-msgstr "A jobb oldalára"
+msgstr "Ugrás a jobb szélre"
 
 #: src/ui/app-menus.ui src/ui/shortcuts.ui
 msgid "Tab at the left"
@@ -554,7 +554,7 @@ msgstr "A menüsor megjelenítése"
 
 #: src/ui/app-menus.ui
 msgid "Hide toolbars"
-msgstr "A menüsor elrejtése"
+msgstr "Eszköztárak elrejtése"
 
 #: src/ui/app-menus.ui src/ui/shortcuts.ui src/ui/win-menus.ui
 msgid "Fullscreen"
@@ -843,7 +843,7 @@ msgstr "Kijelölés lezárása"
 #: src/ui/selection-manager.ui src/ui/shortcuts.ui
 #: src/optionsbars/selection/optionsbar-selection.ui src/tools/ui/selection.ui
 msgid "Deselect"
-msgstr "Kijelölések megszüntetése"
+msgstr "Kijelölés megszüntetése"
 
 #: src/ui/selection-manager.ui src/tools/transform_tools/tool_crop.py
 msgid "Crop"
@@ -882,14 +882,14 @@ msgstr "A kiválasztás invertálása"
 #: src/ui/selection-manager.ui
 #: src/optionsbars/selection/optionsbar-selection.ui src/tools/ui/selection.ui
 msgid "Define as current image"
-msgstr "Meghatározás jelenlegi képként"
+msgstr "Beállítás aktuális képként"
 
 #. Expand the canvas of the current image to make the current selection fit in it.
 #. Can be translated as "Expand to this size".
 #: src/ui/selection-manager.ui
 #: src/optionsbars/selection/optionsbar-selection.ui src/tools/ui/selection.ui
 msgid "Expand image to fit"
-msgstr "Kép átméretezése a kiválasztott terület méretére"
+msgstr "Kép kibővítése a kijelöléshez"
 
 #: src/ui/selection-manager.ui
 #: src/optionsbars/selection/optionsbar-selection.ui src/tools/ui/selection.ui
@@ -946,7 +946,7 @@ msgstr "Átalakítás alkalmazása"
 
 #: src/ui/shortcuts.ui
 msgid "Toggle the preview"
-msgstr "Előnézet megjelenítése"
+msgstr "Előnézet megjelenítése/elrejtése"
 
 #: src/ui/shortcuts.ui src/tools/selection_tools/abstract_select.py
 msgid "Selection"
@@ -992,7 +992,7 @@ msgstr "Belépés/kilépés a teljes képernyős módból"
 
 #: src/ui/shortcuts.ui
 msgid "Toggle toolbars visibility"
-msgstr "Az eszköztár elrejtése/mutatása"
+msgstr "Az eszköztárak elrejtése/megjelenítése"
 
 #: src/ui/shortcuts.ui
 msgid "Touch gestures"
@@ -1012,7 +1012,7 @@ msgstr "Újdonságok a Rajzoló alkalmazásban"
 
 #: src/ui/win-menus.ui
 msgid "Dismiss"
-msgstr "Elutasítás"
+msgstr "Bezárás"
 
 #: src/deco_manager.py
 #, python-format
@@ -1022,7 +1022,7 @@ msgstr "„%s” visszavonása"
 #: src/deco_manager.py
 #, python-format
 msgid "Redo %s"
-msgstr "„%s” újra"
+msgstr "„%s” újra végrehajtása"
 
 #. Context: an error message
 #: src/history_manager.py
@@ -1207,7 +1207,7 @@ msgstr "A magyarázatokért nézze meg a súgót."
 
 #: src/preferences.py
 msgid "Use 'Ctrl' to zoom"
-msgstr "Használja a <Ctrl> billentyűt a nagyításhoz"
+msgstr "A nagyításhoz használja a Ctrl billentyűt"
 
 #. Context: title of a section of the preferences (appearance of the
 #. tools: big icons?, labels?)
@@ -1229,9 +1229,8 @@ msgid ""
 "These tools are not as reliable and useful as they should be, so they are "
 "not all enabled by default."
 msgstr ""
-"Ezek az eszközök még nem annyira megbízhatóak és használhatóak, mint "
-"amennyire lenniük kellene, ezért alapértelmezés szerint nincsenek "
-"bekapcsolva."
+"Ezek az eszközök még nem annyira megbízhatóak és hasznosak, mint kellene, "
+"ezért alapértelmezés szerint nem mindegyik van engedélyezve."
 
 #. Context: this is the name of a tool
 #: src/preferences.py src/tools/classic_tools/tool_eraser.py
@@ -1395,13 +1394,13 @@ msgstr "Színtér"
 #. Context: an invalid colorspace format
 #: src/properties.py
 msgid "Invalid format"
-msgstr "Érvénytelen formátuma"
+msgstr "Érvénytelen formátum"
 
 #. an actual error occurred!
 #. Context: an error message
 #: src/saving_manager.py
 msgid "Failed to replace transparency"
-msgstr "Az átlátzóság helyettesítése meghiúsult"
+msgstr "Az átlátszóság helyettesítése meghiúsult"
 
 #. Context: an error message
 #: src/saving_manager.py
@@ -1457,7 +1456,7 @@ msgstr "Alkalmazás és mentés"
 #. To translators: this string should be quite short
 #: src/saving_manager.py
 msgid "Deselect & save"
-msgstr "Kijelölések megszüntetése és mentés"
+msgstr "Kijelölés feloldása és mentés"
 
 #: src/saving_manager.py
 msgid "Save anyway"
@@ -1789,7 +1788,7 @@ msgstr "Átlátszóság"
 
 #: src/optionsbars/selection/optionsbar-selection.ui src/tools/ui/selection.ui
 msgid "Extract from this color"
-msgstr "Kivonat ebből a színből"
+msgstr "Kinyerés ebből a színből"
 
 #: src/optionsbars/transform/abstract-optionsbar-transform.ui
 msgid "More options"
@@ -1890,7 +1889,7 @@ msgstr "Vonal alakja"
 #: src/tools/ui/tool-arc.ui src/tools/ui/tool-line.ui
 #: src/tools/ui/tool-pencil.ui src/tools/classic_tools/tool_pencil.py
 msgid "Round"
-msgstr "Kerekítés"
+msgstr "Lekerekített"
 
 #. Context: this is the name of a line shape
 #: src/tools/ui/tool-arc.ui src/tools/ui/tool-line.ui
@@ -1898,7 +1897,7 @@ msgstr "Kerekítés"
 #: src/tools/classic_tools/tool_pencil.py
 #: src/tools/classic_tools/tool_points.py
 msgid "Square"
-msgstr "Négyzet"
+msgstr "Négyzetes"
 
 #: src/tools/ui/tool-arc.ui src/tools/ui/tool-line.ui
 #: src/tools/ui/tool-pencil.ui
@@ -1936,11 +1935,11 @@ msgstr "Nyíl nélkül"
 
 #: src/tools/ui/tool-arc.ui src/tools/ui/tool-line.ui
 msgid "Simple arrow"
-msgstr "Egyvonalas nyíl"
+msgstr "Egyvégű nyíl"
 
 #: src/tools/ui/tool-arc.ui src/tools/ui/tool-line.ui
 msgid "Double arrow"
-msgstr "Kétvonalas nyíl"
+msgstr "Kétvégű nyíl"
 
 #: src/tools/ui/tool-arc.ui src/tools/ui/tool-brush.ui
 #: src/tools/ui/tool-highlight.ui src/tools/ui/tool-line.ui
@@ -2096,7 +2095,7 @@ msgstr "Viselkedés"
 #. default behavior of the tool.
 #: src/tools/ui/tool-paint.ui
 msgid "Encircle and fill"
-msgstr "Kitöltés"
+msgstr "Körülhatárolás és kitöltés"
 
 #. Context: this is one of the possible painting algorithms. It
 #. erases the color the user clicked, and then replace transparent
@@ -2203,7 +2202,7 @@ msgstr "Szabad alakzat"
 
 #: src/tools/ui/tool-shape.ui
 msgid "Close shape"
-msgstr "Alak bezárása"
+msgstr "Alakzat bezárása"
 
 #: src/tools/ui/tool-text.ui
 msgid "Insert here"
@@ -2284,7 +2283,7 @@ msgstr "Szaggatott"
 #: src/tools/classic_tools/tool_pencil.py
 msgid "Press <Alt> to toggle the 'outline' option"
 msgstr ""
-"Nyomja le az <Alt> billentyűt a „körvonal” beállítás be-, vagy "
+"Nyomja le az <Alt> billentyűt a „körvonal” beállítás be- vagy "
 "kikapcsolásához"
 
 #: src/tools/classic_tools/tool_brush.py
@@ -2342,7 +2341,7 @@ msgstr "Hossz: %spx"
 
 #: src/tools/classic_tools/tool_line.py
 msgid "Line options"
-msgstr "Vonal beállítások"
+msgstr "A vonal beállításai"
 
 #: src/tools/classic_tools/tool_line.py
 msgid "Press <Shift> to unlock the line direction"
@@ -2368,7 +2367,7 @@ msgstr "A teljes vászon befestéséhez kattintson a vászonra"
 #: src/tools/classic_tools/tool_paint.py
 #: src/tools/selection_tools/select_color.py
 msgid "May not work for complex shapes"
-msgstr "Összetett formák esetén elfőfordulhat, hogy nem működik"
+msgstr "Összetett formák esetén előfordulhat, hogy nem működik"
 
 #: src/tools/classic_tools/tool_paint.py
 #: src/tools/selection_tools/select_color.py
@@ -2413,7 +2412,7 @@ msgstr "Sugár: %spx"
 
 #: src/tools/classic_tools/tool_shape.py
 msgid "Shape options"
-msgstr "Alakzat beállítások"
+msgstr "Az alakzat beállításai"
 
 #: src/tools/classic_tools/tool_shape.py
 #: src/tools/selection_tools/select_free.py
@@ -2423,7 +2422,7 @@ msgstr "Az alakzat bezárásához kattintson az első pontjára."
 #: src/tools/classic_tools/tool_shape.py
 msgid "Press <Alt>, <Shift>, or both, to quickly change the 'filling' option"
 msgstr ""
-"A „kitöltés” opció gyors megváltoztatásához nyomja meg az <Alt>, <Shift>, "
+"A „kitöltés” opció gyors megváltoztatásához nyomja meg az <Alt>, <Shift> "
 "vagy mindkettő billentyűt."
 
 #: src/tools/classic_tools/tool_text.py
@@ -2513,7 +2512,7 @@ msgid ""
 "Press <Alt>, <Shift>, or both, to quickly change the 'expand with' option"
 msgstr ""
 "A „bővítés a következővel:” opció gyors megváltoztatásához nyomja meg az "
-"<Alt>, <Shift>, vagy mindkettő billentyűt."
+"<Alt>, <Shift> vagy mindkettő billentyűt."
 
 #: src/tools/transform_tools/tool_filters.py
 msgid "Active filter"
@@ -2555,7 +2554,7 @@ msgstr "Rajzvászon átméretezése"
 #: src/tools/transform_tools/tool_scale.py
 msgid "Press <Shift> to quickly toggle the 'lock proportions' option"
 msgstr ""
-"Nyomja meg a <Shift> gombot az „arányok rögzítése” opció gyors be-, vagy "
+"Nyomja meg a <Shift> gombot az „arányok rögzítése” opció gyors be- vagy "
 "kikapcsolásához"
 
 #: src/tools/transform_tools/tool_skew.py

@@ -89,25 +89,32 @@ msgstr "A támogatott fájltípusok között szerepel a PNG, a JPEG és a BMP is
 
 #: data/com.github.maoschanz.drawing.appdata.xml.in
 msgid "Drawing now requires GTK 4.10 or newer."
-msgstr ""
+msgstr "A Rajzoló mostantól GTK 4.10-es vagy újabb verziót igényel."
 
 #: data/com.github.maoschanz.drawing.appdata.xml.in
 msgid ""
 "Opening or importing files, saving, and closing tabs now affect the tab "
 "where the action began, even if you switch tabs while a dialog is open."
 msgstr ""
+"A fájlok megnyitása és importálása, a mentés, valamint a lapok bezárása "
+"mostantól mindig azt a lapot érinti, amelyiken a művelet elindult, még "
+"akkor is, ha egy párbeszédablak megnyitása közben lapot vált."
 
 #: data/com.github.maoschanz.drawing.appdata.xml.in
 msgid ""
 "Closing a saved background image no longer disrupts edits or previews in the "
 "active image."
 msgstr ""
+"Egy elmentett háttérkép bezárása már nem zavarja meg az aktív kép "
+"szerkesztését vagy előnézetét."
 
 #: data/com.github.maoschanz.drawing.appdata.xml.in
 msgid ""
 "Scaling with locked proportions now keeps width and height synchronized for "
 "both pixel and percentage values."
 msgstr ""
+"Az arányok zárolásával történő méretezés mostantól mind a képpont, mind a "
+"százalékos értékeknél szinkronban tartja a szélességet és a magasságot."
 
 #: data/com.github.maoschanz.drawing.appdata.xml.in
 msgid ""
@@ -159,18 +166,24 @@ msgstr ""
 msgid ""
 "Color filling and selection no longer hang on certain connected regions."
 msgstr ""
+"A szín kitöltése és a kijelölés már nem akad el bizonyos összefüggő "
+"területeken."
 
 #: data/com.github.maoschanz.drawing.appdata.xml.in
 msgid ""
 "Failed saves preserve the current image and its edits, and external file "
 "changes ask before reloading."
 msgstr ""
+"Sikertelen mentés esetén az aktuális kép és módosításai megmaradnak, a "
+"fájl külső módosítása esetén pedig a program rákérdez, mielőtt újratöltené."
 
 #: data/com.github.maoschanz.drawing.appdata.xml.in
 msgid ""
 "Opaque exports preserve colors correctly, and selections extending beyond "
 "the canvas use transparent padding."
 msgstr ""
+"Az átlátszóság nélküli exportálás helyesen megtartja a színeket, és a "
+"rajzvászonon túlnyúló kijelölések átlátszó kitöltést kapnak a széleken."
 
 #. very generic release notes i use for ALL minor updates, please
 #. translate this one!

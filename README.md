@@ -80,6 +80,7 @@ If your language is not here, or is incompletely translated, you can
 | oc   | Occitan      | **33%**    | @Mejans                                   |
 | pl   | Polish       | 100%       | @pkomur                                   |
 | pt_BR | Br. portuguese | 100%    | @haurenburu and @ArthurBacci64            |
+| pt_PT | Portuguese (Portugal) | 100% | @hugok79                              |
 | ru   | Russian      | 99%        | @tim77 and @Ser82-png                     |
 | sv   | Swedish      | 99%        | @eson57                                   |
 | tr   | Turkish      | 100%       | @TeknoMobil and @serkan-maker             |

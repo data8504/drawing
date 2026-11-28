@@ -198,7 +198,7 @@
   <screenshots>
     <screenshot type="default">
       <image type="source">
-        https://raw.githubusercontent.com/maoschanz/drawing/master/docs/screenshots/1.0/gnome_menu.png
+        https://raw.githubusercontent.com/data8504/drawing/master/docs/screenshots/1.2/gnome_menu.png
       </image>
       <!-- Caption of a screenshot, for appstores -->
       <caption>
@@ -207,7 +207,7 @@
     </screenshot>
     <screenshot>
       <image type="source">
-        https://raw.githubusercontent.com/maoschanz/drawing/master/docs/screenshots/1.0/gnome_selection.png
+        https://raw.githubusercontent.com/data8504/drawing/master/docs/screenshots/1.2/gnome_selection.png
       </image>
       <!-- Caption of a screenshot, for appstores -->
       <caption>
@@ -216,7 +216,7 @@
     </screenshot>
     <screenshot>
       <image type="source">
-        https://raw.githubusercontent.com/maoschanz/drawing/master/docs/screenshots/1.0/gnome_tools_preview.png
+        https://raw.githubusercontent.com/data8504/drawing/master/docs/screenshots/1.2/gnome_tools_preview.png
       </image>
       <!-- Caption of a screenshot, for appstores -->
       <caption>
@@ -225,7 +225,7 @@
     </screenshot>
     <screenshot>
       <image type="source">
-        https://raw.githubusercontent.com/maoschanz/drawing/master/docs/screenshots/1.0/gnome_new.png
+        https://raw.githubusercontent.com/data8504/drawing/master/docs/screenshots/1.2/gnome_new.png
       </image>
       <!-- Caption of a screenshot, for appstores -->
       <caption>

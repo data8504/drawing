@@ -17,6 +17,22 @@
   <p>The most recent versions are listed first.</p>
 
   <section>
+    <title>Version 1.2.1</title>
+    <p>
+      Opening, importing, saving, and closing images now stay with the image
+      that started the action, even after switching tabs.
+    </p>
+    <p>
+      Closing a saved background image no longer disrupts edits or previews in
+      the active image.
+    </p>
+    <p>
+      Scaling with locked proportions now keeps width and height synchronized
+      for both pixel and percentage values.
+    </p>
+  </section>
+
+  <section>
     <title>Version 1.2.0</title>
     <p>
       The <link xref="tools_transform">transformation tools</link> now
@@ -42,6 +58,17 @@
       The option to use a color editor by default has been moved from the
       main window to <link xref="preferences">the preferences window</link>, and
       its bug has been fixed.
+    </p>
+    <p>
+      Color filling and selection no longer hang on certain connected regions.
+    </p>
+    <p>
+      Failed saves preserve the current image and its edits, and external file
+      changes ask before reloading.
+    </p>
+    <p>
+      Opaque exports preserve colors correctly, and selections extending
+      beyond the canvas use transparent padding.
     </p>
   </section>
 

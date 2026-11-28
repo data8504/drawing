@@ -37,12 +37,16 @@
     <release version="1.2.1" date="2026-11-23">
       <description>
         <p>
-          Drawing now uses GTK 4.10 or newer. File selection, saving, clipboard
-          access and window closure use asynchronous GTK workflows.
+          Opening, importing, saving, and closing images now stay with the image
+          that started the action, even after switching tabs.
         </p>
         <p>
-          Locked scaling preserves the aspect ratio across pixel and percentage
-          edits, even when the preview is still updating.
+          Closing a saved background image no longer disrupts edits or
+          previews in the active image.
+        </p>
+        <p>
+          Scaling with locked proportions now keeps width and height
+          synchronized for both pixel and percentage values.
         </p>
       </description>
     </release>
@@ -73,9 +77,16 @@
           main window to the preferences window, and its bug has been fixed.
         </p>
         <p>
-          This release continues Drawing on GTK 3. It fixes hangs in connected
-          color selection and filling, preserves document state when saving,
-          and corrects opaque exports and selections crossing the canvas edge.
+          Color filling and selection no longer hang on certain connected
+          regions.
+        </p>
+        <p>
+          Failed saves preserve the current image and its edits, and external
+          file changes ask before reloading.
+        </p>
+        <p>
+          Opaque exports preserve colors correctly, and selections extending
+          beyond the canvas use transparent padding.
         </p>
       </description>
     </release>
@@ -174,9 +185,9 @@
   </releases>
 
   <!-- developer_name tag deprecated with Appstream 1.0 -->
-  <developer_name translatable="no">Drawing contributors</developer_name>
+  <developer_name translate="no">Drawing contributors</developer_name>
   <developer id="io.github.data8504">
-    <name translatable="no">Drawing contributors</name>
+    <name translate="no">Drawing contributors</name>
   </developer>
   <url type="homepage">https://github.com/data8504/drawing</url>
   <url type="bugtracker">https://github.com/data8504/drawing/issues</url>

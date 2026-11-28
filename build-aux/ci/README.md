@@ -15,6 +15,26 @@ preferences. Install the package matching the distribution with
 `sudo apt install ./drawing_<version>-1+ubuntu26.04_all.deb` (or the 24.04 package).
 A rollback reinstalls the previously saved package, preserving user data.
 
+## Release preparation checklist
+
+Before tagging a stable release:
+
+- Update the version and date consistently in Meson, AppStream and the Debian
+  changelog, together with any compatibility metadata affected by the release.
+- Describe observable changes in the AppStream release notes. Mention toolkit,
+  API or control-flow details only when they affect compatibility or how someone
+  uses the application. Add the release to the bundled `help/C/whats_new.page`.
+- When application metadata or help changes, regenerate `po/drawing.pot` with
+  `utils-bash/translations.sh src_pot` and `help/C/drawing.pot` with
+  `utils-bash/translations.sh help_pot`. Review added and removed messages, the
+  report address and identifiers that should not be translated.
+- Review the README and AppStream screenshots whenever the release materially
+  changes the interface or toolkit. If the existing images no longer represent
+  the application, add optimized captures under `docs/screenshots/<version>/`,
+  check them against their captions and update every consuming URL.
+- Run the full Meson build and test suite and validate the AppStream metadata.
+  Explain any intentionally deferred release surface in the release pull request.
+
 For a stable release, merge reviewed changes through branch protection, update
 Meson and AppStream version metadata in that PR, then push its version tag
 (`v1.2.0`, for example). The tag must identify a commit in protected `master`

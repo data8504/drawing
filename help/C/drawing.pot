@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-01-04 10:12+0100\n"
+"POT-Creation-Date: 2026-11-27 23:09-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,43 +46,55 @@ msgstr ""
 
 #. (itstool) path: info/title
 #: ../help/C/index.page:6
+msgctxt "link:trail"
+msgid "Drawing"
+msgstr ""
+
+#. (itstool) path: info/title
+#: ../help/C/index.page:7
+msgctxt "link"
+msgid "Drawing"
+msgstr ""
+
+#. (itstool) path: info/title
+#: ../help/C/index.page:8
 msgctxt "text"
 msgid "Drawing"
 msgstr ""
 
 #. (itstool) path: page/title
-#: ../help/C/index.page:15
+#: ../help/C/index.page:17
 msgid "<_:media-1/> Drawing"
 msgstr ""
 
 #. (itstool) path: page/p
-#: ../help/C/index.page:21
+#: ../help/C/index.page:23
 msgid "<app>Drawing</app> is a simple raster image editor for GNOME."
 msgstr ""
 
 #. (itstool) path: page/p
-#: ../help/C/index.page:22
+#: ../help/C/index.page:24
 msgid "You can edit or create pictures (PNG, JPEG or BMP) using tools, which can be chosen in the side pane. More options are available in the bottom bar, such as the tool size and color."
 msgstr ""
 
 #. (itstool) path: section/title
-#: ../help/C/index.page:27
+#: ../help/C/index.page:29
 msgid "General"
 msgstr ""
 
 #. (itstool) path: section/title
-#: ../help/C/index.page:31
+#: ../help/C/index.page:33
 #: ../help/C/preferences.page:46
 msgid "Tools"
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/index.page:32
+#: ../help/C/index.page:34
 msgid "At any moment, the window's subtitle should provide useful informations about how to use the active tool."
 msgstr ""
 
 #. (itstool) path: section/title
-#: ../help/C/index.page:37
+#: ../help/C/index.page:39
 msgid "Release notes history"
 msgstr ""
 
@@ -348,51 +360,63 @@ msgstr ""
 
 #. (itstool) path: note/p
 #: ../help/C/preferences.page:86
-msgid "The <gui style=\"menuitem\">Color picker</gui> tool, which picks a color from the pixel you click, is disabled because it's a little redundant with the color picker from <link xref=\"tools_classic_colors\">the color edition menu</link>. The one from the color edition menu can pick an RGB color from any pixel of the display (yes, also from outside the window!), while the tool is limited to pixels from the image but the colors it picks have transparency (RGBA)."
+msgid "The <gui style=\"menuitem\">Color picker</gui> tool, which picks a color from the pixel you click, is disabled because it's a little redundant with the color picker from <link xref=\"tools_classic_colors\">the color edition menu</link>. The one from the color edition menu can pick an RGB color from any pixel of the display, while the tool is limited to pixels from the image but the colors it picks have a transparency channel (RGBA)."
 msgstr ""
 
 #. (itstool) path: note/p
-#: ../help/C/preferences.page:94
-msgid "The <gui style=\"menuitem\">Highlighter</gui> is a little redundant too, since you can to the same with the pencil and <link xref=\"tools_classic_colors\"> the adequate color application mode</link>."
+#: ../help/C/preferences.page:93
+msgid "The <gui style=\"menuitem\">Highlighter</gui> is a little redundant too, since you can do the same with the pencil and <link xref=\"tools_classic_colors\"> the adequate color application mode</link>."
 msgstr ""
 
 #. (itstool) path: note/p
-#: ../help/C/preferences.page:98
+#: ../help/C/preferences.page:97
 msgid "The tool named \"<gui style=\"menuitem\">Points</gui>\" works fine but it's designed for a pretty specific captioning purpose that may not be useful to everyone."
 msgstr ""
 
 #. (itstool) path: subsection/p
-#: ../help/C/preferences.page:103
+#: ../help/C/preferences.page:102
 msgid "See <link xref=\"tools_classic\">this page about tools</link> for more information."
 msgstr ""
 
+#. (itstool) path: subsection/title
 #. (itstool) path: section/title
-#: ../help/C/preferences.page:109
+#: ../help/C/preferences.page:107
+#: ../help/C/tools_classic_colors.page:26
+msgid "Colors"
+msgstr ""
+
+#. (itstool) path: subsection/p
+#: ../help/C/preferences.page:108
+msgid "The <link xref=\"tools_classic_colors\">color selection menu</link> is a color palette by default, but you can optionally use the full RGBA color editor as the default way to pick a color instead."
+msgstr ""
+
+#. (itstool) path: section/title
+#: ../help/C/preferences.page:115
 msgid "Window"
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/preferences.page:111
+#: ../help/C/preferences.page:117
 msgid "Here you can set the size of the thumbnail preview, but using a bigger preview is not recommended for technical reasons."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/preferences.page:114
+#: ../help/C/preferences.page:120
 msgid "You can also set the color of the background \"behind\" the canvas."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/preferences.page:116
+#: ../help/C/preferences.page:122
 msgid "The \"theme variant\" option can force the app to use the dark variant of your current GTK theme."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/preferences.page:119
+#: ../help/C/preferences.page:125
 msgid "Finally, it's possible to choose the layout of the user interface: the \"Compact\" layout, designed for the GNOME desktop, is well tested. Other options include the \"elementary OS\" layout, designed for the elementary OS desktop, and the traditional layout, for MATE or Cinnamon desktop."
 msgstr ""
 
 #. (itstool) path: note/p
-#: ../help/C/preferences.page:125
+#: ../help/C/preferences.page:131
 msgid "In this context,\"symbolic icons\" means that the icons are monochrome (black if you use a light theme, or white if you use a dark theme). Otherwise they can be colorful (depending on your theme)."
 msgstr ""
 
@@ -432,187 +456,197 @@ msgid "Basic lines"
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:32
+#: ../help/C/tools_classic.page:33
 msgid "Pencil: The pencil draws following the mouse pointer, and according to the chosen color."
 msgstr ""
 
 #. (itstool) path: note/p
-#: ../help/C/tools_classic.page:35
-msgid "Using the \"eraser\" mode from the color menu, the pencil can delete all existing colors. Using the \"highlight\" mode and a semi-transparent color, it can also highlight text. For this reason, the two next tools are <link xref=\"preferences#tools\">optional</link>."
+#: ../help/C/tools_classic.page:36
+msgid "Using the \"eraser\" mode from the color menu, the pencil can delete all existing colors. Using the \"highlight\" mode and a semi-transparent color, it can also highlight text. For this reason, the two related tools are <link xref=\"preferences#tools\">optional</link>."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:42
-msgid "Eraser: Ignore the current color settings and just erase to get fully transparent pixels. Optionally, the erased pixels can be changed to the initial color of the canvas, or to the secondary color."
-msgstr ""
-
-#. (itstool) path: item/p
-#: ../help/C/tools_classic.page:45
-msgid "Another option of this tool is its behavior: it can erase according to the line you draw with it, or according to a rectangular shape you define. Using this rectangle mode, you have more available options: blur, mosaic, randomly shuffle pixels, etc. so you can — for example — quickly censor text over wide areas of the image."
-msgstr ""
-
-#. (itstool) path: item/p
-#: ../help/C/tools_classic.page:52
+#: ../help/C/tools_classic.page:43
 msgid "Highlighter: Ignore the transparency of the current color, and draw with a semi-transparent version of the current color."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:54
+#: ../help/C/tools_classic.page:45
 msgid "The \"highlight\" color application mode is used, so the selected color is added to the lighter pixels only, which highlights dark text on light background. An option can be used to do the opposite (highlight light text on dark background)."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:60
+#: ../help/C/tools_classic.page:51
 msgid "Line: This tool can draw straight lines. Its options also include ending the line with an arrow, and using a gradient from the main color to the secondary color."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:63
+#: ../help/C/tools_classic.page:54
 msgid "The option to lock the orientation of the line will force the line to be perfectly horizontal, at 45°, or vertical."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:67
+#: ../help/C/tools_classic.page:58
 msgid "Curve: This tool can draw Bézier curves, optionally with an arrow at the end. Two clicks are required, if you only click once to draw a straight line, that line is drawn temporarily until a second click."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_classic.page:75
+#: ../help/C/tools_classic.page:66
 msgid "Aside of the colors, a usual option for classic tools is whether or not you want to use anti-aliasing. If you use anti-aliasing, the lines will look smoother, but it may negatively affect any following use of the <gui style=\"menuitem\">Paint</gui> tool, as well as several options of the <link xref=\"tools_selection\">selection</link>."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_classic.page:80
+#: ../help/C/tools_classic.page:71
 msgid "With several tools, you can change the ends of the line: it can be rounded or square. You can also draw various patterns of dashed lines with a few tools."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_classic.page:83
+#: ../help/C/tools_classic.page:74
 msgid "The <gui style=\"menuitem\">Outline</gui> option adds an outline around the line you draw. This outline uses the secondary color, and is available with the <gui style=\"menuitem\">Pencil</gui>, <gui style=\"menuitem\">Line</gui>, and <gui style=\"menuitem\">Curve</gui> tools."
 msgstr ""
 
 #. (itstool) path: section/title
-#: ../help/C/tools_classic.page:90
+#: ../help/C/tools_classic.page:81
+msgid "Erase"
+msgstr ""
+
+#. (itstool) path: section/p
+#: ../help/C/tools_classic.page:83
+msgid "The optional <gui style=\"menuitem\">Eraser</gui> tool has several possible behaviors:"
+msgstr ""
+
+#. (itstool) path: item/p
+#: ../help/C/tools_classic.page:87
+msgid "It can erase according to the line you draw with the cursor, ignoring the current color settings to just get fully transparent pixels. Optionally, the erased pixels can be changed to the initial color of the canvas (as set in the app preferences), or to the secondary color."
+msgstr ""
+
+#. (itstool) path: item/p
+#: ../help/C/tools_classic.page:93
+msgid "It can also erase a rectangular area: then you have more available options: blur, mosaic, randomly shuffle pixels, etc. so you can — for example — quickly censor text over wide areas of the image."
+msgstr ""
+
+#. (itstool) path: item/p
+#: ../help/C/tools_classic.page:98
+msgid "The option to <gui style=\"menuitem\">remove color</gui> will erase all the pixels where the color is the same as where you hovered or clicked, across the entire image. It can be useful, for example, to cut out an image from its background."
+msgstr ""
+
+#. (itstool) path: section/title
+#: ../help/C/tools_classic.page:107
 msgid "Pressure-sensitive brushes"
 msgstr ""
 
 #. (itstool) path: note/p
-#: ../help/C/tools_classic.page:92
+#: ../help/C/tools_classic.page:109
 msgid "This tool is disabled by default, because it has performance issues."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_classic.page:95
+#: ../help/C/tools_classic.page:112
 msgid "If you use a drawing tablet and a stylus, you may appreciate the \"brush\" tool, which reacts to the pressure of your input. Various possible brushes are available:"
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:100
+#: ../help/C/tools_classic.page:117
 msgid "Simple: this brush is basically a pencil with no options. The line will be wider if you apply more pressure. Otherwise (if you use a mouse for example), the width of the line will vary according to the speed of your movement."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:106
+#: ../help/C/tools_classic.page:123
 msgid "Airbrush: small \"droplets\" of color will be added to the canvas. If you apply more pressure, there will be more droplets. Without a pressure-sensitive device, their density is constant."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:111
+#: ../help/C/tools_classic.page:128
 msgid "Hairy brush: thin parallel lines will be added to the canvas. If you apply more pressure, the lines will be more outspread. Without a pressure-sensitive device, their proximity is constant."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:116
+#: ../help/C/tools_classic.page:133
 msgid "Calligraphic nib: this brush draws wider in one direction than in the other, according to an angle which is an option of the brush. For a given direction, the line will be wider if you apply more pressure. Without a pressure-sensitive device, the width is constant for a given direction."
 msgstr ""
 
 #. (itstool) path: section/title
-#: ../help/C/tools_classic.page:126
+#: ../help/C/tools_classic.page:143
 msgid "Insert text"
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_classic.page:128
+#: ../help/C/tools_classic.page:145
 msgid "With the <gui style=\"menuitem\">Text</gui> tool, you can insert text on the image. A few formatting options are available in the options menu, such as \"italic\", \"bold\", or a basic font family selection."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_classic.page:132
+#: ../help/C/tools_classic.page:149
 msgid "For better contrast, the text can be displayed on a rectangle background, or with a shadow, or with an outline. The color of this background is the secondary color you chose."
 msgstr ""
 
 #. (itstool) path: note/p
-#: ../help/C/tools_classic.page:140
+#: ../help/C/tools_classic.page:157
 msgid "Don't forget to confirm the insertion using the <gui style=\"button\"> Insert here</gui> button."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_classic.page:144
+#: ../help/C/tools_classic.page:161
 msgid "An optional tool named <gui style=\"menuitem\">Points</gui> is designed to help you captioning pictures: you can add numbered round dots or crosses to elements of the picture."
 msgstr ""
 
 #. (itstool) path: section/title
-#: ../help/C/tools_classic.page:150
+#: ../help/C/tools_classic.page:167
 msgid "Fill an area"
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_classic.page:152
+#: ../help/C/tools_classic.page:169
 msgid "To paint an area using a given color, several tools can be used:"
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:156
+#: ../help/C/tools_classic.page:173
 msgid "Shapes. Available shapes include rectangle, rounded rectangle, oval, circle, polygon, and free shape."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:158
+#: ../help/C/tools_classic.page:175
 msgid "Polygons and free shapes are drawn in several clicks. To close them, do a last click at the position where you began the shape, or use the <gui style=\"menuitem\">Close shape</gui> menu item."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:161
+#: ../help/C/tools_classic.page:178
 msgid "Various filling options are available (using a plain color, or a gradient, or nothing), as well as outline options (using a plain outline, dashes, or nothing)."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:166
+#: ../help/C/tools_classic.page:183
 msgid "Paint. This tool tries to paint an area of a given color with a new color."
 msgstr ""
 
 #. (itstool) path: note/p
-#: ../help/C/tools_classic.page:169
+#: ../help/C/tools_classic.page:186
 msgid "This tool is disabled by default, because it will not work if the shape to paint is too complex."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:172
+#: ../help/C/tools_classic.page:189
 msgid "It can use several possible algorithms: <gui style=\"menuitem\"> Encircle and fill</gui> is very simplistic and discouraged, <gui style=\"menuitem\">Erase and replace</gui> should work better, but still fails in a few situations."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_classic.page:176
+#: ../help/C/tools_classic.page:193
 msgid "The <gui style=\"menuitem\">Entire image</gui> option paints over the the entire image, regardless of what's already drawn."
 msgstr ""
 
-#. (itstool) path: item/p
-#: ../help/C/tools_classic.page:178
-msgid "<gui style=\"menuitem\">Erase color</gui> doesn't paint but erase the color you clicked, on the entire image, for example to cut out an image from its white background."
-msgstr ""
-
 #. (itstool) path: section/title
-#: ../help/C/tools_classic.page:186
+#: ../help/C/tools_classic.page:200
 msgid "Other kinds of tools"
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_classic.page:188
+#: ../help/C/tools_classic.page:202
 msgid "The <link xref=\"tools_selection\">selection tools</link> don't draw, but their capabilities are very powerful and useful for any image editing."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_classic.page:191
+#: ../help/C/tools_classic.page:205
 msgid "Use <link xref=\"tools_transform\">these special tools</link> to transform the canvas or the selected area."
 msgstr ""
 
@@ -634,11 +668,6 @@ msgstr ""
 #. (itstool) path: page/p
 #: ../help/C/tools_classic_colors.page:21
 msgid "The color of the left button corresponds to the left click, and is usually labeled \"Main color\", while the color at the right is the \"Secondary color\". Click on these buttons to edit their respective colors:"
-msgstr ""
-
-#. (itstool) path: section/title
-#: ../help/C/tools_classic_colors.page:26
-msgid "Colors"
 msgstr ""
 
 #. (itstool) path: section/p
@@ -683,7 +712,7 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: ../help/C/tools_classic_colors.page:78
-msgid "HSL modes: these options don't make much sense when you're drawing something, but they can help you when editing photos or drawings."
+msgid "HSL modes: these options don't make much sense when you're drawing something, but they can help you when editing photos or illustrations."
 msgstr ""
 
 #. (itstool) path: note/p
@@ -883,151 +912,146 @@ msgstr ""
 
 #. (itstool) path: note/p
 #: ../help/C/tools_transform.page:23
-msgid "With these tools, once you have the transformation you want, you have to apply the result with the <gui style=\"button\">Apply</gui> button at the right."
+msgid "You can cancel a transformation with the <gui style=\"button\">Cancel</gui> button at the left of the bottom bar."
 msgstr ""
 
-#. (itstool) path: note/p
-#: ../help/C/tools_transform.page:26
-msgid "Otherwise you can cancel the transformation with the <gui style=\"button\"> Cancel</gui> button at the left."
+#. (itstool) path: page/p
+#: ../help/C/tools_transform.page:27
+msgid "When a selection is defined, these tools will transform the selected area, otherwise they will transform the picture as a whole."
 msgstr ""
 
 #. (itstool) path: page/p
 #: ../help/C/tools_transform.page:30
-msgid "When a selection is defined, these tools will transform the selected area, otherwise they will transform the picture as a whole."
-msgstr ""
-
-#. (itstool) path: note/p
-#: ../help/C/tools_transform.page:34
-msgid "If you switch to another tool without applying the transformation explicitely, the transformation will be automatically applied if it concerns the selection, but automatically cancelled if it concerns the whole image."
-msgstr ""
-
-#. (itstool) path: page/p
-#: ../help/C/tools_transform.page:39
 msgid "If you try to save without applying the transformation, a dialog will remind you that you should apply it before saving."
 msgstr ""
 
 #. (itstool) path: section/title
-#: ../help/C/tools_transform.page:43
+#: ../help/C/tools_transform.page:34
 msgid "Crop"
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_transform.page:45
+#: ../help/C/tools_transform.page:36
 msgid "Change the size of the image, by removing parts of it. The side you're cropping is indicated by the mouse cursor: it changes depending on the position of the mouse pointer on the canvas."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_transform.page:48
+#: ../help/C/tools_transform.page:39
 msgid "The exact size can be set using the values in the bottom bar."
 msgstr ""
 
 #. (itstool) path: note/p
-#: ../help/C/tools_transform.page:51
+#: ../help/C/tools_transform.page:42
 msgid "If your increasing the size of the image instead of decreasing it, you may need to change the zoom level to see what you're doing."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_transform.page:55
+#: ../help/C/tools_transform.page:46
 msgid "The color of the pixels you create when increasing the size is customizable, using the menu at the bottom-right of the window, or by pressing <key>Shift</key> and/or <key>Alt</key> when you click to resize."
 msgstr ""
 
 #. (itstool) path: section/title
-#: ../help/C/tools_transform.page:61
+#: ../help/C/tools_transform.page:52
 msgid "Scale"
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_transform.page:63
+#: ../help/C/tools_transform.page:54
 msgid "Resize the image, using the mouse or the values in the bottom bar."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_transform.page:65
+#: ../help/C/tools_transform.page:55
+msgid "These numerical values are in pixels by default, but it's possible to resize according to a percentage of the original image."
+msgstr ""
+
+#. (itstool) path: section/p
+#: ../help/C/tools_transform.page:58
 msgid "The proportions of the image can be locked or not, using the menu at the bottom-right of the window, or by pressing <key>Shift</key> when you click to resize."
 msgstr ""
 
 #. (itstool) path: section/title
-#: ../help/C/tools_transform.page:74
+#: ../help/C/tools_transform.page:67
 msgid "Rotate"
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_transform.page:76
+#: ../help/C/tools_transform.page:69
 msgid "Change the orientation of the image, or flip it, using the buttons in the bottom bar."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_transform.page:78
+#: ../help/C/tools_transform.page:71
 msgid "If a selection is defined, you can freely choose the precise angle of the rotation. Otherwise, only rotations of 90°, 180° or 270° are possible."
 msgstr ""
 
 #. (itstool) path: section/title
-#: ../help/C/tools_transform.page:83
+#: ../help/C/tools_transform.page:76
 msgid "Skew"
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_transform.page:85
+#: ../help/C/tools_transform.page:78
 msgid "This optional tool tilts the image horizontally, vertically, or in both directions."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_transform.page:87
+#: ../help/C/tools_transform.page:80
 msgid "If you're skewing the canvas, the operation creates new pixels: their color is customizable, using the menu at the bottom-right of the window, or by pressing <key>Shift</key> and/or <key>Alt</key> when you click to skew."
 msgstr ""
 
 #. (itstool) path: section/title
-#: ../help/C/tools_transform.page:93
+#: ../help/C/tools_transform.page:86
 msgid "Filters"
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_transform.page:95
+#: ../help/C/tools_transform.page:88
 msgid "You can apply a filter to the image or the selection. Click on the picture to preview the selected filter."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_transform.page:99
+#: ../help/C/tools_transform.page:92
 msgid "Change the <gui style=\"menuitem\">Saturation</gui>: increase or decrease the saturation of the image by modifying the number in the bottom bar."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_transform.page:102
+#: ../help/C/tools_transform.page:95
 msgid "A saturation bigger than 100% boosts the colors, a saturation smaller than 100% does a greyish image."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_transform.page:106
+#: ../help/C/tools_transform.page:99
 msgid "<gui style=\"menuitem\">Veil</gui> will add a slightly desaturated veil upon the image, with a thin grey pixelated pattern."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_transform.page:112
+#: ../help/C/tools_transform.page:105
 msgid "<gui style=\"menuitem\">Add transparency</gui> can make the image partly translucent, depending on the percentage you can set in the bottom bar."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_transform.page:117
+#: ../help/C/tools_transform.page:110
 msgid "<gui style=\"menuitem\">Increase contrast</gui> will increase the contrast in the picture: dark areas will be darker, light areas will be lighter, and color will be stronger. Using the option in the bottom bar, you can choose how strong the effect will be."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_transform.page:126
+#: ../help/C/tools_transform.page:119
 msgid "<gui style=\"menuitem\">Blur</gui>, and several variations of it, will blur the image using a parametrable radius."
 msgstr ""
 
 #. (itstool) path: note/p
-#: ../help/C/tools_transform.page:129
+#: ../help/C/tools_transform.page:122
 msgid "Be careful, if the image is big, applying blur to the image can take a few seconds."
 msgstr ""
 
 #. (itstool) path: item/p
-#: ../help/C/tools_transform.page:134
+#: ../help/C/tools_transform.page:127
 msgid "<gui style=\"menuitem\">Invert colors</gui>."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/tools_transform.page:138
+#: ../help/C/tools_transform.page:131
 msgid "Here is an example of filters applied on small areas of an image:"
 msgstr ""
 
@@ -1048,452 +1072,427 @@ msgstr ""
 
 #. (itstool) path: section/title
 #: ../help/C/whats_new.page:20
-msgid "Version 0.8.5"
+msgid "Version 1.2.1"
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:22
-msgid "Changing the view's position within the thumbnail preview now dynamically and immediately updates the view, instead of only reacting to your the click release."
+#: ../help/C/whats_new.page:21
+msgid "Opening, importing, saving, and closing images now stay with the image that started the action, even after switching tabs."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:27
-msgid "The text tool gains an option to use a thicker outline."
+#: ../help/C/whats_new.page:25
+msgid "Closing a saved background image no longer disrupts edits or previews in the active image."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:30
-msgid "Both the thumbnail preview and the blending mode selection have become more reliable and efficient."
-msgstr ""
-
-#. (itstool) path: section/p
-#: ../help/C/whats_new.page:34
-msgid "The version 0.8.5 also features new translations."
+#: ../help/C/whats_new.page:29
+msgid "Scaling with locked proportions now keeps width and height synchronized for both pixel and percentage values."
 msgstr ""
 
 #. (itstool) path: section/title
-#: ../help/C/whats_new.page:40
-msgid "Version 0.8.4"
+#: ../help/C/whats_new.page:36
+msgid "Version 1.2.0"
+msgstr ""
+
+#. (itstool) path: section/p
+#: ../help/C/whats_new.page:37
+msgid "The <link xref=\"tools_transform\">transformation tools</link> now consistently apply their preview when you change the active tool without clicking on \"apply\"."
 msgstr ""
 
 #. (itstool) path: section/p
 #: ../help/C/whats_new.page:42
-msgid "Version 0.8.4 features several minor bug fixes, and various new translations."
+msgid "The text tool is more intuitive to use, with distinct areas on the canvas to edit, move and insert the text."
 msgstr ""
 
 #. (itstool) path: section/p
 #: ../help/C/whats_new.page:46
-msgid "Undoing several operations one after another should be less slow."
+msgid "A former option of the paint bucket tool, which didn't belong there, has been improved and moved to the eraser tool."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:49
-msgid "It's not possible anymore to reload the picture from the disk if it has never been saved on the disk to begin with."
+#: ../help/C/whats_new.page:50
+msgid "Transparency is henceforth correctly preserved when the \"skew\" tool expands the canvas with a solid color."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:53
-msgid "The text tool gains an option to disable anti-aliasing."
-msgstr ""
-
-#. (itstool) path: section/title
-#: ../help/C/whats_new.page:59
-msgid "Version 0.8.3"
+#: ../help/C/whats_new.page:54
+msgid "You can now adjust the position of the canvas when you're cropping it."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:61
-msgid "After rotating the selection, it had an incorrectly big height, but now it's fixed."
+#: ../help/C/whats_new.page:57
+msgid "The option to use a color editor by default has been moved from the main window to <link xref=\"preferences\">the preferences window</link>, and its bug has been fixed."
+msgstr ""
+
+#. (itstool) path: section/p
+#: ../help/C/whats_new.page:62
+msgid "Color filling and selection no longer hang on certain connected regions."
 msgstr ""
 
 #. (itstool) path: section/p
 #: ../help/C/whats_new.page:65
-msgid "The outline of the <link xref=\"tools_selection\">free selection</link> is now visible even when the image is very zoomed out."
+msgid "Failed saves preserve the current image and its edits, and external file changes ask before reloading."
 msgstr ""
 
 #. (itstool) path: section/p
 #: ../help/C/whats_new.page:69
-msgid "In specific configurations, opening a file would open a second tab with an empty image. This weird behaviour should have disappeared."
+msgid "Opaque exports preserve colors correctly, and selections extending beyond the canvas use transparent padding."
 msgstr ""
 
 #. (itstool) path: section/title
 #: ../help/C/whats_new.page:76
-msgid "Version 0.8.2"
+msgid "Version 1.0.2"
 msgstr ""
 
 #. (itstool) path: section/p
 #: ../help/C/whats_new.page:78
-msgid "The boundaries of the canvas are now always visibly delimited, to better render the area where you can draw, even if the canvas is transparent. It also helps to see what parts of the selection may disappear when you will unselect it."
+msgid "Saving the image should be more reliable, especially when replacing the transparent pixels with a solid color. Pictures are now automatically reloaded from the disk after being saved."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:84
-msgid "<link xref=\"tools_transform\">Transform tools</link> can now draw a preview of the pixels they may create outside of the current canvas, which makes the 'crop', 'scale', and 'rotate' tools more intuitive to use."
+#: ../help/C/whats_new.page:83
+msgid "The user interface of the \"select\" tool changed, as well as the keyboard shortcuts to change tab."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:89
-msgid "The straight line tool has a new option to lock its angle, so you can draw perfect horizontal, vertical, or 45° strokes."
+#: ../help/C/whats_new.page:87
+msgid "A small rendering issue when previewing a blur filter has also been fixed."
 msgstr ""
 
-#. (itstool) path: section/p
+#. (itstool) path: section/title
 #: ../help/C/whats_new.page:93
-msgid "The `--edit-clipboard` command line option now works better with Wayland."
+msgid "Version 1.0.1"
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:96
-msgid "Scaling an image using the numerical inputs now preserves the original proportions of the image (unless the \"never keep proportions\" option is enabled)."
+#: ../help/C/whats_new.page:94
+msgid "By popular demand, the \"highlighter\" tool is now enabled by default, and the message dialog to warn you about the release notes is less intrusive."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:101
-msgid "This version of the app is compatible with older GNOME versions (Ubuntu LTS 18.04)."
+#: ../help/C/whats_new.page:99
+msgid "The main improvement in this update is the zoom workflow: since the version 1.0.0 it's possible to zoom in very deep, but the process was very slow, and the view didn't stay well centered around the mouse pointer; and once at 2000%%, scrolling up or down, or left or right, was quite violent. These problems should all have disappeared in this new version!"
+msgstr ""
+
+#. (itstool) path: section/p
+#: ../help/C/whats_new.page:107
+msgid "Incorrect command line parsing when using the app outside of a flatpak sandbox has also been fixed."
+msgstr ""
+
+#. (itstool) path: section/p
+#: ../help/C/whats_new.page:111
+msgid "For users on elementary OS, a small issue concerning window resizing has been mended too."
 msgstr ""
 
 #. (itstool) path: section/title
-#: ../help/C/whats_new.page:108
-msgid "Version 0.8.1"
+#: ../help/C/whats_new.page:118
+msgid "Version 1.0.0"
 msgstr ""
 
-#. (itstool) path: section/p
-#: ../help/C/whats_new.page:110
-msgid "You can now crop or expand the canvas to an \"automatic\" size based on the current selection size, using new actions available in the selection menus."
+#. (itstool) path: subsection/title
+#: ../help/C/whats_new.page:121
+msgid "Performance"
 msgstr ""
 
-#. (itstool) path: section/p
-#: ../help/C/whats_new.page:115
-msgid "A bug, where the \"crop\" tool could erase the image under certain conditions, has been fixed."
+#. (itstool) path: subsection/p
+#: ../help/C/whats_new.page:122
+msgid "This new version improves rendering performance, which is visible when editing large images with a poor CPU."
 msgstr ""
 
-#. (itstool) path: section/p
-#: ../help/C/whats_new.page:119
-msgid "In the preferences window, there is now an option to select if you prefer the dark theme variant."
+#. (itstool) path: subsection/p
+#: ../help/C/whats_new.page:126
+msgid "It's still not perfect, but it's better!"
 msgstr ""
 
-#. (itstool) path: section/p
-#: ../help/C/whats_new.page:123
-msgid "Several minor options have been added to the tools:"
+#. (itstool) path: subsection/title
+#: ../help/C/whats_new.page:132
+msgid "Keyboard controls"
 msgstr ""
 
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:127
-msgid "The orientation of the calligraphic nib (<gui style=\"button\">Brush</gui> tool);"
+#. (itstool) path: subsection/p
+#: ../help/C/whats_new.page:133
+msgid "You can select tools with keyboard accelerators (<key>Alt</key>+letter). This may not work yet with languages using a non-latin alphabet."
 msgstr ""
 
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:131
-msgid "Various ways to censor an information using filters, with a far quicker workflow, as an option of the <gui style=\"button\">Eraser</gui> tool;"
+#. (itstool) path: subsection/p
+#: ../help/C/whats_new.page:137
+msgid "Pressing <key>Ctrl</key> will display the cursor coordinates in a tooltip. If you do it while using a tool, it may display additional data, for example the dimensions of the shape you're drawing!"
 msgstr ""
 
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:135
-msgid "An \"outline\" option to the <gui style=\"button\">Pencil</gui>, <gui style=\"button\">Line</gui> and <gui style=\"button\">Curve</gui> tools, to get better contrast, or just a cool effect around your lines."
+#. (itstool) path: subsection/p
+#: ../help/C/whats_new.page:142
+msgid "Pressing <key>Shift</key>, or <key>Alt</key> when using a tool enables specific options, such as locking the direction for the \"line\" tool, or changing the filling style of a shape."
 msgstr ""
 
-#. (itstool) path: section/title
-#: ../help/C/whats_new.page:144
-msgid "Version 0.8.0"
+#. (itstool) path: subsection/title
+#: ../help/C/whats_new.page:150
+msgid "New tool!"
 msgstr ""
 
-#. (itstool) path: section/p
-#: ../help/C/whats_new.page:146
-msgid "The <link xref=\"fullscreen\">fullscreen mode</link> has been completely redesigned to provide an easier yet less intrusive access to the tools and their options."
-msgstr ""
-
-#. (itstool) path: section/p
+#. (itstool) path: subsection/p
 #: ../help/C/whats_new.page:151
-msgid "The help manual has been splitted in smaller pages to be easier to read, and several buttons to access it have been added across the application."
+msgid "You can now use the new <link xref=\"tools_transform#skew\">\"skew\" tool </link>, to tilt an image from a rectangle to a parallelogram. Such a deformation can be applied horizontally or vertically."
 msgstr ""
 
 #. (itstool) path: subsection/title
-#: ../help/C/whats_new.page:157
-msgid "New tools"
+#: ../help/C/whats_new.page:159
+msgid "New options!"
 msgstr ""
 
 #. (itstool) path: subsection/p
-#: ../help/C/whats_new.page:158
-msgid "You can now use a tablet and a stylus to <link xref=\"tools_classic#brushes\"> draw with pressure-sensitive brushes</link>, available under the new optional 'brush' tool: a simple brush, an airbrush, a hairy brush, and a calligraphic nib."
+#: ../help/C/whats_new.page:160
+msgid "Using <link xref=\"tools_transform#scale\">the \"scale\" tool</link>, you may optionally set the new size as a relative percentage rather than an absolute value in pixels."
 msgstr ""
 
-#. (itstool) path: subsection/title
-#: ../help/C/whats_new.page:167
-msgid "New options for existing tools"
+#. (itstool) path: subsection/p
+#: ../help/C/whats_new.page:165
+msgid "Thanks to a new option, the highlighter will draw straighter, less messy lines."
 msgstr ""
 
-#. (itstool) path: item/p
+#. (itstool) path: subsection/p
 #: ../help/C/whats_new.page:169
-msgid "The <link xref=\"tools_selection\">selection tools</link> have a new, more rich, more readable bottom pane."
+msgid "Pixel rendering is now very sharp when the image is very <link xref=\"zoom_preview\">zoomed in</link>, and the pencil is more precise, so you can draw each pixel precisely."
 msgstr ""
 
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:173
-msgid "<link xref=\"tools_transform#filters\">Filters</link> have been rewritten to be more reliable, and a new filter to harmoniously increase contrast has been added."
+#. (itstool) path: subsection/title
+#: ../help/C/whats_new.page:177
+msgid "Translations"
 msgstr ""
 
-#. (itstool) path: item/p
+#. (itstool) path: subsection/p
 #: ../help/C/whats_new.page:178
-msgid "When you move or delete the selection, now the pixels left behind can optionally be a specific color, rather than always transparency. This specific color can be excluded from the selection. That feature is complex to explain with words, try it yourself you'll see."
-msgstr ""
-
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:184
-msgid "The eraser tool now as options: it can use a specific color, rather than always transparency. This option has the same value as the selection replacement color mentioned above. This tool also have a new icon, based on the Adwaita theme."
-msgstr ""
-
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:190
-msgid "Options such as the text background type, the shape filling style, or the aforementioned eraser/selection replacement color, are now persisted when closing the application."
-msgstr ""
-
-#. (itstool) path: subsection/title
-#: ../help/C/whats_new.page:199
-msgid "Color modes"
+msgid "The version 1.0.0 also features new updates to many translations, such as czech, croatian, german, hebrew, and many more."
 msgstr ""
 
 #. (itstool) path: subsection/p
-#: ../help/C/whats_new.page:200
-msgid "The user interface for selecting the <link xref=\"tools_classic_colors\"> active color application mode</link> has been redesigned to better show the accurate label, and better organize the possible modes as submenus."
+#: ../help/C/whats_new.page:182
+msgid "The help manual you're reading is now mostly translated in spanish, russian, and turkish."
 msgstr ""
 
 #. (itstool) path: subsection/p
-#: ../help/C/whats_new.page:207
-msgid "The \"blur\" mode has been removed, which simplifies the situation and allows <link xref=\"tools_classic\">several tools</link> (\"shapes\" and \"brushes\") to get support for the color application modes in general."
-msgstr ""
-
-#. (itstool) path: subsection/title
-#: ../help/C/whats_new.page:215
-msgid "Bugs fixed"
-msgstr ""
-
-#. (itstool) path: subsection/p
-#: ../help/C/whats_new.page:216
-msgid "Coordinates of the selection were lost when unselecting a selection defined by an undo."
+#: ../help/C/whats_new.page:186
+msgid "A huge \"thank you\" to contributors all around the world!"
 msgstr ""
 
 #. (itstool) path: section/title
-#: ../help/C/whats_new.page:224
-msgid "Version 0.6.5"
+#: ../help/C/whats_new.page:193
+msgid "Version 0.8.5"
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:226
-msgid "Bugs fixed: the bottom panes sometimes refused to adapt to the screen size, and could disappear under certain conditions."
+#: ../help/C/whats_new.page:195
+msgid "Changing the view's position within the thumbnail preview now dynamically and immediately updates the view, instead of only reacting to your the click release."
+msgstr ""
+
+#. (itstool) path: section/p
+#: ../help/C/whats_new.page:200
+msgid "The text tool gains an option to use a thicker outline."
+msgstr ""
+
+#. (itstool) path: section/p
+#: ../help/C/whats_new.page:203
+msgid "Both the thumbnail preview and the blending mode selection have become more reliable and efficient."
+msgstr ""
+
+#. (itstool) path: section/p
+#: ../help/C/whats_new.page:207
+msgid "The version 0.8.5 also features new translations."
+msgstr ""
+
+#. (itstool) path: section/title
+#: ../help/C/whats_new.page:213
+msgid "Version 0.8.4"
+msgstr ""
+
+#. (itstool) path: section/p
+#: ../help/C/whats_new.page:215
+msgid "Undoing several operations one after another should be less slow."
+msgstr ""
+
+#. (itstool) path: section/p
+#: ../help/C/whats_new.page:218
+msgid "It's not possible anymore to reload the picture from the disk if it has never been saved on the disk to begin with."
+msgstr ""
+
+#. (itstool) path: section/p
+#: ../help/C/whats_new.page:222
+msgid "The text tool gains an option to disable anti-aliasing."
+msgstr ""
+
+#. (itstool) path: section/title
+#: ../help/C/whats_new.page:228
+msgid "Version 0.8.3"
 msgstr ""
 
 #. (itstool) path: section/p
 #: ../help/C/whats_new.page:230
-msgid "The catastrophic \"print\" action, that no one ever used so no one ever noticed, is now somewhat usable."
+msgid "After rotating the selection, it had an incorrectly big height, but now it's fixed."
 msgstr ""
 
 #. (itstool) path: section/p
 #: ../help/C/whats_new.page:234
-msgid "Importing or opening an image using drag-and-drop is now disabled with flatpak, because it can't work with the sandbox."
+msgid "The outline of the <link xref=\"tools_selection\">free selection</link> is now visible even when the image is very zoomed out."
 msgstr ""
 
 #. (itstool) path: section/p
 #: ../help/C/whats_new.page:238
-msgid "The <link xref=\"zoom_preview\">movements of the view</link> when holding and moving the middle-click are now far more accurate."
+msgid "In specific configurations, opening a file would open a second tab with an empty image. This weird behaviour should have disappeared."
 msgstr ""
 
 #. (itstool) path: section/title
 #: ../help/C/whats_new.page:245
-msgid "Version 0.6.4"
+msgid "Version 0.8.2"
 msgstr ""
 
 #. (itstool) path: section/p
 #: ../help/C/whats_new.page:247
-msgid "The value of the \"use anti-aliasing\" option is now persisted when the app is closed, and restored when the app starts."
+msgid "The boundaries of the canvas are now always visibly delimited, to better render the area where you can draw, even if the canvas is transparent. It also helps to see what parts of the selection may disappear when you will unselect it."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:251
-msgid "Various changes to the way file types are handled should help you to get informative error messages, and the app should be usable despite these errors."
-msgstr ""
-
-#. (itstool) path: section/title
-#: ../help/C/whats_new.page:259
-msgid "Version 0.6.3"
+#: ../help/C/whats_new.page:253
+msgid "<link xref=\"tools_transform\">Transform tools</link> can now draw a preview of the pixels they may create outside of the current canvas, which makes the 'crop', 'scale', and 'rotate' tools more intuitive to use."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:261
-msgid "More options to draw using dashes (several type of dashes) and arrows (several scenarios where they were broken have been addressed). An option to draw double-ended arrows is available."
+#: ../help/C/whats_new.page:258
+msgid "The straight line tool has a new option to lock its angle, so you can draw perfect horizontal, vertical, or 45° strokes."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:266
-msgid "This version is compatible with older distributions (versions of GNOME libraries older than 3.30)."
+#: ../help/C/whats_new.page:262
+msgid "The `--edit-clipboard` command line option now works better with Wayland."
+msgstr ""
+
+#. (itstool) path: section/p
+#: ../help/C/whats_new.page:265
+msgid "Scaling an image using the numerical inputs now preserves the original proportions of the image (unless the \"never keep proportions\" option is enabled)."
 msgstr ""
 
 #. (itstool) path: section/p
 #: ../help/C/whats_new.page:270
-msgid "When the app uses a menu-bar, the tools have been arranged in a submenu: \"Tools / Active tool\"."
+msgid "This version of the app is compatible with older GNOME versions (Ubuntu LTS 18.04)."
 msgstr ""
 
 #. (itstool) path: section/title
 #: ../help/C/whats_new.page:277
-msgid "Version 0.6.2"
+msgid "Version 0.8.1"
 msgstr ""
 
 #. (itstool) path: section/p
 #: ../help/C/whats_new.page:279
-msgid "The 'highlighter' tool now provides options to highlight light text on a dark background."
+msgid "You can now crop or expand the canvas to an \"automatic\" size based on the current selection size, using new actions available in the selection menus."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:283
-msgid "When an image has been saved without its transparency, the app now suggests to reload the image from the disk. Also, this 'reload from disk' feature is now available with every possible window layout."
+#: ../help/C/whats_new.page:284
+msgid "A bug, where the \"crop\" tool could erase the image under certain conditions, has been fixed."
 msgstr ""
 
 #. (itstool) path: section/p
 #: ../help/C/whats_new.page:288
-msgid "An action to copy the whole image to clipboard has been added."
+msgid "In the preferences window, there is now an option to select if you prefer the dark theme variant."
 msgstr ""
 
 #. (itstool) path: section/p
-#: ../help/C/whats_new.page:291
-msgid "Keyboard shortcuts for increasing and decreasing the tool width have been added."
+#: ../help/C/whats_new.page:292
+msgid "Several minor options have been added to the tools:"
 msgstr ""
 
-#. (itstool) path: section/p
-#: ../help/C/whats_new.page:295
-msgid "The 'paint' tool can now optionally paint over the entire image."
+#. (itstool) path: item/p
+#: ../help/C/whats_new.page:296
+msgid "The orientation of the calligraphic nib (<gui style=\"button\">Brush</gui> tool);"
+msgstr ""
+
+#. (itstool) path: item/p
+#: ../help/C/whats_new.page:300
+msgid "Various ways to censor an information using filters, with a far quicker workflow, as an option of the <gui style=\"button\">Eraser</gui> tool;"
+msgstr ""
+
+#. (itstool) path: item/p
+#: ../help/C/whats_new.page:304
+msgid "An \"outline\" option to the <gui style=\"button\">Pencil</gui>, <gui style=\"button\">Line</gui> and <gui style=\"button\">Curve</gui> tools, to get better contrast, or just a cool effect around your lines."
 msgstr ""
 
 #. (itstool) path: section/title
-#: ../help/C/whats_new.page:301
-msgid "Version 0.6.1"
-msgstr ""
-
-#. (itstool) path: section/p
-#: ../help/C/whats_new.page:303
-msgid "It's now possible to remove transparency when saving PNG files too. And there are more color options to replace the transparent pixels: 'initial color' means the transparent pixels will be replaced by the initial color of the canvas, as set in the app preferences."
-msgstr ""
-
-#. (itstool) path: section/p
-#: ../help/C/whats_new.page:309
-msgid "A new optional tool named \"Points\" has been added, it may help captioning pictures."
-msgstr ""
-
-#. (itstool) path: section/p
 #: ../help/C/whats_new.page:313
-msgid "Minors bugs to the 'rotate' tool have been fixed, that occurred when the selection was flipped before being rotated."
+msgid "Version 0.8.0"
 msgstr ""
 
-#. (itstool) path: section/title
+#. (itstool) path: section/p
+#: ../help/C/whats_new.page:315
+msgid "The <link xref=\"fullscreen\">fullscreen mode</link> has been completely redesigned to provide an easier yet less intrusive access to the tools and their options."
+msgstr ""
+
+#. (itstool) path: section/p
 #: ../help/C/whats_new.page:320
-msgid "Version 0.6.0"
+msgid "The help manual has been splitted in smaller pages to be easier to read, and several buttons to access it have been added across the application."
 msgstr ""
 
 #. (itstool) path: subsection/title
-#: ../help/C/whats_new.page:323
-msgid "Zoom"
+#: ../help/C/whats_new.page:326
+msgid "New tools"
 msgstr ""
 
 #. (itstool) path: subsection/p
-#: ../help/C/whats_new.page:324
-msgid "The most prominent new feature is the ability to <link xref=\"zoom_preview\"> zoom in (or zoom out)</link> on the image. It can be achieved using:"
+#: ../help/C/whats_new.page:327
+msgid "You can now use a tablet and a stylus to <link xref=\"tools_classic#brushes\"> draw with pressure-sensitive brushes</link>, available under the new optional 'brush' tool: a simple brush, an airbrush, a hairy brush, and a calligraphic nib."
 msgstr ""
 
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:329
-msgid "buttons in the minimap popover;"
-msgstr ""
-
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:332
-msgid "touch gestures (touchpad or touchscreen);"
-msgstr ""
-
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:335
-msgid "the mouse wheel;"
+#. (itstool) path: subsection/title
+#: ../help/C/whats_new.page:336
+msgid "New options for existing tools"
 msgstr ""
 
 #. (itstool) path: item/p
 #: ../help/C/whats_new.page:338
-msgid "keyboard shortcuts."
+msgid "The <link xref=\"tools_selection\">selection tools</link> have a new, more rich, more readable bottom pane."
 msgstr ""
 
-#. (itstool) path: subsection/p
-#: ../help/C/whats_new.page:344
-msgid "With HiDPI displays, most problems have been fixed: the canvas should be displayed without unwanted rescalings and destructive croppings."
+#. (itstool) path: item/p
+#: ../help/C/whats_new.page:342
+msgid "<link xref=\"tools_transform#filters\">Filters</link> have been rewritten to be more reliable, and a new filter to harmoniously increase contrast has been added."
 msgstr ""
 
-#. (itstool) path: subsection/title
-#: ../help/C/whats_new.page:351
-msgid "Improvements to tools"
+#. (itstool) path: item/p
+#: ../help/C/whats_new.page:347
+msgid "When you move or delete the selection, now the pixels left behind can optionally be a specific color, rather than always transparency. This specific color can be excluded from the selection. That feature is complex to explain with words, try it yourself you'll see."
 msgstr ""
 
-#. (itstool) path: subsection/p
-#: ../help/C/whats_new.page:352
-msgid "An \"additional tools\" section has been added to <link xref=\"preferences#tools\"> the preferences window</link>, and several tools listed in this section are disabled by default. It includes tools that are redundant with other more powerful tools, or tools whose implementation isn't reliable enough."
+#. (itstool) path: item/p
+#: ../help/C/whats_new.page:353
+msgid "The eraser tool now as options: it can use a specific color, rather than always transparency. This option has the same value as the selection replacement color mentioned above. This tool also have a new icon, based on the Adwaita theme."
 msgstr ""
 
-#. (itstool) path: subsection/p
+#. (itstool) path: item/p
 #: ../help/C/whats_new.page:359
-msgid "Otherwise, the following changes occurred:"
-msgstr ""
-
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:363
-msgid "<link xref=\"tools_selection\">Rectangle selection and freehand selection</link> are now distinct tools, that share the same bottom pane."
-msgstr ""
-
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:368
-msgid "The 'rotate' tool now supports any angle when rotating the selection, and it handles horizontal or vertical flipping."
-msgstr ""
-
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:372
-msgid "The numerous tools producing shapes (circle, rectangle, polygon, …), have been merged into a single, more consistent 'shape' tool, along with 'rounded rectangle' and 'ellipse'. Their filling options now include various types of gradients."
-msgstr ""
-
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:378
-msgid "The text tool can now write using most system fonts, thus allowing more complex characters to be used (e.g. Asian characters)."
-msgstr ""
-
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:382
-msgid "The 'saturate' tool has been replaced by <link xref=\"tools_transform#filters\"> 'filters'</link>, a more powerful tool with several types of blur, color inversion, pixelization, saturation and transparency."
-msgstr ""
-
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:387
-msgid "Specialized types of pencils (eraser, highlighter) have been added, as optional tools."
-msgstr ""
-
-#. (itstool) path: item/p
-#: ../help/C/whats_new.page:391
-msgid "The \"free selection\" tool, as well as the \"free shape\" and \"polygon\" shape, are easier to use thanks to an action to close the path, available in the tool options menu."
-msgstr ""
-
-#. (itstool) path: subsection/p
-#: ../help/C/whats_new.page:397
-msgid "Concerning common options, you can now disable anti-aliasing. Also, the \"color application mode\" is now an option listed in the <link xref=\"tools_classic_colors\">colors menus and popovers</link>."
+msgid "Options such as the text background type, the shape filling style, or the aforementioned eraser/selection replacement color, are now persisted when closing the application."
 msgstr ""
 
 #. (itstool) path: subsection/title
-#: ../help/C/whats_new.page:405
-msgid "Other features"
+#: ../help/C/whats_new.page:368
+msgid "Color modes"
 msgstr ""
 
 #. (itstool) path: subsection/p
-#: ../help/C/whats_new.page:406
-msgid "A <link xref=\"fullscreen\">fullscreen mode</link> is now available."
+#: ../help/C/whats_new.page:369
+msgid "The user interface for selecting the <link xref=\"tools_classic_colors\"> active color application mode</link> has been redesigned to better show the accurate label, and better organize the possible modes as submenus."
 msgstr ""
 
 #. (itstool) path: subsection/p
-#: ../help/C/whats_new.page:409
-msgid "The \"windows\" menu has been removed from the menubar."
+#: ../help/C/whats_new.page:376
+msgid "The \"blur\" mode has been removed, which simplifies the situation and allows <link xref=\"tools_classic\">several tools</link> (\"shapes\" and \"brushes\") to get support for the color application modes in general."
+msgstr ""
+
+#. (itstool) path: subsection/title
+#: ../help/C/whats_new.page:384
+msgid "Bugs fixed"
 msgstr ""
 
 #. (itstool) path: subsection/p
-#: ../help/C/whats_new.page:412
-msgid "The user should be warned when they try to save despite the current operation not being applied."
+#: ../help/C/whats_new.page:385
+msgid "Coordinates of the selection were lost when unselecting a selection defined by an undo."
 msgstr ""
 
 #. (itstool) path: info/desc

@@ -37,8 +37,12 @@
     <release version="1.2.1" date="2026-11-23">
       <description>
         <p>
-          Opening, importing, saving, and closing images now stay with the image
-          that started the action, even after switching tabs.
+          Drawing now requires GTK 4.10 or newer.
+        </p>
+        <p>
+          Opening or importing files, saving, and closing tabs now affect the
+          tab where the action began, even if you switch tabs while a dialog is
+          open.
         </p>
         <p>
           Closing a saved background image no longer disrupts edits or

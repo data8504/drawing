@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: drawing\n"
 "Report-Msgid-Bugs-To: github.com/data8504/drawing/issues/new/choose\n"
-"POT-Creation-Date: 2026-11-27 23:09-0800\n"
+"POT-Creation-Date: 2026-11-27 23:31-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -78,9 +78,13 @@ msgid "Supported file types include PNG, JPEG and BMP."
 msgstr ""
 
 #: data/com.github.maoschanz.drawing.appdata.xml.in
+msgid "Drawing now requires GTK 4.10 or newer."
+msgstr ""
+
+#: data/com.github.maoschanz.drawing.appdata.xml.in
 msgid ""
-"Opening, importing, saving, and closing images now stay with the image that "
-"started the action, even after switching tabs."
+"Opening or importing files, saving, and closing tabs now affect the tab "
+"where the action began, even if you switch tabs while a dialog is open."
 msgstr ""
 
 #: data/com.github.maoschanz.drawing.appdata.xml.in

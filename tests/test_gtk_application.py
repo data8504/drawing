@@ -74,6 +74,22 @@ class ApplicationSmokeTest(unittest.TestCase):
 						'picker', 'color_select', 'paint', 'crop', 'scale',
 						'rotate', 'skew', 'filters',
 					})
+					icon_theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
+					foreground = Gdk.RGBA(red=1, green=1, blue=1, alpha=1)
+					for tool_id, tool in window.tools.items():
+						with self.subTest(tool_icon=tool_id):
+							icon = icon_theme.lookup_icon(tool._icon_name, None, 24, 1,
+								Gtk.TextDirection.NONE,
+								Gtk.IconLookupFlags.FORCE_SYMBOLIC)
+							snapshot = Gtk.Snapshot()
+							icon.snapshot_symbolic(snapshot, 24, 24, [foreground] * 4)
+							node = snapshot.to_node()
+							self.assertIsNotNone(node, 'Tool icon rendered empty')
+							bounds = node.get_bounds()
+							self.assertGreater(bounds.get_width(), 0,
+								'Tool icon rendered empty')
+							self.assertGreater(bounds.get_height(), 0,
+								'Tool icon rendered empty')
 					image = window.get_active_image()
 					initial = image.get_initial_rgba()
 					self.assertEqual((initial.red, initial.green, initial.blue,
